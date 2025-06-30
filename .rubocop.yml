@@ -1,0 +1,83 @@
+plugins:
+  - rubocop-rspec
+
+inherit_gem:
+  rspec-sleeping_king_studios: config/rubocop-rspec.yml
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Include:
+    - 'lib/**/*.rb'
+    - 'spec/**/*.rb'
+  Exclude:
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
+Layout/LineLength:
+  AllowedPatterns:
+    - '\A\s*#'
+  Max: 80
+
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: ~
+
+Metrics/BlockLength:
+  Exclude:
+    - '*.gemspec'
+    - 'spec/**/*.rb'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: exception
+
+RSpec/BeNil:
+  Enabled: false
+
+RSpec/Eq:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 10
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/HookArgument:
+  EnforcedStyle: example
+
+RSpec/IncludeExamples:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false # Expects subject to precede shared examples.
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+
+RSpec/NestedGroups:
+  Max: 5
+
+Style/AccessorGrouping:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  # Checks the style of children definitions at classes and modules.
+  #
+  # Our preferred style is compact-plus-one, which does not match any of the
+  # existing styles, so we disable this cop.
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
