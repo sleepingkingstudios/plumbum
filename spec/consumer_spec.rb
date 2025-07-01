@@ -12,7 +12,9 @@ module Plumbum
 
     module ClassMethods
       def dependency(key)
-        dependency_keys << key.to_s
+        key = key.to_s
+
+        dependency_keys << key
 
         define_method(key) do
           plumbum_providers.each do |provider|
@@ -39,27 +41,27 @@ module Plumbum
       @plumbum_providers = [*self.class.plumbum_class_providers]
     end
 
+    private
+
     attr_reader :plumbum_providers
   end
 
   module Provider
     def [](key)
-      values[key]
+      values[normalize_key(key)]
     end
     alias get []
 
-    def fetch(key)
-      values.fetch(key) do
-        raise Plumbum::Error, "missing dependency with key #{key.inspect}"
-      end
-    end
-
     def has?(key)
-      values.key?(key)
+      values.key?(normalize_key(key))
     end
     alias key? has?
 
     private
+
+    def normalize_key(key)
+      key.to_s
+    end
 
     def values
       @values ||= {}
