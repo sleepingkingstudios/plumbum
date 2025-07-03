@@ -33,10 +33,12 @@ Layout/ParameterAlignment:
 Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
+    - 'lib/plumbum/rspec/deferred/**/*.rb'
     - 'spec/**/*.rb'
 
 Metrics/ModuleLength:
   Exclude:
+    - 'lib/plumbum/rspec/deferred/**/*.rb'
     - 'spec/**/*.rb'
 
 Naming/RescuedExceptionsVariableName:
