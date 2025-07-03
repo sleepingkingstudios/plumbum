@@ -2,8 +2,8 @@
 
 # Dependency injection and management library for Ruby.
 module Plumbum
-  autoload :Provider, 'plumbum/provider'
-  autoload :RSpec,    'plumbum/rspec'
+  autoload :Provider,  'plumbum/provider'
+  autoload :Providers, 'plumbum/providers'
 
   class << self
     # @return [String] the current version of the gem.
