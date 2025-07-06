@@ -5,6 +5,7 @@ require 'plumbum'
 module Plumbum
   # Namespace for exceptions raised when handling Plumbum errors.
   module Errors
-    autoload :ImmutableError, 'plumbum/errors/immutable_error'
+    autoload :ImmutableError,         'plumbum/errors/immutable_error'
+    autoload :MissingDependencyError, 'plumbum/errors/missing_dependency_error'
   end
 end
