@@ -64,6 +64,7 @@ module Plumbum
       end
     end
 
+    # @return a new instance of Consumer.
     def initialize(...)
       super
 
@@ -79,8 +80,8 @@ module Plumbum
     #
     # @return [Object] the dependency value.
     #
-    # @raises [Plumbum::Errors::MissingDependencyError] if no matching
-    #   dependency is found.
+    # @raise [Plumbum::Errors::MissingDependencyError] if no matching dependency
+    #   is found.
     def get_plumbum_dependency(key)
       SleepingKingStudios::Tools::Toolbelt
         .instance
