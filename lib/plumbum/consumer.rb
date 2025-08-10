@@ -14,6 +14,8 @@ module Plumbum
       # Defines an injected dependency for instances of the class.
       #
       # @param key [String, Symbol] the key for the dependency.
+      # @param as [String, Symbol] the method name used to define dependency
+      #   methods. Defaults to the key.
       # @param optional [true, false] if true, calling the dependency returns
       #   nil if the dependency is not defined. Defaults to false.
       # @param predicate [true, false] if true, also defines a predicate method
@@ -24,17 +26,15 @@ module Plumbum
       #
       # @raise [ArgumentError] if the key is not a String or Symbol, or is
       #   empty.
-      def dependency(key, optional: false, predicate: false)
-        SleepingKingStudios::Tools::Toolbelt
-          .instance
-          .assertions
-          .validate_name(key, as: :key)
+      def dependency(key, as: nil, optional: false, predicate: false)
+        validate_name(key, as: :key)
+        validate_name(as,  as: :as) unless as.nil?
 
         dependency_keys << key.to_s
 
-        define_predicate(key) if predicate
+        define_predicate(key, as:) if predicate
 
-        define_reader(key, optional:)
+        define_reader(key, as:, optional:)
       end
 
       # @return [Set<String>] the keys of the dependencies declared by the class
@@ -59,19 +59,19 @@ module Plumbum
 
       private
 
-      def define_predicate(key)
-        method_name = :"#{key}?"
+      def define_predicate(key, as: nil)
+        method_name = :"#{as || key}?"
 
         dependency_methods.define_method(method_name) do
           has_plumbum_dependency?(key)
         end
       end
 
-      def define_reader(key, **options)
-        method_name = key
+      def define_reader(key, as: nil, optional: false)
+        method_name = as || key
 
         dependency_methods.define_method(method_name) do
-          get_plumbum_dependency(key, **options)
+          get_plumbum_dependency(key, optional:)
         end
       end
 
@@ -84,6 +84,13 @@ module Plumbum
           .new
           .tap { |mod| include mod }
           .then { |mod| const_set(:DependencyMethods, mod) }
+      end
+
+      def validate_name(value, as: nil)
+        SleepingKingStudios::Tools::Toolbelt
+          .instance
+          .assertions
+          .validate_name(value, as:)
       end
     end
 

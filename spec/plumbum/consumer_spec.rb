@@ -99,13 +99,183 @@ RSpec.describe Plumbum::Consumer do
 
         expect(instance).to respond_to(reader_name).with(0).arguments
       end
+
+      describe 'with as: nil' do
+        it { expect(described_class.dependency(key)).to be key.to_sym }
+
+        it 'should add the key to the dependency keys' do
+          expect { described_class.dependency(key) }
+            .to change(described_class, :dependency_keys)
+            .to include(key.to_s)
+        end
+
+        it 'should define the reader method', :aggregate_failures do
+          expect(instance).not_to respond_to(reader_name)
+
+          described_class.dependency(key)
+
+          expect(instance).to respond_to(reader_name).with(0).arguments
+        end
+      end
+
+      describe 'with as: an Object' do
+        let(:error_message) do
+          tools
+            .assertions
+            .error_message_for(
+              'sleeping_king_studios.tools.assertions.name',
+              as: :as
+            )
+        end
+
+        it 'should raise an exception' do
+          expect { described_class.dependency(key, as: Object.new.freeze) }
+            .to raise_error ArgumentError, error_message
+        end
+      end
+
+      describe 'with as: an empty String' do
+        let(:error_message) do
+          tools
+            .assertions
+            .error_message_for(
+              'sleeping_king_studios.tools.assertions.presence',
+              as: :as
+            )
+        end
+
+        it 'should raise an exception' do
+          expect { described_class.dependency(key, as: '') }
+            .to raise_error ArgumentError, error_message
+        end
+      end
+
+      describe 'with as: an empty Symbol' do
+        let(:error_message) do
+          tools
+            .assertions
+            .error_message_for(
+              'sleeping_king_studios.tools.assertions.presence',
+              as: :as
+            )
+        end
+
+        it 'should raise an exception' do
+          expect { described_class.dependency(key, as: :'') }
+            .to raise_error ArgumentError, error_message
+        end
+      end
+
+      describe 'with as: a String' do
+        let(:method_name) { "scoped_#{key}" }
+        let(:reader_name) { method_name.to_sym }
+
+        it 'should return the reader name' do
+          expect(described_class.dependency(key, as: method_name))
+            .to be reader_name
+        end
+
+        it 'should add the key to the dependency keys' do
+          expect { described_class.dependency(key, as: method_name) }
+            .to change(described_class, :dependency_keys)
+            .to include(key.to_s)
+        end
+
+        it 'should define the reader method', :aggregate_failures do
+          expect(instance).not_to respond_to(key)
+          expect(instance).not_to respond_to(reader_name)
+
+          described_class.dependency(key, as: method_name)
+
+          expect(instance).not_to respond_to(key)
+          expect(instance).to respond_to(reader_name).with(0).arguments
+        end
+      end
+
+      describe 'with as: a Symbol' do
+        let(:method_name) { :"scoped_#{key}" }
+        let(:reader_name) { method_name }
+
+        it 'should return the reader name' do
+          expect(described_class.dependency(key, as: method_name))
+            .to be reader_name
+        end
+
+        it 'should add the key to the dependency keys' do
+          expect { described_class.dependency(key, as: method_name) }
+            .to change(described_class, :dependency_keys)
+            .to include(key.to_s)
+        end
+
+        it 'should define the reader method', :aggregate_failures do
+          expect(instance).not_to respond_to(key)
+          expect(instance).not_to respond_to(reader_name)
+
+          described_class.dependency(key, as: method_name)
+
+          expect(instance).not_to respond_to(key)
+          expect(instance).to respond_to(reader_name).with(0).arguments
+        end
+      end
+
+      describe 'with predicate: true' do
+        let(:predicate_name) { :"#{reader_name}?" }
+
+        it 'should return the reader name' do
+          expect(described_class.dependency(key, predicate: true))
+            .to be reader_name
+        end
+
+        it 'should add the key to the dependency keys' do
+          expect { described_class.dependency(key, predicate: true) }
+            .to change(described_class, :dependency_keys)
+            .to include(key.to_s)
+        end
+
+        it 'should define the predicate method', :aggregate_failures do
+          expect(instance).not_to respond_to(predicate_name)
+
+          described_class.dependency(key, predicate: true)
+
+          expect(instance).to respond_to(predicate_name).with(0).arguments
+        end
+
+        it 'should define the reader method', :aggregate_failures do
+          expect(instance).not_to respond_to(reader_name)
+
+          described_class.dependency(key, predicate: true)
+
+          expect(instance).to respond_to(reader_name).with(0).arguments
+        end
+
+        describe 'with as: value' do
+          let(:method_name) { :"scoped_#{key}" }
+          let(:reader_name) { method_name }
+
+          it 'should define the predicate method', :aggregate_failures do
+            expect(instance).not_to respond_to(predicate_name)
+
+            described_class.dependency(key, as: method_name, predicate: true)
+
+            expect(instance).to respond_to(predicate_name).with(0).arguments
+          end
+
+          it 'should define the reader method', :aggregate_failures do
+            expect(instance).not_to respond_to(reader_name)
+
+            described_class.dependency(key, as: method_name, predicate: true)
+
+            expect(instance).to respond_to(reader_name).with(0).arguments
+          end
+        end
+      end
     end
 
     it 'should define the class method' do
       expect(described_class)
         .to respond_to(:dependency)
         .with(1).argument
-        .and_keywords(:optional, :predicate)
+        .and_keywords(:as, :optional, :predicate)
     end
 
     describe 'with nil' do
@@ -274,6 +444,25 @@ RSpec.describe Plumbum::Consumer do
       end
     end
 
+    context 'when the class defines a dependency with as: value' do
+      let(:error_message) do
+        'dependency not found with key "railtie"'
+      end
+
+      before(:example) do
+        described_class.dependency('railtie', as: 'integration')
+      end
+
+      it { expect(instance).to respond_to(:integration).with(0).arguments }
+
+      it 'should raise an exception' do
+        expect { instance.integration }.to raise_error(
+          Plumbum::Errors::MissingDependencyError,
+          error_message
+        )
+      end
+    end
+
     context 'when the class defines a dependency with optional: false' do
       let(:error_message) do
         'dependency not found with key "railtie"'
@@ -367,6 +556,50 @@ RSpec.describe Plumbum::Consumer do
       it { expect(instance).to respond_to(:flag_enabled?).with(0).arguments }
 
       it { expect(instance.flag_enabled?).to be false }
+
+      context 'with as: value' do
+        before(:example) do
+          described_class
+            .dependency('flag_enabled', as: 'flag', predicate: true)
+        end
+
+        it { expect(instance).to respond_to(:flag?).with(0).arguments }
+
+        it { expect(instance.flag?).to be false }
+
+        context 'when the class includes providers' do
+          example_class 'Spec::OneProvider', Module do |klass|
+            klass.include Plumbum::Providers::Singular
+
+            klass.define_method :initialize do |key:, value:|
+              @key   = key.to_s
+              @value = value
+            end
+          end
+
+          example_constant 'Spec::FlagProvider' do
+            Spec::OneProvider.new(key: :flag_enabled, value: false)
+          end
+
+          before(:example) do
+            described_class.include Spec::FlagProvider
+          end
+
+          it { expect(instance.flag?).to be true }
+
+          context 'when the class overwrites the method' do # rubocop:disable RSpec/NestedGroups
+            before(:example) do
+              described_class.define_method(:flag?) do
+                super().to_s
+              end
+            end
+
+            it 'should use the class definition' do
+              expect(instance.flag?).to eq 'true'
+            end
+          end
+        end
+      end
 
       context 'when the class overwrites the method' do
         before(:example) do
