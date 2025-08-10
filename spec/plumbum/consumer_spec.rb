@@ -105,7 +105,7 @@ RSpec.describe Plumbum::Consumer do
       expect(described_class)
         .to respond_to(:dependency)
         .with(1).argument
-        .and_keywords(:optional)
+        .and_keywords(:optional, :predicate)
     end
 
     describe 'with nil' do
@@ -346,9 +346,81 @@ RSpec.describe Plumbum::Consumer do
     end
   end
 
+  describe '#:dependency?' do
+    wrap_deferred 'when the class defines dependencies' do
+      it { expect(instance).not_to respond_to(:tools?) }
+    end
+
+    context 'when the class defines a dependency with predicate: false' do
+      before(:example) do
+        described_class.dependency('flag_enabled', predicate: false)
+      end
+
+      it { expect(instance).not_to respond_to(:flag_enabled?) }
+    end
+
+    context 'when the class defines a dependency with predicate: true' do
+      before(:example) do
+        described_class.dependency('flag_enabled', predicate: true)
+      end
+
+      it { expect(instance).to respond_to(:flag_enabled?).with(0).arguments }
+
+      it { expect(instance.flag_enabled?).to be false }
+
+      context 'when the class overwrites the method' do
+        before(:example) do
+          described_class.define_method(:flag_enabled?) do
+            super().to_s
+          end
+        end
+
+        it 'should use the class definition' do
+          expect(instance.flag_enabled?).to eq 'false'
+        end
+      end
+
+      context 'when the class includes providers' do
+        example_class 'Spec::OneProvider', Module do |klass|
+          klass.include Plumbum::Providers::Singular
+
+          klass.define_method :initialize do |key:, value:|
+            @key   = key.to_s
+            @value = value
+          end
+        end
+
+        example_constant 'Spec::FlagProvider' do
+          Spec::OneProvider.new(key: :flag_enabled, value: false)
+        end
+
+        before(:example) do
+          described_class.include Spec::FlagProvider
+        end
+
+        it { expect(instance.flag_enabled?).to be true }
+
+        context 'when the class overwrites the method' do
+          before(:example) do
+            described_class.define_method(:flag_enabled?) do
+              super().to_s
+            end
+          end
+
+          it 'should use the class definition' do
+            expect(instance.flag_enabled?).to eq 'true'
+          end
+        end
+      end
+    end
+  end
+
   describe '#get_plumbum_dependency' do
     it 'should define the method' do
-      expect(instance).to respond_to(:get_plumbum_dependency).with(1).argument
+      expect(instance)
+        .to respond_to(:get_plumbum_dependency)
+        .with(1).argument
+        .and_keywords(:optional)
     end
 
     describe 'with nil' do
@@ -494,6 +566,102 @@ RSpec.describe Plumbum::Consumer do
               .to eq(Spec::ToolsProvider.value)
           end
         end
+      end
+    end
+  end
+
+  describe '#has_plumbum_dependency?' do
+    it 'should define the method' do
+      expect(instance).to respond_to(:has_plumbum_dependency?).with(1).argument
+    end
+
+    describe 'with nil' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :key
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { instance.has_plumbum_dependency?(nil) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an Object' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.name',
+            as: :key
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { instance.has_plumbum_dependency?(Object.new.freeze) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an empty String' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :key
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { instance.has_plumbum_dependency?('') }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an empty Symbol' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :key
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { instance.has_plumbum_dependency?(:'') }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with a non-matching String' do
+      it { expect(instance.has_plumbum_dependency?('invalid')).to be false }
+    end
+
+    describe 'with a non-matching Symbol' do
+      it { expect(instance.has_plumbum_dependency?(:invalid)).to be false }
+    end
+
+    wrap_deferred 'when the class includes providers' do
+      describe 'with a non-matching String' do
+        it { expect(instance.has_plumbum_dependency?('invalid')).to be false }
+      end
+
+      describe 'with a non-matching Symbol' do
+        it { expect(instance.has_plumbum_dependency?(:invalid)).to be false }
+      end
+
+      describe 'with a matching String' do
+        it { expect(instance.has_plumbum_dependency?('tools')).to be true }
+      end
+
+      describe 'with a matching Symbol' do
+        it { expect(instance.has_plumbum_dependency?(:tools)).to be true }
       end
     end
   end
