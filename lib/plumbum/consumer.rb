@@ -16,15 +16,23 @@ module Plumbum
       # @param key [String, Symbol] the key for the dependency.
       # @param optional [true, false] if true, calling the dependency returns
       #   nil if the dependency is not defined. Defaults to false.
+      # @param predicate [true, false] if true, also defines a predicate method
+      #   that returns true if the dependency has a defined value. Defaults to
+      #   false.
       #
       # @return [Symbol] the name of the generated method.
-      def dependency(key, optional: false)
+      #
+      # @raise [ArgumentError] if the key is not a String or Symbol, or is
+      #   empty.
+      def dependency(key, optional: false, predicate: false)
         SleepingKingStudios::Tools::Toolbelt
           .instance
           .assertions
           .validate_name(key, as: :key)
 
         dependency_keys << key.to_s
+
+        define_predicate(key) if predicate
 
         define_reader(key, optional:)
       end
@@ -51,8 +59,18 @@ module Plumbum
 
       private
 
+      def define_predicate(key)
+        method_name = :"#{key}?"
+
+        dependency_methods.define_method(method_name) do
+          has_plumbum_dependency?(key)
+        end
+      end
+
       def define_reader(key, **options)
-        dependency_methods.define_method(key) do
+        method_name = key
+
+        dependency_methods.define_method(method_name) do
           get_plumbum_dependency(key, **options)
         end
       end
@@ -87,6 +105,7 @@ module Plumbum
     #
     # @return [Object] the dependency value.
     #
+    # @raise [ArgumentError] if the key is not a String or Symbol, or is empty.
     # @raise [Plumbum::Errors::MissingDependencyError] if no matching dependency
     #   is found.
     def get_plumbum_dependency(key, optional: false)
@@ -94,16 +113,39 @@ module Plumbum
         .instance
         .assertions.validate_name(key, as: :key)
 
-      plumbum_providers.each do |provider|
-        return provider.get(key) if provider.has?(key)
+      find_dependency(key) do
+        handle_missing_plumbum_dependency(key, optional:)
       end
+    end
 
-      handle_missing_dependency(key, optional:)
+    # Checks if the dependency with the given key is defined.
+    #
+    # @param key [String, Symbol] the key for the requested dependency.
+    #
+    # @return [true, false] true if the dependency is defined, otherwise false.
+    #
+    # @raise [ArgumentError] if the key is not a String or Symbol, or is empty.
+    def has_plumbum_dependency?(key) # rubocop:disable Naming/PredicatePrefix
+      SleepingKingStudios::Tools::Toolbelt
+        .instance
+        .assertions.validate_name(key, as: :key)
+
+      find_dependency(key) { return false }
+
+      true
     end
 
     private
 
-    def handle_missing_dependency(key, optional: false)
+    def find_dependency(key)
+      plumbum_providers.each do |provider|
+        return provider.get(key) if provider.has?(key)
+      end
+
+      yield
+    end
+
+    def handle_missing_plumbum_dependency(key, optional: false)
       return nil if optional
 
       raise Plumbum::Errors::MissingDependencyError,
