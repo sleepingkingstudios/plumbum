@@ -275,7 +275,7 @@ RSpec.describe Plumbum::Consumer do
       expect(described_class)
         .to respond_to(:dependency)
         .with(1).argument
-        .and_keywords(:as, :optional, :predicate)
+        .and_keywords(:as, :memoize, :optional, :predicate)
     end
 
     describe 'with nil' do
@@ -461,6 +461,143 @@ RSpec.describe Plumbum::Consumer do
           error_message
         )
       end
+
+      context 'when the class includes a provider for the dependency' do
+        example_class 'Spec::OneProvider', Module do |klass|
+          klass.include Plumbum::Providers::Singular
+
+          klass.define_method :initialize do |key:, value:|
+            @key   = key.to_s
+            @value = value
+          end
+        end
+
+        example_constant 'Spec::RailtieProvider' do
+          Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
+        end
+
+        before(:example) do
+          described_class.include Spec::RailtieProvider
+        end
+
+        it { expect(instance.integration).to be Spec::RailtieProvider.value }
+      end
+    end
+
+    context 'when the class defines a dependency with memoize: false' do
+      let(:error_message) do
+        'dependency not found with key "request"'
+      end
+
+      before(:example) do
+        described_class.dependency('request', memoize: false)
+      end
+
+      it { expect(instance).to respond_to(:request).with(0).arguments }
+
+      it 'should raise an exception' do
+        expect { instance.request }.to raise_error(
+          Plumbum::Errors::MissingDependencyError,
+          error_message
+        )
+      end
+
+      context 'when the class includes a provider for the dependency' do
+        let(:original_value) { { http_method: :get } }
+
+        example_class 'Spec::MutableProvider', Module do |klass|
+          klass.include Plumbum::Providers::Singular
+
+          klass.define_method :initialize do |key:, value:|
+            @key   = key.to_s
+            @value = value
+          end
+
+          klass.attr_writer :value
+        end
+
+        example_constant 'Spec::RequestProvider' do
+          Spec::MutableProvider.new(key: :request, value: original_value)
+        end
+
+        before(:example) do
+          described_class.dependency('request', memoize: false)
+
+          described_class.include Spec::RequestProvider
+        end
+
+        it { expect(instance.request).to be Spec::RequestProvider.value }
+
+        context 'when the provider value changes' do
+          let(:changed_value) { { http_method: :post } }
+
+          before(:example) do
+            instance.request # Cache the dependency.
+
+            Spec::RequestProvider.value = changed_value
+          end
+
+          it { expect(instance.request).to be Spec::RequestProvider.value }
+        end
+      end
+    end
+
+    context 'when the class defines a dependency with memoize: true' do
+      let(:error_message) do
+        'dependency not found with key "request"'
+      end
+
+      before(:example) do
+        described_class.dependency('request', memoize: true)
+      end
+
+      it { expect(instance).to respond_to(:request).with(0).arguments }
+
+      it 'should raise an exception' do
+        expect { instance.request }.to raise_error(
+          Plumbum::Errors::MissingDependencyError,
+          error_message
+        )
+      end
+
+      context 'when the class includes a provider for the dependency' do
+        let(:original_value) { { http_method: :get } }
+
+        example_class 'Spec::MutableProvider', Module do |klass|
+          klass.include Plumbum::Providers::Singular
+
+          klass.define_method :initialize do |key:, value:|
+            @key   = key.to_s
+            @value = value
+          end
+
+          klass.attr_writer :value
+        end
+
+        example_constant 'Spec::RequestProvider' do
+          Spec::MutableProvider.new(key: :request, value: original_value)
+        end
+
+        before(:example) do
+          described_class.dependency('request', memoize: true)
+
+          described_class.include Spec::RequestProvider
+        end
+
+        it { expect(instance.request).to be Spec::RequestProvider.value }
+
+        context 'when the provider value changes' do
+          let(:changed_value) { { http_method: :post } }
+
+          before(:example) do
+            instance.request # Cache the dependency.
+
+            Spec::RequestProvider.value = changed_value
+          end
+
+          it { expect(instance.request).to be original_value }
+        end
+      end
     end
 
     context 'when the class defines a dependency with optional: false' do
@@ -531,6 +668,45 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it { expect(instance.railtie).to be Spec::RailtieProvider.value }
+      end
+    end
+
+    context 'when the class includes a mutable provider' do
+      let(:original_value) { { http_method: :get } }
+
+      example_class 'Spec::MutableProvider', Module do |klass|
+        klass.include Plumbum::Providers::Singular
+
+        klass.define_method :initialize do |key:, value:|
+          @key   = key.to_s
+          @value = value
+        end
+
+        klass.attr_writer :value
+      end
+
+      example_constant 'Spec::RequestProvider' do
+        Spec::MutableProvider.new(key: :request, value: original_value)
+      end
+
+      before(:example) do
+        described_class.dependency('request')
+
+        described_class.include Spec::RequestProvider
+      end
+
+      it { expect(instance.request).to be Spec::RequestProvider.value }
+
+      context 'when the provider value changes' do
+        let(:changed_value) { { http_method: :post } }
+
+        before(:example) do
+          instance.request # Cache the dependency.
+
+          Spec::RequestProvider.value = changed_value
+        end
+
+        it { expect(instance.request).to be original_value }
       end
     end
   end
