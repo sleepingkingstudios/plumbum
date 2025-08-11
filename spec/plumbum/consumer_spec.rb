@@ -13,25 +13,6 @@ RSpec.describe Plumbum::Consumer do
       ]
     end
 
-    example_class 'Spec::ManyProvider', Module do |klass|
-      klass.include Plumbum::Providers::Plural
-
-      klass.define_method :initialize do |values:|
-        tools = SleepingKingStudios::Tools::Toolbelt.instance
-
-        @values = tools.hash_tools.convert_keys_to_strings(values)
-      end
-    end
-
-    example_class 'Spec::OneProvider', Module do |klass|
-      klass.include Plumbum::Providers::Singular
-
-      klass.define_method :initialize do |key:, value:|
-        @key   = key.to_s
-        @value = value
-      end
-    end
-
     example_constant 'Spec::ConfigProvider' do
       Spec::ManyProvider.new(
         values: { env: 'test', repository: { books: [] }, tools: {} }
@@ -79,6 +60,36 @@ RSpec.describe Plumbum::Consumer do
   end
 
   example_class 'Spec::InjectedObject', 'Spec::InjectedParent'
+
+  example_class 'Spec::ManyProvider', Module do |klass|
+    klass.include Plumbum::Providers::Plural
+
+    klass.define_method :initialize do |values:|
+      tools = SleepingKingStudios::Tools::Toolbelt.instance
+
+      @values = tools.hash_tools.convert_keys_to_strings(values)
+    end
+  end
+
+  example_class 'Spec::MutableProvider', Module do |klass|
+    klass.include Plumbum::Providers::Singular
+
+    klass.define_method :initialize do |key:, value:|
+      @key   = key.to_s
+      @value = value
+    end
+
+    klass.attr_writer :value
+  end
+
+  example_class 'Spec::OneProvider', Module do |klass|
+    klass.include Plumbum::Providers::Singular
+
+    klass.define_method :initialize do |key:, value:|
+      @key   = key.to_s
+      @value = value
+    end
+  end
 
   describe '.dependency' do
     deferred_examples 'should define the dependency' do
@@ -463,15 +474,6 @@ RSpec.describe Plumbum::Consumer do
       end
 
       context 'when the class includes a provider for the dependency' do
-        example_class 'Spec::OneProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-        end
-
         example_constant 'Spec::RailtieProvider' do
           Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
         end
@@ -504,17 +506,6 @@ RSpec.describe Plumbum::Consumer do
 
       context 'when the class includes a provider for the dependency' do
         let(:original_value) { { http_method: :get } }
-
-        example_class 'Spec::MutableProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-
-          klass.attr_writer :value
-        end
 
         example_constant 'Spec::RequestProvider' do
           Spec::MutableProvider.new(key: :request, value: original_value)
@@ -563,17 +554,6 @@ RSpec.describe Plumbum::Consumer do
       context 'when the class includes a provider for the dependency' do
         let(:original_value) { { http_method: :get } }
 
-        example_class 'Spec::MutableProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-
-          klass.attr_writer :value
-        end
-
         example_constant 'Spec::RequestProvider' do
           Spec::MutableProvider.new(key: :request, value: original_value)
         end
@@ -619,15 +599,6 @@ RSpec.describe Plumbum::Consumer do
       end
 
       context 'when the class includes a provider for the dependency' do
-        example_class 'Spec::OneProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-        end
-
         example_constant 'Spec::RailtieProvider' do
           Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
         end
@@ -650,15 +621,6 @@ RSpec.describe Plumbum::Consumer do
       it { expect(instance.railtie).to be nil }
 
       context 'when the class includes a provider for the dependency' do
-        example_class 'Spec::OneProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-        end
-
         example_constant 'Spec::RailtieProvider' do
           Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
         end
@@ -673,17 +635,6 @@ RSpec.describe Plumbum::Consumer do
 
     context 'when the class includes a mutable provider' do
       let(:original_value) { { http_method: :get } }
-
-      example_class 'Spec::MutableProvider', Module do |klass|
-        klass.include Plumbum::Providers::Singular
-
-        klass.define_method :initialize do |key:, value:|
-          @key   = key.to_s
-          @value = value
-        end
-
-        klass.attr_writer :value
-      end
 
       example_constant 'Spec::RequestProvider' do
         Spec::MutableProvider.new(key: :request, value: original_value)
@@ -744,15 +695,6 @@ RSpec.describe Plumbum::Consumer do
         it { expect(instance.flag?).to be false }
 
         context 'when the class includes providers' do
-          example_class 'Spec::OneProvider', Module do |klass|
-            klass.include Plumbum::Providers::Singular
-
-            klass.define_method :initialize do |key:, value:|
-              @key   = key.to_s
-              @value = value
-            end
-          end
-
           example_constant 'Spec::FlagProvider' do
             Spec::OneProvider.new(key: :flag_enabled, value: false)
           end
@@ -790,15 +732,6 @@ RSpec.describe Plumbum::Consumer do
       end
 
       context 'when the class includes providers' do
-        example_class 'Spec::OneProvider', Module do |klass|
-          klass.include Plumbum::Providers::Singular
-
-          klass.define_method :initialize do |key:, value:|
-            @key   = key.to_s
-            @value = value
-          end
-        end
-
         example_constant 'Spec::FlagProvider' do
           Spec::OneProvider.new(key: :flag_enabled, value: false)
         end
