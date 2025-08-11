@@ -6,6 +6,62 @@ require 'plumbum'
 
 module Plumbum
   # Provides methods for defining and accessing injected dependencies.
+  #
+  # @example Define a basic dependency.
+  #   class Orchestrator
+  #     include Plumbum::Consumer
+  #     include ApplicationProvider
+  #
+  #     dependency :application
+  #   end
+  #
+  #   Orchestrator.new.application
+  #   #=> returns the value of ApplicationProvider.value
+  #
+  # @example Define an aliased dependency.
+  #   class Orchestrator
+  #     include Plumbum::Consumer
+  #     include ApplicationProvider
+  #
+  #     dependency :application, as: :app
+  #   end
+  #
+  #   Orchestrator.new.app
+  #   #=> returns the value of ApplicationProvider.value
+  #
+  # @example Define an optional dependency.
+  #   class BillCustomer
+  #     include Plumbum::Consumer
+  #
+  #     dependency :rewards
+  #   end
+  #
+  #   class BillRewardsCustomer < BillCustomer
+  #     include RewardsProvider
+  #   end
+  #
+  #   BillCustomer.new.rewards
+  #   #=> returns nil
+  #
+  #   BillRewardsCustomer.new.rewards
+  #   #=> returns RewardsProvider.value
+  #
+  # @example Define an unmemoized dependency.
+  #   class Action
+  #     include Plumbum::Consumer
+  #     include RequestProvider
+  #
+  #     dependency :request, memoize: false
+  #   end
+  #
+  #   action = Action.new
+  #   action.request
+  #   #=> returns the value of RequestProvider.value
+  #
+  #   request = Request.new
+  #   RequestProvider.value = request
+  #   action.request
+  #   #=> returns the new request
   module Consumer
     extend SleepingKingStudios::Tools::Toolbox::Mixin
 
@@ -38,11 +94,13 @@ module Plumbum
         validate_name(key, as: :key)
         validate_name(as,  as: :as) unless as.nil?
 
+        key, method_name, path = split_key(key, as:)
+
         dependency_keys << key.to_s
 
-        define_predicate(key, as:) if predicate
+        define_predicate(key:, method_name:) if predicate
 
-        define_reader(key, as:, memoize:, optional:)
+        define_reader(key:, method_name:, memoize:, optional:, path:)
       end
 
       # @return [Set<String>] the keys of the dependencies declared by the class
@@ -67,25 +125,23 @@ module Plumbum
 
       private
 
-      def define_predicate(key, as: nil)
-        method_name = :"#{as || key}?"
+      def define_predicate(key:, method_name:)
+        method_name = :"#{method_name}?"
 
         dependency_methods.define_method(method_name) do
           has_plumbum_dependency?(key)
         end
       end
 
-      def define_reader(key, as:, memoize:, optional:)
-        method_name = as || key
-
+      def define_reader(key:, memoize:, method_name:, optional:, path:)
         dependency_methods.define_method(method_name) do
-          return get_plumbum_dependency(key, optional:) unless memoize
+          return get_scoped_dependency(key, optional:, path:) unless memoize
 
           if (@plumbum_dependencies ||= {}).key?(key)
             return @plumbum_dependencies[key]
           end
 
-          get_plumbum_dependency(key, optional:).tap do |value|
+          get_scoped_dependency(key, optional:, path:).tap do |value|
             @plumbum_dependencies[key] = value unless value.nil?
           end
         end
@@ -100,6 +156,14 @@ module Plumbum
           .new
           .tap { |mod| include mod }
           .then { |mod| const_set(:DependencyMethods, mod) }
+      end
+
+      def split_key(key, as:)
+        segments = key.to_s.split('.')
+
+        return [key, as || key, nil] if segments.size == 1
+
+        [segments.first, as || segments.last, segments[1..]]
       end
 
       def validate_name(value, as: nil)
@@ -166,6 +230,17 @@ module Plumbum
       end
 
       yield
+    end
+
+    def get_scoped_dependency(key, path:, optional: false)
+      dependency = get_plumbum_dependency(key, optional:)
+
+      return dependency if path.nil? || path.empty?
+
+      SleepingKingStudios::Tools::Toolbelt
+        .instance
+        .object_tools
+        .dig(dependency, *path)
     end
 
     def handle_missing_plumbum_dependency(key, optional: false)
