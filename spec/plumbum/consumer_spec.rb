@@ -95,12 +95,12 @@ RSpec.describe Plumbum::Consumer do
     deferred_examples 'should define the dependency' do
       let(:reader_name) { defined?(super()) ? super() : key.to_sym }
 
-      it { expect(described_class.dependency(key)).to be key.to_sym }
+      it { expect(described_class.dependency(key)).to be reader_name }
 
       it 'should add the key to the dependency keys' do
         expect { described_class.dependency(key) }
           .to change(described_class, :dependency_keys)
-          .to include(key.to_s)
+          .to include(expected_key)
       end
 
       it 'should define the reader method', :aggregate_failures do
@@ -112,12 +112,12 @@ RSpec.describe Plumbum::Consumer do
       end
 
       describe 'with as: nil' do
-        it { expect(described_class.dependency(key)).to be key.to_sym }
+        it { expect(described_class.dependency(key)).to be reader_name }
 
         it 'should add the key to the dependency keys' do
           expect { described_class.dependency(key) }
             .to change(described_class, :dependency_keys)
-            .to include(key.to_s)
+            .to include(expected_key)
         end
 
         it 'should define the reader method', :aggregate_failures do
@@ -178,54 +178,54 @@ RSpec.describe Plumbum::Consumer do
       end
 
       describe 'with as: a String' do
-        let(:method_name) { "scoped_#{key}" }
-        let(:reader_name) { method_name.to_sym }
+        let(:scoped_name) { :"scoped_#{reader_name}" }
+        let(:method_name) { scoped_name.to_s }
 
         it 'should return the reader name' do
           expect(described_class.dependency(key, as: method_name))
-            .to be reader_name
+            .to be scoped_name
         end
 
         it 'should add the key to the dependency keys' do
           expect { described_class.dependency(key, as: method_name) }
             .to change(described_class, :dependency_keys)
-            .to include(key.to_s)
+            .to include(expected_key)
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(key)
           expect(instance).not_to respond_to(reader_name)
+          expect(instance).not_to respond_to(scoped_name)
 
           described_class.dependency(key, as: method_name)
 
-          expect(instance).not_to respond_to(key)
-          expect(instance).to respond_to(reader_name).with(0).arguments
+          expect(instance).not_to respond_to(reader_name)
+          expect(instance).to respond_to(scoped_name).with(0).arguments
         end
       end
 
       describe 'with as: a Symbol' do
-        let(:method_name) { :"scoped_#{key}" }
-        let(:reader_name) { method_name }
+        let(:scoped_name) { :"scoped_#{reader_name}" }
+        let(:method_name) { scoped_name }
 
         it 'should return the reader name' do
           expect(described_class.dependency(key, as: method_name))
-            .to be reader_name
+            .to be scoped_name
         end
 
         it 'should add the key to the dependency keys' do
           expect { described_class.dependency(key, as: method_name) }
             .to change(described_class, :dependency_keys)
-            .to include(key.to_s)
+            .to include(expected_key)
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(key)
           expect(instance).not_to respond_to(reader_name)
+          expect(instance).not_to respond_to(scoped_name)
 
           described_class.dependency(key, as: method_name)
 
-          expect(instance).not_to respond_to(key)
-          expect(instance).to respond_to(reader_name).with(0).arguments
+          expect(instance).not_to respond_to(reader_name)
+          expect(instance).to respond_to(scoped_name).with(0).arguments
         end
       end
 
@@ -240,7 +240,7 @@ RSpec.describe Plumbum::Consumer do
         it 'should add the key to the dependency keys' do
           expect { described_class.dependency(key, predicate: true) }
             .to change(described_class, :dependency_keys)
-            .to include(key.to_s)
+            .to include(expected_key)
         end
 
         it 'should define the predicate method', :aggregate_failures do
@@ -260,8 +260,9 @@ RSpec.describe Plumbum::Consumer do
         end
 
         describe 'with as: value' do
-          let(:method_name) { :"scoped_#{key}" }
-          let(:reader_name) { method_name }
+          let(:scoped_name)    { :"scoped_#{reader_name}" }
+          let(:method_name)    { scoped_name.to_s }
+          let(:predicate_name) { :"#{scoped_name}?" }
 
           it 'should define the predicate method', :aggregate_failures do
             expect(instance).not_to respond_to(predicate_name)
@@ -272,11 +273,11 @@ RSpec.describe Plumbum::Consumer do
           end
 
           it 'should define the reader method', :aggregate_failures do
-            expect(instance).not_to respond_to(reader_name)
+            expect(instance).not_to respond_to(scoped_name)
 
             described_class.dependency(key, as: method_name, predicate: true)
 
-            expect(instance).to respond_to(reader_name).with(0).arguments
+            expect(instance).to respond_to(scoped_name).with(0).arguments
           end
         end
       end
@@ -354,13 +355,33 @@ RSpec.describe Plumbum::Consumer do
     end
 
     describe 'with a valid String' do
-      let(:key) { 'valid' }
+      let(:key)          { 'valid' }
+      let(:expected_key) { 'valid' }
+      let(:reader_name)  { :valid }
 
       include_deferred 'should define the dependency'
     end
 
     describe 'with a valid Symbol' do
-      let(:key) { :valid }
+      let(:key)          { :valid }
+      let(:expected_key) { 'valid' }
+      let(:reader_name)  { :valid }
+
+      include_deferred 'should define the dependency'
+    end
+
+    describe 'with a dot-separated String' do
+      let(:key)          { 'application.tools.object_tools' }
+      let(:expected_key) { 'application' }
+      let(:reader_name)  { :object_tools }
+
+      include_deferred 'should define the dependency'
+    end
+
+    describe 'with a dot-separated Symbol' do
+      let(:key)          { :'application.tools.object_tools' }
+      let(:expected_key) { 'application' }
+      let(:reader_name)  { :object_tools }
 
       include_deferred 'should define the dependency'
     end
@@ -633,6 +654,103 @@ RSpec.describe Plumbum::Consumer do
       end
     end
 
+    context 'when the class defines a drilled dependency' do
+      let(:error_message) do
+        'dependency not found with key "application"'
+      end
+
+      before(:example) do
+        described_class.dependency('application.tools.object_tools')
+      end
+
+      it { expect(instance).to respond_to(:object_tools).with(0).arguments }
+
+      it 'should raise an exception' do
+        expect { instance.object_tools }.to raise_error(
+          Plumbum::Errors::MissingDependencyError,
+          error_message
+        )
+      end
+
+      context 'when the class includes a provider for the dependency' do
+        let(:object_tools) { Object.new.freeze }
+        let(:tools)        { Struct.new(:object_tools).new(object_tools) }
+        let(:application)  { Struct.new(:tools).new(tools) }
+
+        example_constant 'Spec::ApplicationProvider' do
+          Spec::OneProvider.new(key: :application, value: application)
+        end
+
+        before(:example) do
+          described_class.include Spec::ApplicationProvider
+        end
+
+        it { expect(instance.object_tools).to be object_tools }
+      end
+    end
+
+    context 'when the class defines a drilled dependency with as: value' do
+      let(:error_message) do
+        'dependency not found with key "application"'
+      end
+
+      before(:example) do
+        described_class.dependency('application.tools.object_tools', as: :obj)
+      end
+
+      it { expect(instance).to respond_to(:obj).with(0).arguments }
+
+      it 'should raise an exception' do
+        expect { instance.obj }.to raise_error(
+          Plumbum::Errors::MissingDependencyError,
+          error_message
+        )
+      end
+
+      context 'when the class includes a provider for the dependency' do
+        let(:object_tools) { Object.new.freeze }
+        let(:tools)        { Struct.new(:object_tools).new(object_tools) }
+        let(:application)  { Struct.new(:tools).new(tools) }
+
+        example_constant 'Spec::ApplicationProvider' do
+          Spec::OneProvider.new(key: :application, value: application)
+        end
+
+        before(:example) do
+          described_class.include Spec::ApplicationProvider
+        end
+
+        it { expect(instance.obj).to be object_tools }
+      end
+    end
+
+    context 'when the class defines a drilled dependency with optional: true' do
+      before(:example) do
+        described_class
+          .dependency('application.tools.object_tools', optional: true)
+      end
+
+      it { expect(instance).to respond_to(:object_tools).with(0).arguments }
+
+      it { expect(instance.object_tools).to be nil }
+
+      context 'when the class includes a provider for the dependency' do
+        let(:object_tools) { Object.new.freeze }
+        let(:tools)        { Struct.new(:object_tools).new(object_tools) }
+        let(:application)  { Struct.new(:tools).new(tools) }
+
+        example_constant 'Spec::ApplicationProvider' do
+          Spec::OneProvider.new(key: :application, value: application)
+        end
+
+        before(:example) do
+          described_class.include Spec::ApplicationProvider
+        end
+
+        it { expect(instance.object_tools).to be object_tools }
+      end
+    end
+
     context 'when the class includes a mutable provider' do
       let(:original_value) { { http_method: :get } }
 
@@ -753,6 +871,29 @@ RSpec.describe Plumbum::Consumer do
             expect(instance.flag_enabled?).to eq 'true'
           end
         end
+      end
+    end
+
+    context 'when the class defines a drilled dependency with a predicate' do
+      before(:example) do
+        described_class
+          .dependency('application.tools.object_tools', predicate: true)
+      end
+
+      it { expect(instance).to respond_to(:object_tools?).with(0).arguments }
+
+      it { expect(instance.object_tools?).to be false }
+
+      context 'when the class includes a provider for the dependency' do
+        example_constant 'Spec::ApplicationProvider' do
+          Spec::OneProvider.new(key: :application, value: Object.new.freeze)
+        end
+
+        before(:example) do
+          described_class.include Spec::ApplicationProvider
+        end
+
+        it { expect(instance.object_tools?).to be true }
       end
     end
   end
