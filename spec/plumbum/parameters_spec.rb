@@ -106,6 +106,28 @@ RSpec.describe Plumbum::Parameters do
           .with(0).arguments
           .and_keywords(:values)
       end
+
+      describe 'with no parameters' do
+        it { expect { described_class.new }.not_to raise_error }
+      end
+
+      describe 'with values: nil' do
+        let(:error_message) { 'values is not an instance of Hash' }
+
+        it 'should raise an exception' do
+          expect { described_class.new(values: nil) }
+            .to raise_error ArgumentError, error_message
+        end
+      end
+
+      describe 'with values: an Object' do
+        let(:error_message) { 'values is not an instance of Hash' }
+
+        it 'should raise an exception' do
+          expect { described_class.new(values: Object.new.freeze) }
+            .to raise_error ArgumentError, error_message
+        end
+      end
     end
 
     include_deferred 'should implement the Provider interface'

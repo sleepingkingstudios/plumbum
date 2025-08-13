@@ -7,15 +7,31 @@ module Plumbum
   module Parameters
     # Provider that wraps a subset of the constructor parameters.
     class Provider
+      UNDEFINED = Object.new.freeze
+      private_constant :UNDEFINED
+
       include Plumbum::Providers::Plural
 
       # @param values [Hash{Symbol=>Object}] the key-value pairs returned by the
       #   provider.
-      def initialize(values:)
+      def initialize(values: UNDEFINED)
+        values = {} if values == UNDEFINED
+
+        validate_values(values)
+
         @values =
           values
           .transform_keys(&:to_s)
           .freeze
+      end
+
+      private
+
+      def validate_values(values)
+        SleepingKingStudios::Tools::Toolbelt
+          .instance
+          .assertions
+          .validate_instance_of(values, expected: Hash, as: 'values')
       end
     end
 
