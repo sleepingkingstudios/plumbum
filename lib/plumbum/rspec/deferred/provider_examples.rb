@@ -180,6 +180,22 @@ module Plumbum::RSpec::Deferred
           end
         end
       end
+
+      describe '#options' do
+        include_examples 'should define reader', :options, -> { be_a Hash }
+      end
+
+      describe '#set' do
+        let(:invalid_key) { defined?(super()) ? super() : :invalid }
+
+        define_method :call_method do |key|
+          subject.set(key, Object.new.freeze)
+        end
+
+        it { expect(subject).to respond_to(:set).with(2).arguments }
+
+        include_deferred 'should validate the key'
+      end
     end
   end
 end
