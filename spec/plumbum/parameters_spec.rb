@@ -30,7 +30,7 @@ RSpec.describe Plumbum::Parameters do
       )
     end
 
-    before(:example) { described_class.include Spec::ConfigProvider }
+    before(:example) { described_class.provider Spec::ConfigProvider }
   end
 
   deferred_context 'when the class defines dependencies' do

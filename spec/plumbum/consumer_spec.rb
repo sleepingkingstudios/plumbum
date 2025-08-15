@@ -3,14 +3,20 @@
 require 'plumbum/consumer'
 
 RSpec.describe Plumbum::Consumer do
-  subject(:instance) { described_class.new(**options) }
+  subject(:consumer) { described_class.new(**options) }
 
-  deferred_context 'when the class includes providers' do
+  deferred_context 'when the class defines dependencies' do
+    let(:class_dependencies) { %w[env tools] }
+
+    before(:example) do
+      described_class.dependency('env')
+      described_class.dependency('tools')
+    end
+  end
+
+  deferred_context 'when the class defines providers' do
     let(:expected_providers) do
-      [
-        Spec::ToolsProvider,
-        Spec::ConfigProvider
-      ]
+      super() << Spec::ToolsProvider << Spec::ConfigProvider
     end
 
     example_constant 'Spec::ConfigProvider' do
@@ -24,17 +30,8 @@ RSpec.describe Plumbum::Consumer do
     end
 
     before(:example) do
-      described_class.include Spec::ConfigProvider
-      described_class.include Spec::ToolsProvider
-    end
-  end
-
-  deferred_context 'when the class defines dependencies' do
-    let(:class_dependencies) { %w[env tools] }
-
-    before(:example) do
-      described_class.dependency('env')
-      described_class.dependency('tools')
+      described_class.provider Spec::ConfigProvider
+      described_class.provider Spec::ToolsProvider
     end
   end
 
@@ -44,6 +41,20 @@ RSpec.describe Plumbum::Consumer do
     before(:example) do
       parent_class.dependency('repository')
       parent_class.dependency('tools')
+    end
+  end
+
+  deferred_context 'when the parent class defines providers' do
+    let(:expected_providers) do
+      super() << Spec::OptionsProvider
+    end
+
+    example_constant 'Spec::OptionsProvider' do
+      Spec::OneProvider.new(key: :options, value: { key: 'value' })
+    end
+
+    before(:example) do
+      parent_class.provider Spec::OptionsProvider
     end
   end
 
@@ -60,6 +71,10 @@ RSpec.describe Plumbum::Consumer do
   end
 
   example_class 'Spec::InjectedObject', 'Spec::InjectedParent'
+
+  example_class 'Spec::GenericProvider' do |klass|
+    klass.include Plumbum::Provider
+  end
 
   example_class 'Spec::ManyProvider', Module do |klass|
     klass.include Plumbum::Providers::Plural
@@ -104,11 +119,11 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should define the reader method', :aggregate_failures do
-        expect(instance).not_to respond_to(reader_name)
+        expect(consumer).not_to respond_to(reader_name)
 
         described_class.dependency(key)
 
-        expect(instance).to respond_to(reader_name).with(0).arguments
+        expect(consumer).to respond_to(reader_name).with(0).arguments
       end
 
       describe 'with as: nil' do
@@ -121,11 +136,11 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(reader_name)
+          expect(consumer).not_to respond_to(reader_name)
 
           described_class.dependency(key)
 
-          expect(instance).to respond_to(reader_name).with(0).arguments
+          expect(consumer).to respond_to(reader_name).with(0).arguments
         end
       end
 
@@ -193,13 +208,13 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(reader_name)
-          expect(instance).not_to respond_to(scoped_name)
+          expect(consumer).not_to respond_to(reader_name)
+          expect(consumer).not_to respond_to(scoped_name)
 
           described_class.dependency(key, as: method_name)
 
-          expect(instance).not_to respond_to(reader_name)
-          expect(instance).to respond_to(scoped_name).with(0).arguments
+          expect(consumer).not_to respond_to(reader_name)
+          expect(consumer).to respond_to(scoped_name).with(0).arguments
         end
       end
 
@@ -219,13 +234,13 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(reader_name)
-          expect(instance).not_to respond_to(scoped_name)
+          expect(consumer).not_to respond_to(reader_name)
+          expect(consumer).not_to respond_to(scoped_name)
 
           described_class.dependency(key, as: method_name)
 
-          expect(instance).not_to respond_to(reader_name)
-          expect(instance).to respond_to(scoped_name).with(0).arguments
+          expect(consumer).not_to respond_to(reader_name)
+          expect(consumer).to respond_to(scoped_name).with(0).arguments
         end
       end
 
@@ -244,19 +259,19 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should define the predicate method', :aggregate_failures do
-          expect(instance).not_to respond_to(predicate_name)
+          expect(consumer).not_to respond_to(predicate_name)
 
           described_class.dependency(key, predicate: true)
 
-          expect(instance).to respond_to(predicate_name).with(0).arguments
+          expect(consumer).to respond_to(predicate_name).with(0).arguments
         end
 
         it 'should define the reader method', :aggregate_failures do
-          expect(instance).not_to respond_to(reader_name)
+          expect(consumer).not_to respond_to(reader_name)
 
           described_class.dependency(key, predicate: true)
 
-          expect(instance).to respond_to(reader_name).with(0).arguments
+          expect(consumer).to respond_to(reader_name).with(0).arguments
         end
 
         describe 'with as: value' do
@@ -265,19 +280,19 @@ RSpec.describe Plumbum::Consumer do
           let(:predicate_name) { :"#{scoped_name}?" }
 
           it 'should define the predicate method', :aggregate_failures do
-            expect(instance).not_to respond_to(predicate_name)
+            expect(consumer).not_to respond_to(predicate_name)
 
             described_class.dependency(key, as: method_name, predicate: true)
 
-            expect(instance).to respond_to(predicate_name).with(0).arguments
+            expect(consumer).to respond_to(predicate_name).with(0).arguments
           end
 
           it 'should define the reader method', :aggregate_failures do
-            expect(instance).not_to respond_to(scoped_name)
+            expect(consumer).not_to respond_to(scoped_name)
 
             described_class.dependency(key, as: method_name, predicate: true)
 
-            expect(instance).to respond_to(scoped_name).with(0).arguments
+            expect(consumer).to respond_to(scoped_name).with(0).arguments
           end
         end
       end
@@ -430,37 +445,131 @@ RSpec.describe Plumbum::Consumer do
     end
   end
 
+  describe '.provider' do
+    it { expect(described_class).to respond_to(:provider).with(1).argument }
+
+    describe 'with nil' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :provider,
+            expected: Plumbum::Provider
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.provider(nil) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with an Object' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :provider,
+            expected: Plumbum::Provider
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.provider(Object.new.freeze) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with a Module' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :provider,
+            expected: Plumbum::Provider
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.provider(Module.new) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with a provider' do
+      let(:provider) { Spec::GenericProvider.new }
+
+      it { expect(described_class.provider(provider)).to be nil }
+
+      it 'should add the provider to #plumbum_providers', :aggregate_failures do
+        expect { described_class.provider(provider) }.to(
+          change { described_class.plumbum_providers.count }.by(1)
+        )
+
+        expect(described_class.plumbum_providers.first).to be provider
+      end
+
+      wrap_deferred 'when the class defines providers' do
+        it 'should add the provider to #plumbum_providers',
+          :aggregate_failures \
+        do
+          expect { described_class.provider(provider) }.to(
+            change { described_class.plumbum_providers.count }.by(1)
+          )
+
+          expect(described_class.plumbum_providers.first).to be provider
+        end
+      end
+    end
+  end
+
   describe '.plumbum_providers' do
+    let(:expected_providers) { [] }
+
     it 'should define the class reader' do
       expect(described_class)
         .to define_reader(:plumbum_providers)
         .with_value([])
     end
 
-    wrap_deferred 'when the class includes providers' do
+    wrap_deferred 'when the class defines providers' do # rubocop:disable RSpec/RepeatedExampleGroupBody
+      it { expect(described_class.plumbum_providers).to eq(expected_providers) }
+    end
+
+    wrap_deferred 'when the parent class defines providers' do # rubocop:disable RSpec/RepeatedExampleGroupBody
+      it { expect(described_class.plumbum_providers).to eq(expected_providers) }
+    end
+
+    context 'when the class and parent class define providers' do
+      include_deferred 'when the parent class defines providers'
+      include_deferred 'when the class defines providers'
+
       it { expect(described_class.plumbum_providers).to eq(expected_providers) }
     end
   end
 
   describe '#:dependency' do
-    it { expect(instance).not_to respond_to(:tools) }
+    it { expect(consumer).not_to respond_to(:tools) }
 
     wrap_deferred 'when the class defines dependencies' do
       let(:error_message) do
         'dependency not found with key "tools"'
       end
 
-      it { expect(instance).to respond_to(:tools).with(0).arguments }
+      it { expect(consumer).to respond_to(:tools).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.tools }.to raise_error(
+        expect { consumer.tools }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
       end
 
-      wrap_deferred 'when the class includes providers' do
-        it { expect(instance.tools).to be Spec::ToolsProvider.value }
+      wrap_deferred 'when the class defines providers' do
+        it { expect(consumer.tools).to be Spec::ToolsProvider.value }
 
         context 'when the class overwrites the method' do
           before(:example) do
@@ -470,7 +579,7 @@ RSpec.describe Plumbum::Consumer do
           end
 
           it 'should use the class definition' do
-            expect(instance.tools).to eq({ tools: Spec::ToolsProvider.value })
+            expect(consumer.tools).to eq({ tools: Spec::ToolsProvider.value })
           end
         end
       end
@@ -485,10 +594,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('railtie', as: 'integration')
       end
 
-      it { expect(instance).to respond_to(:integration).with(0).arguments }
+      it { expect(consumer).to respond_to(:integration).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.integration }.to raise_error(
+        expect { consumer.integration }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -500,10 +609,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::RailtieProvider
+          described_class.provider Spec::RailtieProvider
         end
 
-        it { expect(instance.integration).to be Spec::RailtieProvider.value }
+        it { expect(consumer.integration).to be Spec::RailtieProvider.value }
       end
     end
 
@@ -516,10 +625,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('request', memoize: false)
       end
 
-      it { expect(instance).to respond_to(:request).with(0).arguments }
+      it { expect(consumer).to respond_to(:request).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.request }.to raise_error(
+        expect { consumer.request }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -535,21 +644,21 @@ RSpec.describe Plumbum::Consumer do
         before(:example) do
           described_class.dependency('request', memoize: false)
 
-          described_class.include Spec::RequestProvider
+          described_class.provider Spec::RequestProvider
         end
 
-        it { expect(instance.request).to be Spec::RequestProvider.value }
+        it { expect(consumer.request).to be Spec::RequestProvider.value }
 
         context 'when the provider value changes' do
           let(:changed_value) { { http_method: :post } }
 
           before(:example) do
-            instance.request # Cache the dependency.
+            consumer.request # Cache the dependency.
 
             Spec::RequestProvider.value = changed_value
           end
 
-          it { expect(instance.request).to be Spec::RequestProvider.value }
+          it { expect(consumer.request).to be Spec::RequestProvider.value }
         end
       end
     end
@@ -563,10 +672,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('request', memoize: true)
       end
 
-      it { expect(instance).to respond_to(:request).with(0).arguments }
+      it { expect(consumer).to respond_to(:request).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.request }.to raise_error(
+        expect { consumer.request }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -582,21 +691,21 @@ RSpec.describe Plumbum::Consumer do
         before(:example) do
           described_class.dependency('request', memoize: true)
 
-          described_class.include Spec::RequestProvider
+          described_class.provider Spec::RequestProvider
         end
 
-        it { expect(instance.request).to be Spec::RequestProvider.value }
+        it { expect(consumer.request).to be Spec::RequestProvider.value }
 
         context 'when the provider value changes' do
           let(:changed_value) { { http_method: :post } }
 
           before(:example) do
-            instance.request # Cache the dependency.
+            consumer.request # Cache the dependency.
 
             Spec::RequestProvider.value = changed_value
           end
 
-          it { expect(instance.request).to be original_value }
+          it { expect(consumer.request).to be original_value }
         end
       end
     end
@@ -610,10 +719,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('railtie', optional: false)
       end
 
-      it { expect(instance).to respond_to(:railtie).with(0).arguments }
+      it { expect(consumer).to respond_to(:railtie).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.railtie }.to raise_error(
+        expect { consumer.railtie }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -625,10 +734,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::RailtieProvider
+          described_class.provider Spec::RailtieProvider
         end
 
-        it { expect(instance.railtie).to be Spec::RailtieProvider.value }
+        it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
       end
     end
 
@@ -637,9 +746,9 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('railtie', optional: true)
       end
 
-      it { expect(instance).to respond_to(:railtie).with(0).arguments }
+      it { expect(consumer).to respond_to(:railtie).with(0).arguments }
 
-      it { expect(instance.railtie).to be nil }
+      it { expect(consumer.railtie).to be nil }
 
       context 'when the class includes a provider for the dependency' do
         example_constant 'Spec::RailtieProvider' do
@@ -647,10 +756,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::RailtieProvider
+          described_class.provider Spec::RailtieProvider
         end
 
-        it { expect(instance.railtie).to be Spec::RailtieProvider.value }
+        it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
       end
     end
 
@@ -663,10 +772,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('application.tools.object_tools')
       end
 
-      it { expect(instance).to respond_to(:object_tools).with(0).arguments }
+      it { expect(consumer).to respond_to(:object_tools).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.object_tools }.to raise_error(
+        expect { consumer.object_tools }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -682,10 +791,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::ApplicationProvider
+          described_class.provider Spec::ApplicationProvider
         end
 
-        it { expect(instance.object_tools).to be object_tools }
+        it { expect(consumer.object_tools).to be object_tools }
       end
     end
 
@@ -698,10 +807,10 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('application.tools.object_tools', as: :obj)
       end
 
-      it { expect(instance).to respond_to(:obj).with(0).arguments }
+      it { expect(consumer).to respond_to(:obj).with(0).arguments }
 
       it 'should raise an exception' do
-        expect { instance.obj }.to raise_error(
+        expect { consumer.obj }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -717,10 +826,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::ApplicationProvider
+          described_class.provider Spec::ApplicationProvider
         end
 
-        it { expect(instance.obj).to be object_tools }
+        it { expect(consumer.obj).to be object_tools }
       end
     end
 
@@ -730,9 +839,9 @@ RSpec.describe Plumbum::Consumer do
           .dependency('application.tools.object_tools', optional: true)
       end
 
-      it { expect(instance).to respond_to(:object_tools).with(0).arguments }
+      it { expect(consumer).to respond_to(:object_tools).with(0).arguments }
 
-      it { expect(instance.object_tools).to be nil }
+      it { expect(consumer.object_tools).to be nil }
 
       context 'when the class includes a provider for the dependency' do
         let(:object_tools) { Object.new.freeze }
@@ -744,10 +853,10 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::ApplicationProvider
+          described_class.provider Spec::ApplicationProvider
         end
 
-        it { expect(instance.object_tools).to be object_tools }
+        it { expect(consumer.object_tools).to be object_tools }
       end
     end
 
@@ -761,28 +870,28 @@ RSpec.describe Plumbum::Consumer do
       before(:example) do
         described_class.dependency('request')
 
-        described_class.include Spec::RequestProvider
+        described_class.provider Spec::RequestProvider
       end
 
-      it { expect(instance.request).to be Spec::RequestProvider.value }
+      it { expect(consumer.request).to be Spec::RequestProvider.value }
 
       context 'when the provider value changes' do
         let(:changed_value) { { http_method: :post } }
 
         before(:example) do
-          instance.request # Cache the dependency.
+          consumer.request # Cache the dependency.
 
           Spec::RequestProvider.value = changed_value
         end
 
-        it { expect(instance.request).to be original_value }
+        it { expect(consumer.request).to be original_value }
       end
     end
   end
 
   describe '#:dependency?' do
     wrap_deferred 'when the class defines dependencies' do
-      it { expect(instance).not_to respond_to(:tools?) }
+      it { expect(consumer).not_to respond_to(:tools?) }
     end
 
     context 'when the class defines a dependency with predicate: false' do
@@ -790,7 +899,7 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('flag_enabled', predicate: false)
       end
 
-      it { expect(instance).not_to respond_to(:flag_enabled?) }
+      it { expect(consumer).not_to respond_to(:flag_enabled?) }
     end
 
     context 'when the class defines a dependency with predicate: true' do
@@ -798,9 +907,9 @@ RSpec.describe Plumbum::Consumer do
         described_class.dependency('flag_enabled', predicate: true)
       end
 
-      it { expect(instance).to respond_to(:flag_enabled?).with(0).arguments }
+      it { expect(consumer).to respond_to(:flag_enabled?).with(0).arguments }
 
-      it { expect(instance.flag_enabled?).to be false }
+      it { expect(consumer.flag_enabled?).to be false }
 
       context 'with as: value' do
         before(:example) do
@@ -808,20 +917,20 @@ RSpec.describe Plumbum::Consumer do
             .dependency('flag_enabled', as: 'flag', predicate: true)
         end
 
-        it { expect(instance).to respond_to(:flag?).with(0).arguments }
+        it { expect(consumer).to respond_to(:flag?).with(0).arguments }
 
-        it { expect(instance.flag?).to be false }
+        it { expect(consumer.flag?).to be false }
 
-        context 'when the class includes providers' do
+        context 'when the class defines providers' do
           example_constant 'Spec::FlagProvider' do
             Spec::OneProvider.new(key: :flag_enabled, value: false)
           end
 
           before(:example) do
-            described_class.include Spec::FlagProvider
+            described_class.provider Spec::FlagProvider
           end
 
-          it { expect(instance.flag?).to be true }
+          it { expect(consumer.flag?).to be true }
 
           context 'when the class overwrites the method' do # rubocop:disable RSpec/NestedGroups
             before(:example) do
@@ -831,7 +940,7 @@ RSpec.describe Plumbum::Consumer do
             end
 
             it 'should use the class definition' do
-              expect(instance.flag?).to eq 'true'
+              expect(consumer.flag?).to eq 'true'
             end
           end
         end
@@ -845,20 +954,20 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should use the class definition' do
-          expect(instance.flag_enabled?).to eq 'false'
+          expect(consumer.flag_enabled?).to eq 'false'
         end
       end
 
-      context 'when the class includes providers' do
+      context 'when the class defines providers' do
         example_constant 'Spec::FlagProvider' do
           Spec::OneProvider.new(key: :flag_enabled, value: false)
         end
 
         before(:example) do
-          described_class.include Spec::FlagProvider
+          described_class.provider Spec::FlagProvider
         end
 
-        it { expect(instance.flag_enabled?).to be true }
+        it { expect(consumer.flag_enabled?).to be true }
 
         context 'when the class overwrites the method' do
           before(:example) do
@@ -868,7 +977,7 @@ RSpec.describe Plumbum::Consumer do
           end
 
           it 'should use the class definition' do
-            expect(instance.flag_enabled?).to eq 'true'
+            expect(consumer.flag_enabled?).to eq 'true'
           end
         end
       end
@@ -880,9 +989,9 @@ RSpec.describe Plumbum::Consumer do
           .dependency('application.tools.object_tools', predicate: true)
       end
 
-      it { expect(instance).to respond_to(:object_tools?).with(0).arguments }
+      it { expect(consumer).to respond_to(:object_tools?).with(0).arguments }
 
-      it { expect(instance.object_tools?).to be false }
+      it { expect(consumer.object_tools?).to be false }
 
       context 'when the class includes a provider for the dependency' do
         example_constant 'Spec::ApplicationProvider' do
@@ -890,17 +999,17 @@ RSpec.describe Plumbum::Consumer do
         end
 
         before(:example) do
-          described_class.include Spec::ApplicationProvider
+          described_class.provider Spec::ApplicationProvider
         end
 
-        it { expect(instance.object_tools?).to be true }
+        it { expect(consumer.object_tools?).to be true }
       end
     end
   end
 
   describe '#get_plumbum_dependency' do
     it 'should define the method' do
-      expect(instance)
+      expect(consumer)
         .to respond_to(:get_plumbum_dependency)
         .with(1).argument
         .and_keywords(:optional)
@@ -917,7 +1026,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency(nil) }
+        expect { consumer.get_plumbum_dependency(nil) }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -933,7 +1042,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency(Object.new.freeze) }
+        expect { consumer.get_plumbum_dependency(Object.new.freeze) }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -949,7 +1058,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency('') }
+        expect { consumer.get_plumbum_dependency('') }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -965,7 +1074,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency(:'') }
+        expect { consumer.get_plumbum_dependency(:'') }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -976,7 +1085,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency('invalid') }.to raise_error(
+        expect { consumer.get_plumbum_dependency('invalid') }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
@@ -989,21 +1098,21 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.get_plumbum_dependency(:invalid) }.to raise_error(
+        expect { consumer.get_plumbum_dependency(:invalid) }.to raise_error(
           Plumbum::Errors::MissingDependencyError,
           error_message
         )
       end
     end
 
-    wrap_deferred 'when the class includes providers' do
+    wrap_deferred 'when the class defines providers' do
       describe 'with a non-matching String' do
         let(:error_message) do
           'dependency not found with key "invalid"'
         end
 
         it 'should raise an exception' do
-          expect { instance.get_plumbum_dependency('invalid') }.to raise_error(
+          expect { consumer.get_plumbum_dependency('invalid') }.to raise_error(
             Plumbum::Errors::MissingDependencyError,
             error_message
           )
@@ -1016,7 +1125,7 @@ RSpec.describe Plumbum::Consumer do
         end
 
         it 'should raise an exception' do
-          expect { instance.get_plumbum_dependency(:invalid) }.to raise_error(
+          expect { consumer.get_plumbum_dependency(:invalid) }.to raise_error(
             Plumbum::Errors::MissingDependencyError,
             error_message
           )
@@ -1025,13 +1134,13 @@ RSpec.describe Plumbum::Consumer do
 
       describe 'with a matching String' do
         it 'should return the dependency value' do
-          expect(instance.get_plumbum_dependency('env'))
+          expect(consumer.get_plumbum_dependency('env'))
             .to eq(Spec::ConfigProvider.values['env'])
         end
 
         context 'with a String matching multiple providers' do
           it 'should return the value from the last provider' do
-            expect(instance.get_plumbum_dependency('tools'))
+            expect(consumer.get_plumbum_dependency('tools'))
               .to eq(Spec::ToolsProvider.value)
           end
         end
@@ -1039,13 +1148,13 @@ RSpec.describe Plumbum::Consumer do
 
       describe 'with a matching Symbol' do
         it 'should return the dependency value' do
-          expect(instance.get_plumbum_dependency(:env))
+          expect(consumer.get_plumbum_dependency(:env))
             .to eq(Spec::ConfigProvider.values['env'])
         end
 
         context 'with a Symbol matching multiple providers' do
           it 'should return the value from the last provider' do
-            expect(instance.get_plumbum_dependency(:tools))
+            expect(consumer.get_plumbum_dependency(:tools))
               .to eq(Spec::ToolsProvider.value)
           end
         end
@@ -1055,7 +1164,7 @@ RSpec.describe Plumbum::Consumer do
 
   describe '#has_plumbum_dependency?' do
     it 'should define the method' do
-      expect(instance).to respond_to(:has_plumbum_dependency?).with(1).argument
+      expect(consumer).to respond_to(:has_plumbum_dependency?).with(1).argument
     end
 
     describe 'with nil' do
@@ -1069,7 +1178,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.has_plumbum_dependency?(nil) }
+        expect { consumer.has_plumbum_dependency?(nil) }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -1085,7 +1194,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.has_plumbum_dependency?(Object.new.freeze) }
+        expect { consumer.has_plumbum_dependency?(Object.new.freeze) }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -1101,7 +1210,7 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.has_plumbum_dependency?('') }
+        expect { consumer.has_plumbum_dependency?('') }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -1117,43 +1226,56 @@ RSpec.describe Plumbum::Consumer do
       end
 
       it 'should raise an exception' do
-        expect { instance.has_plumbum_dependency?(:'') }
+        expect { consumer.has_plumbum_dependency?(:'') }
           .to raise_error ArgumentError, error_message
       end
     end
 
     describe 'with a non-matching String' do
-      it { expect(instance.has_plumbum_dependency?('invalid')).to be false }
+      it { expect(consumer.has_plumbum_dependency?('invalid')).to be false }
     end
 
     describe 'with a non-matching Symbol' do
-      it { expect(instance.has_plumbum_dependency?(:invalid)).to be false }
+      it { expect(consumer.has_plumbum_dependency?(:invalid)).to be false }
     end
 
-    wrap_deferred 'when the class includes providers' do
+    wrap_deferred 'when the class defines providers' do
       describe 'with a non-matching String' do
-        it { expect(instance.has_plumbum_dependency?('invalid')).to be false }
+        it { expect(consumer.has_plumbum_dependency?('invalid')).to be false }
       end
 
       describe 'with a non-matching Symbol' do
-        it { expect(instance.has_plumbum_dependency?(:invalid)).to be false }
+        it { expect(consumer.has_plumbum_dependency?(:invalid)).to be false }
       end
 
       describe 'with a matching String' do
-        it { expect(instance.has_plumbum_dependency?('tools')).to be true }
+        it { expect(consumer.has_plumbum_dependency?('tools')).to be true }
       end
 
       describe 'with a matching Symbol' do
-        it { expect(instance.has_plumbum_dependency?(:tools)).to be true }
+        it { expect(consumer.has_plumbum_dependency?(:tools)).to be true }
       end
     end
   end
 
   describe '#plumbum_providers' do
+    let(:expected_providers) { [] }
+
     include_examples 'should define reader', :plumbum_providers, []
 
-    wrap_deferred 'when the class includes providers' do
-      it { expect(instance.plumbum_providers).to eq(expected_providers) }
+    wrap_deferred 'when the class defines providers' do # rubocop:disable RSpec/RepeatedExampleGroupBody
+      it { expect(consumer.plumbum_providers).to eq(expected_providers) }
+    end
+
+    wrap_deferred 'when the parent class defines providers' do # rubocop:disable RSpec/RepeatedExampleGroupBody
+      it { expect(consumer.plumbum_providers).to eq(expected_providers) }
+    end
+
+    context 'when the class and parent class define providers' do
+      include_deferred 'when the parent class defines providers'
+      include_deferred 'when the class defines providers'
+
+      it { expect(consumer.plumbum_providers).to eq(expected_providers) }
     end
   end
 end

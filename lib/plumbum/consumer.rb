@@ -116,11 +116,40 @@ module Plumbum
           end
       end
 
+      # Registers a provider for the class.
+      #
+      # @provider [Plumbum::Provider] the provider to register.
+      #
+      # @return void
+      def provider(provider) # rubocop:disable Metrics/MethodLength
+        unless provider.is_a?(Plumbum::Provider)
+          message =
+            SleepingKingStudios::Tools::Toolbelt
+            .instance
+            .assertions
+            .error_message_for(
+              'sleeping_king_studios.tools.assertions.instance_of',
+              as:       :provider,
+              expected: Plumbum::Provider
+            )
+
+          raise ArgumentError, message
+        end
+
+        own_plumbum_providers.prepend(provider)
+
+        nil
+      end
+
       # @return [Array<Plumbum::Provider>] the providers defined for the class.
       def plumbum_providers
-        @plumbum_providers ||=
-          ancestors
-          .select { |mod| mod.is_a?(Plumbum::Provider) }
+        each_plumbum_provider.to_a
+      end
+
+      protected
+
+      def own_plumbum_providers
+        @own_plumbum_providers ||= []
       end
 
       private
@@ -156,6 +185,16 @@ module Plumbum
           .new
           .tap { |mod| include mod }
           .then { |mod| const_set(:DependencyMethods, mod) }
+      end
+
+      def each_plumbum_provider(&)
+        return enum_for(:each_plumbum_provider) unless block_given?
+
+        ancestors.reverse_each do |ancestor|
+          next unless ancestor.respond_to?(:own_plumbum_providers, true)
+
+          ancestor.own_plumbum_providers.each(&)
+        end
       end
 
       def split_key(key, as:)
