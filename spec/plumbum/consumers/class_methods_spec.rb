@@ -27,5 +27,7 @@ RSpec.describe Plumbum::Consumers::ClassMethods do
     klass.include Spec::IncludedConsumer
   end
 
+  include_deferred 'with example providers'
+
   include_deferred 'should implement the Consumer class methods'
 end
