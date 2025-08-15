@@ -4,13 +4,20 @@ require 'plumbum/parameters'
 require 'plumbum/rspec/deferred/provider_examples'
 
 RSpec.describe Plumbum::Parameters do
-  subject(:instance) do
+  subject(:consumer) do
     described_class.new(
       *arguments,
       **keywords,
       **dependencies,
       &block
     )
+  end
+
+  deferred_context 'when the class defines dependencies' do
+    before(:example) do
+      described_class.dependency('env')
+      described_class.dependency('tools')
+    end
   end
 
   deferred_context 'when the class includes providers' do
@@ -31,13 +38,6 @@ RSpec.describe Plumbum::Parameters do
     end
 
     before(:example) { described_class.provider Spec::ConfigProvider }
-  end
-
-  deferred_context 'when the class defines dependencies' do
-    before(:example) do
-      described_class.dependency('env')
-      described_class.dependency('tools')
-    end
   end
 
   deferred_context 'when the constructor takes parameters' do
@@ -319,22 +319,22 @@ RSpec.describe Plumbum::Parameters do
     end
 
     wrap_deferred 'when the constructor takes parameters' do
-      it { expect(instance.arguments).to be == [] }
+      it { expect(consumer.arguments).to be == [] }
 
-      it { expect(instance.keywords).to be == {} }
+      it { expect(consumer.keywords).to be == {} }
 
-      it { expect(instance.block).to be nil }
+      it { expect(consumer.block).to be nil }
 
       describe 'with parameters' do
         let(:arguments) { %w[ichi ni san] }
         let(:keywords)  { { ok: true } }
         let(:block)     { -> {} }
 
-        it { expect(instance.arguments).to be == arguments }
+        it { expect(consumer.arguments).to be == arguments }
 
-        it { expect(instance.keywords).to be == keywords }
+        it { expect(consumer.keywords).to be == keywords }
 
-        it { expect(instance.block).to be == block }
+        it { expect(consumer.block).to be == block }
       end
     end
 
@@ -342,9 +342,9 @@ RSpec.describe Plumbum::Parameters do
       describe 'with dependencies' do
         let(:dependencies) { { env: 'test', tools: Object.new } }
 
-        it { expect(instance.env).to be dependencies[:env] }
+        it { expect(consumer.env).to be dependencies[:env] }
 
-        it { expect(instance.tools).to be dependencies[:tools] }
+        it { expect(consumer.tools).to be dependencies[:tools] }
       end
 
       describe 'with parameters' do
@@ -363,24 +363,24 @@ RSpec.describe Plumbum::Parameters do
       include_deferred 'when the constructor takes parameters'
       include_deferred 'when the class defines dependencies'
 
-      it { expect(instance.arguments).to be == [] }
+      it { expect(consumer.arguments).to be == [] }
 
-      it { expect(instance.keywords).to be == {} }
+      it { expect(consumer.keywords).to be == {} }
 
-      it { expect(instance.block).to be nil }
+      it { expect(consumer.block).to be nil }
 
       describe 'with dependencies' do
         let(:dependencies) { { env: 'test', tools: Object.new } }
 
-        it { expect(instance.arguments).to be == [] }
+        it { expect(consumer.arguments).to be == [] }
 
-        it { expect(instance.keywords).to be == {} }
+        it { expect(consumer.keywords).to be == {} }
 
-        it { expect(instance.block).to be nil }
+        it { expect(consumer.block).to be nil }
 
-        it { expect(instance.env).to be dependencies[:env] }
+        it { expect(consumer.env).to be dependencies[:env] }
 
-        it { expect(instance.tools).to be dependencies[:tools] }
+        it { expect(consumer.tools).to be dependencies[:tools] }
       end
 
       describe 'with parameters' do
@@ -388,11 +388,11 @@ RSpec.describe Plumbum::Parameters do
         let(:keywords)  { { ok: true } }
         let(:block)     { -> {} }
 
-        it { expect(instance.arguments).to be == arguments }
+        it { expect(consumer.arguments).to be == arguments }
 
-        it { expect(instance.keywords).to be == keywords }
+        it { expect(consumer.keywords).to be == keywords }
 
-        it { expect(instance.block).to be == block }
+        it { expect(consumer.block).to be == block }
       end
 
       describe 'with parameters and dependencies' do
@@ -401,15 +401,97 @@ RSpec.describe Plumbum::Parameters do
         let(:block)        { -> {} }
         let(:dependencies) { { env: 'test', tools: Object.new } }
 
-        it { expect(instance.arguments).to be == arguments }
+        it { expect(consumer.arguments).to be == arguments }
 
-        it { expect(instance.keywords).to be == keywords }
+        it { expect(consumer.keywords).to be == keywords }
 
-        it { expect(instance.block).to be == block }
+        it { expect(consumer.block).to be == block }
 
-        it { expect(instance.env).to be dependencies[:env] }
+        it { expect(consumer.env).to be dependencies[:env] }
 
-        it { expect(instance.tools).to be dependencies[:tools] }
+        it { expect(consumer.tools).to be dependencies[:tools] }
+      end
+    end
+  end
+
+  describe '#get_plumbum_dependency' do
+    wrap_deferred 'when the class defines dependencies' do
+      describe 'with a non-matching String' do
+        let(:error_message) do
+          'dependency not found with key "tools"'
+        end
+
+        it 'should raise an exception' do
+          expect { consumer.get_plumbum_dependency('tools') }.to raise_error(
+            Plumbum::Errors::MissingDependencyError,
+            error_message
+          )
+        end
+      end
+
+      describe 'with a non-matching Symbol' do
+        let(:error_message) do
+          'dependency not found with key :tools'
+        end
+
+        it 'should raise an exception' do
+          expect { consumer.get_plumbum_dependency(:tools) }.to raise_error(
+            Plumbum::Errors::MissingDependencyError,
+            error_message
+          )
+        end
+      end
+
+      wrap_deferred 'when the class includes providers' do
+        describe 'with a matching String' do
+          it 'should return the dependency value' do
+            expect(consumer.get_plumbum_dependency('tools'))
+              .to eq(Spec::ConfigProvider.values['tools'])
+          end
+        end
+
+        describe 'with a matching Symbol' do
+          it 'should return the dependency value' do
+            expect(consumer.get_plumbum_dependency(:tools))
+              .to eq(Spec::ConfigProvider.values['tools'])
+          end
+        end
+
+        context 'when initialized with dependencies' do
+          let(:tools)        { Object.new.freeze }
+          let(:dependencies) { super().merge(tools:) }
+
+          # rubocop:disable RSpec/NestedGroups
+          describe 'with a matching String' do
+            it 'should return the dependency value' do
+              expect(consumer.get_plumbum_dependency('tools')).to be tools
+            end
+          end
+
+          describe 'with a matching Symbol' do
+            it 'should return the dependency value' do
+              expect(consumer.get_plumbum_dependency(:tools)).to be tools
+            end
+          end
+          # rubocop:enable RSpec/NestedGroups
+        end
+      end
+
+      context 'when initialized with dependencies' do
+        let(:tools)        { Object.new.freeze }
+        let(:dependencies) { super().merge(tools:) }
+
+        describe 'with a matching String' do
+          it 'should return the dependency value' do
+            expect(consumer.get_plumbum_dependency('tools')).to be tools
+          end
+        end
+
+        describe 'with a matching Symbol' do
+          it 'should return the dependency value' do
+            expect(consumer.get_plumbum_dependency(:tools)).to be tools
+          end
+        end
       end
     end
   end

@@ -107,7 +107,7 @@ module Plumbum::Consumers
 
       key, method_name, path = ClassMethods.split_key(key, as:)
 
-      plumbum_dependency_keys << key.to_s
+      own_plumbum_dependency_keys << key.to_s
 
       ClassMethods.define_methods(
         self,
@@ -120,17 +120,27 @@ module Plumbum::Consumers
       )
     end
 
+    # @param cache [true, false] if false,.clears the memoized value and
+    #   recalculates the keys.
+    #
     # @return [Set<String>] the keys of the dependencies declared by the class
     #   and its ancestors.
-    def plumbum_dependency_keys
+    def plumbum_dependency_keys(cache: true)
+      @plumbum_dependency_keys = nil if cache == false
+
       return @plumbum_dependency_keys if @plumbum_dependency_keys
 
-      @plumbum_dependency_keys =
-        if superclass.respond_to?(:plumbum_dependency_keys)
-          superclass.plumbum_dependency_keys.dup
-        else
-          Set.new
-        end
+      @plumbum_dependency_keys = ancestors.reduce(Set.new) do |set, ancestor|
+        next set unless ancestor.respond_to?(:own_plumbum_dependency_keys, true)
+
+        set.union(ancestor.own_plumbum_dependency_keys)
+      end
+    end
+
+    protected
+
+    def own_plumbum_dependency_keys
+      @own_plumbum_dependency_keys ||= Set.new
     end
   end
 end

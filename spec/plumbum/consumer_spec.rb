@@ -43,19 +43,28 @@ RSpec.describe Plumbum::Consumer do
     end
   end
 
-  let(:described_class) { Spec::InjectedObject }
-  let(:parent_class)    { Spec::InjectedParent }
+  let(:described_class) { Spec::ExampleConsumer }
+  let(:included_module) { Spec::IncludedConsumer }
+  let(:parent_class)    { Spec::ParentConsumer }
   let(:options)         { {} }
 
   define_method :tools do
     SleepingKingStudios::Tools::Toolbelt.instance
   end
 
-  example_class 'Spec::InjectedParent' do |klass|
+  example_constant 'Spec::IncludedConsumer' do
+    Module.new do
+      include Plumbum::Consumer
+    end
+  end
+
+  example_class 'Spec::ParentConsumer' do |klass|
     klass.include Plumbum::Consumer # rubocop:disable RSpec/DescribedClass
   end
 
-  example_class 'Spec::InjectedObject', 'Spec::InjectedParent'
+  example_class 'Spec::ExampleConsumer', 'Spec::ParentConsumer' do |klass|
+    klass.include Spec::IncludedConsumer
+  end
 
   include_deferred 'with example providers'
 

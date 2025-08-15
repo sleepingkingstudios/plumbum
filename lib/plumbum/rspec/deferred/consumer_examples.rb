@@ -18,6 +18,14 @@ module Plumbum::RSpec::Deferred
       end
     end
 
+    deferred_context 'when an included module defines dependencies' do
+      let(:included_dependencies) { %w[context] }
+
+      before(:example) do
+        included_module.plumbum_dependency('context')
+      end
+    end
+
     deferred_context 'when the parent class defines dependencies' do
       let(:parent_dependencies) { %w[repository tools] }
 
@@ -74,9 +82,9 @@ module Plumbum::RSpec::Deferred
           end
 
           it 'should add the key to the dependency keys' do
-            expect { described_class.plumbum_dependency(key) }
-              .to change(described_class, :plumbum_dependency_keys)
-              .to include(expected_key)
+            expect { described_class.plumbum_dependency(key) }.to(
+              change { dependency_keys }.to(include(expected_key))
+            )
           end
 
           it 'should define the reader method', :aggregate_failures do
@@ -94,9 +102,9 @@ module Plumbum::RSpec::Deferred
             end
 
             it 'should add the key to the dependency keys' do
-              expect { described_class.plumbum_dependency(key) }
-                .to change(described_class, :plumbum_dependency_keys)
-                .to include(expected_key)
+              expect { described_class.plumbum_dependency(key) }.to(
+                change { dependency_keys }.to(include(expected_key))
+              )
             end
 
             it 'should define the reader method', :aggregate_failures do
@@ -171,8 +179,7 @@ module Plumbum::RSpec::Deferred
               expect do
                 described_class.plumbum_dependency(key, as: method_name)
               end
-                .to change(described_class, :plumbum_dependency_keys)
-                .to include(expected_key)
+                .to(change { dependency_keys }.to(include(expected_key)))
             end
 
             it 'should define the reader method', :aggregate_failures do
@@ -199,8 +206,7 @@ module Plumbum::RSpec::Deferred
               expect do
                 described_class.plumbum_dependency(key, as: method_name)
               end
-                .to change(described_class, :plumbum_dependency_keys)
-                .to include(expected_key)
+                .to change { dependency_keys }.to(include(expected_key))
             end
 
             it 'should define the reader method', :aggregate_failures do
@@ -226,8 +232,7 @@ module Plumbum::RSpec::Deferred
               expect do
                 described_class.plumbum_dependency(key, predicate: true)
               end
-                .to change(described_class, :plumbum_dependency_keys)
-                .to include(expected_key)
+                .to change { dependency_keys }.to(include(expected_key))
             end
 
             it 'should define the predicate method', :aggregate_failures do
@@ -270,6 +275,10 @@ module Plumbum::RSpec::Deferred
               end
             end
           end
+        end
+
+        define_method :dependency_keys do
+          described_class.plumbum_dependency_keys(cache: false)
         end
 
         define_method :tools do
@@ -381,10 +390,23 @@ module Plumbum::RSpec::Deferred
       end
 
       describe '.plumbum_dependency_keys' do
-        it 'should define the class reader' do
+        it 'should define the method' do
           expect(described_class)
-            .to define_reader(:plumbum_dependency_keys)
-            .with_value(Set.new)
+            .to respond_to(:plumbum_dependency_keys)
+            .with(0).arguments
+            .and_keywords(:cache)
+        end
+
+        it { expect(described_class.plumbum_dependency_keys).to be == Set.new }
+
+        wrap_deferred 'when an included module defines dependencies' do
+          let(:expected_dependencies) { included_dependencies }
+
+          it 'should return the class dependencies' do
+            expect(described_class.plumbum_dependency_keys)
+              .to be_a(Set)
+              .and match_array(expected_dependencies)
+          end
         end
 
         wrap_deferred 'when the parent class defines dependencies' do
@@ -407,18 +429,50 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        context 'when the parent class and class define dependencies' do
+        context 'when the class and ancestors define dependencies' do
           let(:expected_dependencies) do
-            [*parent_dependencies, *class_dependencies].uniq
+            [
+              *parent_dependencies,
+              *class_dependencies,
+              *included_dependencies
+            ].uniq
           end
 
           include_deferred 'when the parent class defines dependencies'
+          include_deferred 'when an included module defines dependencies'
           include_deferred 'when the class defines dependencies'
 
           it 'should return the parent class and class dependencies' do
             expect(described_class.plumbum_dependency_keys)
               .to be_a(Set)
               .and match_array(expected_dependencies)
+          end
+        end
+
+        context 'when the dependency keys change' do
+          before(:example) do
+            # Memoize value.
+            described_class.plumbum_dependency_keys
+
+            described_class.plumbum_dependency 'added_dependency'
+          end
+
+          it 'should not update the dependency keys' do
+            expect(described_class.plumbum_dependency_keys).to be == Set.new
+          end
+
+          describe 'with cache: false' do
+            it 'should update the dependency keys' do
+              expect(described_class.plumbum_dependency_keys(cache: false))
+                .to be == Set.new(%w[added_dependency])
+            end
+          end
+
+          describe 'with cache: true' do
+            it 'should not update the dependency keys' do
+              expect(described_class.plumbum_dependency_keys(cache: true))
+                .to be == Set.new
+            end
           end
         end
       end
