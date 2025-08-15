@@ -41,29 +41,28 @@ module Plumbum
     #     any injected dependencies.
     #   @param block [Proc] the block passed to the constructor.
     def initialize(*, **keywords, &)
-      keywords, values = extract_plumbum_dependencies(keywords)
+      values, keywords = extract_plumbum_dependencies(keywords)
 
       super
 
-      @plumbum_providers = [
-        Plumbum::Parameters::Provider.new(values:),
-        *plumbum_providers
-      ]
+      @plumbum_parameters_provider = Plumbum::Parameters::Provider.new(values:)
     end
 
     private
 
-    def extract_plumbum_dependencies(all_keywords)
-      keywords = {}
-      values   = {}
+    def extract_plumbum_dependencies(keywords)
+      dependency_keys = self.class.dependency_keys
 
-      all_keywords.each do |key, value|
-        hsh      =
-          self.class.dependency_keys.include?(key.to_s) ? values : keywords
-        hsh[key] = value
-      end
+      keywords
+        .partition { |key, _| dependency_keys.include?(key.to_s) }
+        .map(&:to_h)
+    end
 
-      [keywords, values]
+    def plumbum_providers
+      [
+        @plumbum_parameters_provider,
+        *super
+      ]
     end
   end
 end

@@ -3,6 +3,7 @@
 require 'sleeping_king_studios/tools'
 
 require 'plumbum'
+require 'plumbum/consumers/instance_methods'
 
 module Plumbum
   # Provides methods for defining and accessing injected dependencies.
@@ -63,7 +64,8 @@ module Plumbum
   #   action.request
   #   #=> returns the new request
   module Consumer
-    extend SleepingKingStudios::Tools::Toolbox::Mixin
+    extend  SleepingKingStudios::Tools::Toolbox::Mixin
+    include Plumbum::Consumers::InstanceMethods
 
     # Class methods to extend when including Plumbum::Consumer.
     module ClassMethods
@@ -100,7 +102,11 @@ module Plumbum
 
         define_predicate(key:, method_name:) if predicate
 
-        define_reader(key:, method_name:, memoize:, optional:, path:)
+        if memoize
+          define_memoized_reader(key:, method_name:, optional:, path:)
+        else
+          define_reader(key:, method_name:, optional:, path:)
+        end
       end
 
       # @return [Set<String>] the keys of the dependencies declared by the class
@@ -154,6 +160,18 @@ module Plumbum
 
       private
 
+      def define_memoized_reader(key:, method_name:, optional:, path:)
+        dependency_methods.define_method(method_name) do
+          if (@plumbum_dependencies ||= {}).key?(key)
+            return @plumbum_dependencies[key]
+          end
+
+          get_scoped_plumbum_dependency(key, optional:, path:).tap do |value|
+            @plumbum_dependencies[key] = value unless value.nil?
+          end
+        end
+      end
+
       def define_predicate(key:, method_name:)
         method_name = :"#{method_name}?"
 
@@ -162,17 +180,9 @@ module Plumbum
         end
       end
 
-      def define_reader(key:, memoize:, method_name:, optional:, path:)
+      def define_reader(key:, method_name:, optional:, path:)
         dependency_methods.define_method(method_name) do
-          return get_scoped_dependency(key, optional:, path:) unless memoize
-
-          if (@plumbum_dependencies ||= {}).key?(key)
-            return @plumbum_dependencies[key]
-          end
-
-          get_scoped_dependency(key, optional:, path:).tap do |value|
-            @plumbum_dependencies[key] = value unless value.nil?
-          end
+          get_scoped_plumbum_dependency(key, optional:, path:)
         end
       end
 
@@ -211,82 +221,6 @@ module Plumbum
           .assertions
           .validate_name(value, as:)
       end
-    end
-
-    # @return a new instance of Consumer.
-    def initialize(...)
-      super
-
-      @plumbum_providers = self.class.plumbum_providers
-    end
-
-    # @return [Array<Plumbum::Provider>] the providers defined for the instance.
-    attr_reader :plumbum_providers
-
-    # Retrieves the dependency with the specified key.
-    #
-    # @param key [String, Symbol] the key for the requested dependency.
-    # @param optional [true, false] if true, returns nil if the dependency is
-    #   not defined. Defaults to false.
-    #
-    # @return [Object] the dependency value.
-    #
-    # @raise [ArgumentError] if the key is not a String or Symbol, or is empty.
-    # @raise [Plumbum::Errors::MissingDependencyError] if no matching dependency
-    #   is found.
-    def get_plumbum_dependency(key, optional: false)
-      SleepingKingStudios::Tools::Toolbelt
-        .instance
-        .assertions.validate_name(key, as: :key)
-
-      find_dependency(key) do
-        handle_missing_plumbum_dependency(key, optional:)
-      end
-    end
-
-    # Checks if the dependency with the given key is defined.
-    #
-    # @param key [String, Symbol] the key for the requested dependency.
-    #
-    # @return [true, false] true if the dependency is defined, otherwise false.
-    #
-    # @raise [ArgumentError] if the key is not a String or Symbol, or is empty.
-    def has_plumbum_dependency?(key) # rubocop:disable Naming/PredicatePrefix
-      SleepingKingStudios::Tools::Toolbelt
-        .instance
-        .assertions.validate_name(key, as: :key)
-
-      find_dependency(key) { return false }
-
-      true
-    end
-
-    private
-
-    def find_dependency(key)
-      plumbum_providers.each do |provider|
-        return provider.get(key) if provider.has?(key)
-      end
-
-      yield
-    end
-
-    def get_scoped_dependency(key, path:, optional: false)
-      dependency = get_plumbum_dependency(key, optional:)
-
-      return dependency if path.nil? || path.empty?
-
-      SleepingKingStudios::Tools::Toolbelt
-        .instance
-        .object_tools
-        .dig(dependency, *path)
-    end
-
-    def handle_missing_plumbum_dependency(key, optional: false)
-      return nil if optional
-
-      raise Plumbum::Errors::MissingDependencyError,
-        "dependency not found with key #{key.inspect}"
     end
   end
 end

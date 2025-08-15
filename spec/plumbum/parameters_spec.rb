@@ -413,24 +413,4 @@ RSpec.describe Plumbum::Parameters do
       end
     end
   end
-
-  describe '#plumbum_providers' do
-    let(:parameters_provider) do
-      an_instance_of(Plumbum::Parameters::Provider)
-        .and(have_attributes(values: {}))
-    end
-    let(:expected_providers) { [parameters_provider] }
-
-    it 'should return the providers' do
-      expect(instance.plumbum_providers).to match_array(expected_providers)
-    end
-
-    wrap_deferred 'when the class includes providers' do
-      let(:expected_providers) { [Spec::ConfigProvider, *super()] }
-
-      it 'should return the providers' do
-        expect(instance.plumbum_providers).to match_array(expected_providers)
-      end
-    end
-  end
 end

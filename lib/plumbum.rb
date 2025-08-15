@@ -3,6 +3,7 @@
 # Dependency injection and management library for Ruby.
 module Plumbum
   autoload :Consumer,  'plumbum/consumer'
+  autoload :Consumers, 'plumbum/consumers'
   autoload :Errors,    'plumbum/errors'
   autoload :Provider,  'plumbum/provider'
   autoload :Providers, 'plumbum/providers'
