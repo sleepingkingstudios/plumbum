@@ -8,15 +8,6 @@ RSpec.describe Plumbum::Consumer do
 
   subject(:consumer) { described_class.new(**options) }
 
-  deferred_context 'when the class defines dependencies' do
-    let(:class_dependencies) { %w[env tools] }
-
-    before(:example) do
-      described_class.dependency('env')
-      described_class.dependency('tools')
-    end
-  end
-
   deferred_context 'when the class defines providers' do
     let(:expected_providers) do
       super() << Spec::ToolsProvider << Spec::ConfigProvider
@@ -35,15 +26,6 @@ RSpec.describe Plumbum::Consumer do
     before(:example) do
       described_class.provider Spec::ConfigProvider
       described_class.provider Spec::ToolsProvider
-    end
-  end
-
-  deferred_context 'when the parent class defines dependencies' do
-    let(:parent_dependencies) { %w[repository tools] }
-
-    before(:example) do
-      parent_class.dependency('repository')
-      parent_class.dependency('tools')
     end
   end
 
@@ -77,344 +59,27 @@ RSpec.describe Plumbum::Consumer do
 
   include_deferred 'with example providers'
 
+  include_deferred 'should implement the Consumer class methods'
+
   include_deferred 'should implement the Consumer instance methods'
 
   describe '.dependency' do
-    deferred_examples 'should define the dependency' do
-      let(:reader_name) { defined?(super()) ? super() : key.to_sym }
+    it 'should alias the method' do
+      original_method = described_class.method(:plumbum_dependency)
+      aliased_method  = described_class.method(:dependency)
 
-      it { expect(described_class.dependency(key)).to be reader_name }
-
-      it 'should add the key to the dependency keys' do
-        expect { described_class.dependency(key) }
-          .to change(described_class, :dependency_keys)
-          .to include(expected_key)
-      end
-
-      it 'should define the reader method', :aggregate_failures do
-        expect(consumer).not_to respond_to(reader_name)
-
-        described_class.dependency(key)
-
-        expect(consumer).to respond_to(reader_name).with(0).arguments
-      end
-
-      describe 'with as: nil' do
-        it { expect(described_class.dependency(key)).to be reader_name }
-
-        it 'should add the key to the dependency keys' do
-          expect { described_class.dependency(key) }
-            .to change(described_class, :dependency_keys)
-            .to include(expected_key)
-        end
-
-        it 'should define the reader method', :aggregate_failures do
-          expect(consumer).not_to respond_to(reader_name)
-
-          described_class.dependency(key)
-
-          expect(consumer).to respond_to(reader_name).with(0).arguments
-        end
-      end
-
-      describe 'with as: an Object' do
-        let(:error_message) do
-          tools
-            .assertions
-            .error_message_for(
-              'sleeping_king_studios.tools.assertions.name',
-              as: :as
-            )
-        end
-
-        it 'should raise an exception' do
-          expect { described_class.dependency(key, as: Object.new.freeze) }
-            .to raise_error ArgumentError, error_message
-        end
-      end
-
-      describe 'with as: an empty String' do
-        let(:error_message) do
-          tools
-            .assertions
-            .error_message_for(
-              'sleeping_king_studios.tools.assertions.presence',
-              as: :as
-            )
-        end
-
-        it 'should raise an exception' do
-          expect { described_class.dependency(key, as: '') }
-            .to raise_error ArgumentError, error_message
-        end
-      end
-
-      describe 'with as: an empty Symbol' do
-        let(:error_message) do
-          tools
-            .assertions
-            .error_message_for(
-              'sleeping_king_studios.tools.assertions.presence',
-              as: :as
-            )
-        end
-
-        it 'should raise an exception' do
-          expect { described_class.dependency(key, as: :'') }
-            .to raise_error ArgumentError, error_message
-        end
-      end
-
-      describe 'with as: a String' do
-        let(:scoped_name) { :"scoped_#{reader_name}" }
-        let(:method_name) { scoped_name.to_s }
-
-        it 'should return the reader name' do
-          expect(described_class.dependency(key, as: method_name))
-            .to be scoped_name
-        end
-
-        it 'should add the key to the dependency keys' do
-          expect { described_class.dependency(key, as: method_name) }
-            .to change(described_class, :dependency_keys)
-            .to include(expected_key)
-        end
-
-        it 'should define the reader method', :aggregate_failures do
-          expect(consumer).not_to respond_to(reader_name)
-          expect(consumer).not_to respond_to(scoped_name)
-
-          described_class.dependency(key, as: method_name)
-
-          expect(consumer).not_to respond_to(reader_name)
-          expect(consumer).to respond_to(scoped_name).with(0).arguments
-        end
-      end
-
-      describe 'with as: a Symbol' do
-        let(:scoped_name) { :"scoped_#{reader_name}" }
-        let(:method_name) { scoped_name }
-
-        it 'should return the reader name' do
-          expect(described_class.dependency(key, as: method_name))
-            .to be scoped_name
-        end
-
-        it 'should add the key to the dependency keys' do
-          expect { described_class.dependency(key, as: method_name) }
-            .to change(described_class, :dependency_keys)
-            .to include(expected_key)
-        end
-
-        it 'should define the reader method', :aggregate_failures do
-          expect(consumer).not_to respond_to(reader_name)
-          expect(consumer).not_to respond_to(scoped_name)
-
-          described_class.dependency(key, as: method_name)
-
-          expect(consumer).not_to respond_to(reader_name)
-          expect(consumer).to respond_to(scoped_name).with(0).arguments
-        end
-      end
-
-      describe 'with predicate: true' do
-        let(:predicate_name) { :"#{reader_name}?" }
-
-        it 'should return the reader name' do
-          expect(described_class.dependency(key, predicate: true))
-            .to be reader_name
-        end
-
-        it 'should add the key to the dependency keys' do
-          expect { described_class.dependency(key, predicate: true) }
-            .to change(described_class, :dependency_keys)
-            .to include(expected_key)
-        end
-
-        it 'should define the predicate method', :aggregate_failures do
-          expect(consumer).not_to respond_to(predicate_name)
-
-          described_class.dependency(key, predicate: true)
-
-          expect(consumer).to respond_to(predicate_name).with(0).arguments
-        end
-
-        it 'should define the reader method', :aggregate_failures do
-          expect(consumer).not_to respond_to(reader_name)
-
-          described_class.dependency(key, predicate: true)
-
-          expect(consumer).to respond_to(reader_name).with(0).arguments
-        end
-
-        describe 'with as: value' do
-          let(:scoped_name)    { :"scoped_#{reader_name}" }
-          let(:method_name)    { scoped_name.to_s }
-          let(:predicate_name) { :"#{scoped_name}?" }
-
-          it 'should define the predicate method', :aggregate_failures do
-            expect(consumer).not_to respond_to(predicate_name)
-
-            described_class.dependency(key, as: method_name, predicate: true)
-
-            expect(consumer).to respond_to(predicate_name).with(0).arguments
-          end
-
-          it 'should define the reader method', :aggregate_failures do
-            expect(consumer).not_to respond_to(scoped_name)
-
-            described_class.dependency(key, as: method_name, predicate: true)
-
-            expect(consumer).to respond_to(scoped_name).with(0).arguments
-          end
-        end
-      end
-    end
-
-    it 'should define the class method' do
-      expect(described_class)
-        .to respond_to(:dependency)
-        .with(1).argument
-        .and_keywords(:as, :memoize, :optional, :predicate)
-    end
-
-    describe 'with nil' do
-      let(:error_message) do
-        tools
-          .assertions
-          .error_message_for(
-            'sleeping_king_studios.tools.assertions.presence',
-            as: :key
-          )
-      end
-
-      it 'should raise an exception' do
-        expect { described_class.dependency(nil) }
-          .to raise_error ArgumentError, error_message
-      end
-    end
-
-    describe 'with an Object' do
-      let(:error_message) do
-        tools
-          .assertions
-          .error_message_for(
-            'sleeping_king_studios.tools.assertions.name',
-            as: :key
-          )
-      end
-
-      it 'should raise an exception' do
-        expect { described_class.dependency(Object.new.freeze) }
-          .to raise_error ArgumentError, error_message
-      end
-    end
-
-    describe 'with an empty String' do
-      let(:error_message) do
-        tools
-          .assertions
-          .error_message_for(
-            'sleeping_king_studios.tools.assertions.presence',
-            as: :key
-          )
-      end
-
-      it 'should raise an exception' do
-        expect { described_class.dependency('') }
-          .to raise_error ArgumentError, error_message
-      end
-    end
-
-    describe 'with an empty Symbol' do
-      let(:error_message) do
-        tools
-          .assertions
-          .error_message_for(
-            'sleeping_king_studios.tools.assertions.presence',
-            as: :key
-          )
-      end
-
-      it 'should raise an exception' do
-        expect { described_class.dependency(:'') }
-          .to raise_error ArgumentError, error_message
-      end
-    end
-
-    describe 'with a valid String' do
-      let(:key)          { 'valid' }
-      let(:expected_key) { 'valid' }
-      let(:reader_name)  { :valid }
-
-      include_deferred 'should define the dependency'
-    end
-
-    describe 'with a valid Symbol' do
-      let(:key)          { :valid }
-      let(:expected_key) { 'valid' }
-      let(:reader_name)  { :valid }
-
-      include_deferred 'should define the dependency'
-    end
-
-    describe 'with a dot-separated String' do
-      let(:key)          { 'application.tools.object_tools' }
-      let(:expected_key) { 'application' }
-      let(:reader_name)  { :object_tools }
-
-      include_deferred 'should define the dependency'
-    end
-
-    describe 'with a dot-separated Symbol' do
-      let(:key)          { :'application.tools.object_tools' }
-      let(:expected_key) { 'application' }
-      let(:reader_name)  { :object_tools }
-
-      include_deferred 'should define the dependency'
+      expect(original_method.source_location)
+        .to be == aliased_method.source_location
     end
   end
 
   describe '.dependency_keys' do
-    it 'should define the class reader' do
-      expect(described_class)
-        .to define_reader(:dependency_keys)
-        .with_value(Set.new)
-    end
+    it 'should alias the method' do
+      original_method = described_class.method(:plumbum_dependency_keys)
+      aliased_method  = described_class.method(:dependency_keys)
 
-    wrap_deferred 'when the parent class defines dependencies' do
-      let(:expected_dependencies) { parent_dependencies }
-
-      it 'should return the class dependencies' do
-        expect(described_class.dependency_keys)
-          .to be_a(Set)
-          .and match_array(expected_dependencies)
-      end
-    end
-
-    wrap_deferred 'when the class defines dependencies' do
-      let(:expected_dependencies) { class_dependencies }
-
-      it 'should return the class dependencies' do
-        expect(described_class.dependency_keys)
-          .to be_a(Set)
-          .and match_array(expected_dependencies)
-      end
-    end
-
-    context 'when the parent class and class define dependencies' do
-      let(:expected_dependencies) do
-        [*parent_dependencies, *class_dependencies].uniq
-      end
-
-      include_deferred 'when the parent class defines dependencies'
-      include_deferred 'when the class defines dependencies'
-
-      it 'should return the parent class and class dependencies' do
-        expect(described_class.dependency_keys)
-          .to be_a(Set)
-          .and match_array(expected_dependencies)
-      end
+      expect(original_method.source_location)
+        .to be == aliased_method.source_location
     end
   end
 
