@@ -976,7 +976,7 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('railtie', as: 'integration')
+            described_class.plumbum_dependency('railtie', as: 'integration')
           end
 
           it { expect(consumer).to respond_to(:integration).with(0).arguments }
@@ -994,7 +994,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::RailtieProvider
+              described_class.plumbum_provider Spec::RailtieProvider
             end
 
             it 'should return the dependency value' do
@@ -1009,7 +1009,7 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('request', memoize: false)
+            described_class.plumbum_dependency('request', memoize: false)
           end
 
           it { expect(consumer).to respond_to(:request).with(0).arguments }
@@ -1029,9 +1029,9 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.dependency('request', memoize: false)
+              described_class.plumbum_dependency('request', memoize: false)
 
-              described_class.provider Spec::RequestProvider
+              described_class.plumbum_provider Spec::RequestProvider
             end
 
             it { expect(consumer.request).to be Spec::RequestProvider.value }
@@ -1056,7 +1056,7 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('request', memoize: true)
+            described_class.plumbum_dependency('request', memoize: true)
           end
 
           it { expect(consumer).to respond_to(:request).with(0).arguments }
@@ -1076,9 +1076,9 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.dependency('request', memoize: true)
+              described_class.plumbum_dependency('request', memoize: true)
 
-              described_class.provider Spec::RequestProvider
+              described_class.plumbum_provider Spec::RequestProvider
             end
 
             it { expect(consumer.request).to be Spec::RequestProvider.value }
@@ -1103,7 +1103,7 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('railtie', optional: false)
+            described_class.plumbum_dependency('railtie', optional: false)
           end
 
           it { expect(consumer).to respond_to(:railtie).with(0).arguments }
@@ -1121,7 +1121,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::RailtieProvider
+              described_class.plumbum_provider Spec::RailtieProvider
             end
 
             it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
@@ -1130,7 +1130,7 @@ module Plumbum::RSpec::Deferred
 
         context 'when the class defines a dependency with optional: true' do
           before(:example) do
-            described_class.dependency('railtie', optional: true)
+            described_class.plumbum_dependency('railtie', optional: true)
           end
 
           it { expect(consumer).to respond_to(:railtie).with(0).arguments }
@@ -1143,7 +1143,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::RailtieProvider
+              described_class.plumbum_provider Spec::RailtieProvider
             end
 
             it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
@@ -1156,7 +1156,7 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('application.tools.object_tools')
+            described_class.plumbum_dependency('application.tools.object_tools')
           end
 
           it { expect(consumer).to respond_to(:object_tools).with(0).arguments }
@@ -1178,7 +1178,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::ApplicationProvider
+              described_class.plumbum_provider Spec::ApplicationProvider
             end
 
             it { expect(consumer.object_tools).to be object_tools }
@@ -1192,7 +1192,7 @@ module Plumbum::RSpec::Deferred
 
           before(:example) do
             described_class
-              .dependency('application.tools.object_tools', as: :obj)
+              .plumbum_dependency('application.tools.object_tools', as: :obj)
           end
 
           it { expect(consumer).to respond_to(:obj).with(0).arguments }
@@ -1214,7 +1214,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::ApplicationProvider
+              described_class.plumbum_provider Spec::ApplicationProvider
             end
 
             it { expect(consumer.obj).to be object_tools }
@@ -1223,8 +1223,10 @@ module Plumbum::RSpec::Deferred
 
         context 'when the class defines an optional drilled dependency' do
           before(:example) do
-            described_class
-              .dependency('application.tools.object_tools', optional: true)
+            described_class.plumbum_dependency(
+              'application.tools.object_tools',
+              optional: true
+            )
           end
 
           it { expect(consumer).to respond_to(:object_tools).with(0).arguments }
@@ -1241,7 +1243,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::ApplicationProvider
+              described_class.plumbum_provider Spec::ApplicationProvider
             end
 
             it { expect(consumer.object_tools).to be object_tools }
@@ -1256,9 +1258,9 @@ module Plumbum::RSpec::Deferred
           end
 
           before(:example) do
-            described_class.dependency('request')
+            described_class.plumbum_dependency('request')
 
-            described_class.provider Spec::RequestProvider
+            described_class.plumbum_provider Spec::RequestProvider
           end
 
           it { expect(consumer.request).to be Spec::RequestProvider.value }
@@ -1284,7 +1286,7 @@ module Plumbum::RSpec::Deferred
 
         context 'when the class defines a dependency with predicate: false' do
           before(:example) do
-            described_class.dependency('flag_enabled', predicate: false)
+            described_class.plumbum_dependency('flag_enabled', predicate: false)
           end
 
           it { expect(consumer).not_to respond_to(:flag_enabled?) }
@@ -1292,7 +1294,7 @@ module Plumbum::RSpec::Deferred
 
         context 'when the class defines a dependency with predicate: true' do
           before(:example) do
-            described_class.dependency('flag_enabled', predicate: true)
+            described_class.plumbum_dependency('flag_enabled', predicate: true)
           end
 
           it 'should define the predicate' do
@@ -1304,7 +1306,7 @@ module Plumbum::RSpec::Deferred
           context 'with as: value' do
             before(:example) do
               described_class
-                .dependency('flag_enabled', as: 'flag', predicate: true)
+                .plumbum_dependency('flag_enabled', as: 'flag', predicate: true)
             end
 
             it { expect(consumer).to respond_to(:flag?).with(0).arguments }
@@ -1317,7 +1319,7 @@ module Plumbum::RSpec::Deferred
               end
 
               before(:example) do
-                described_class.provider Spec::FlagProvider
+                described_class.plumbum_provider Spec::FlagProvider
               end
 
               it { expect(consumer.flag?).to be true }
@@ -1354,7 +1356,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::FlagProvider
+              described_class.plumbum_provider Spec::FlagProvider
             end
 
             it { expect(consumer.flag_enabled?).to be true }
@@ -1376,8 +1378,10 @@ module Plumbum::RSpec::Deferred
         context 'when the class defines a drilled dependency with a predicate' \
         do
           before(:example) do
-            described_class
-              .dependency('application.tools.object_tools', predicate: true)
+            described_class.plumbum_dependency(
+              'application.tools.object_tools',
+              predicate: true
+            )
           end
 
           it 'should define the predicate' do
@@ -1392,7 +1396,7 @@ module Plumbum::RSpec::Deferred
             end
 
             before(:example) do
-              described_class.provider Spec::ApplicationProvider
+              described_class.plumbum_provider Spec::ApplicationProvider
             end
 
             it { expect(consumer.object_tools?).to be true }
