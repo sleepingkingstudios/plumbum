@@ -7,10 +7,10 @@ module Plumbum
   module Parameters
     # Provider that wraps a subset of the constructor parameters.
     class Provider
+      include Plumbum::Providers::Plural
+
       UNDEFINED = Object.new.freeze
       private_constant :UNDEFINED
-
-      include Plumbum::Providers::Plural
 
       # @param values [Hash{Symbol=>Object}] the key-value pairs returned by the
       #   provider.
