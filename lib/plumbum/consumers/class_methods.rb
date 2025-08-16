@@ -162,9 +162,14 @@ module Plumbum::Consumers
       nil
     end
 
+    # @param cache [true, false] if false,.clears the memoized value and
+    #   reaggregates the providers.
+    #
     # @return [Array<Plumbum::Provider>] the providers defined for the class.
-    def plumbum_providers
-      each_plumbum_provider.to_a
+    def plumbum_providers(cache: true)
+      @plumbum_providers = nil if cache == false
+
+      @plumbum_providers ||= each_plumbum_provider.to_a
     end
 
     protected

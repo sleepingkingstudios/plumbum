@@ -57,6 +57,20 @@ module Plumbum::RSpec::Deferred
       end
     end
 
+    deferred_context 'when an included module defines providers' do
+      let(:expected_providers) do
+        super() << Spec::ContextProvider
+      end
+
+      example_constant 'Spec::ContextProvider' do
+        Spec::OneProvider.new(key: :context, value: Object.new.freeze)
+      end
+
+      before(:example) do
+        included_module.plumbum_provider Spec::ContextProvider
+      end
+    end
+
     deferred_context 'when the class defines dependencies' do
       let(:class_dependencies) { %w[env tools] }
 
@@ -560,16 +574,20 @@ module Plumbum::RSpec::Deferred
         describe 'with a provider' do
           let(:provider) { Spec::GenericProvider.new }
 
+          define_method :defined_providers do
+            described_class.plumbum_providers(cache: false)
+          end
+
           it { expect(described_class.plumbum_provider(provider)).to be nil }
 
           it 'should add the provider to #plumbum_providers',
             :aggregate_failures \
           do
             expect { described_class.plumbum_provider(provider) }.to(
-              change { described_class.plumbum_providers.count }.by(1)
+              change { defined_providers.count }.by(1)
             )
 
-            expect(described_class.plumbum_providers.first).to be provider
+            expect(defined_providers.first).to be provider
           end
 
           wrap_deferred 'when the class defines providers' do
@@ -577,10 +595,10 @@ module Plumbum::RSpec::Deferred
               :aggregate_failures \
             do
               expect { described_class.plumbum_provider(provider) }.to(
-                change { described_class.plumbum_providers.count }.by(1)
+                change { defined_providers.count }.by(1)
               )
 
-              expect(described_class.plumbum_providers.first).to be provider
+              expect(defined_providers.first).to be provider
             end
           end
         end
@@ -589,10 +607,19 @@ module Plumbum::RSpec::Deferred
       describe '.plumbum_providers' do
         let(:expected_providers) { [] }
 
-        it 'should define the class reader' do
+        it 'should define the method' do
           expect(described_class)
-            .to define_reader(:plumbum_providers)
-            .with_value([])
+            .to respond_to(:plumbum_providers)
+            .with(0).arguments
+            .and_keywords(:cache)
+        end
+
+        it { expect(described_class.plumbum_providers).to be == [] }
+
+        wrap_deferred 'when the parent class defines providers' do
+          it 'should return the expected providers' do
+            expect(described_class.plumbum_providers).to eq(expected_providers)
+          end
         end
 
         wrap_deferred 'when the class defines providers' do
@@ -601,18 +628,48 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        wrap_deferred 'when the parent class defines providers' do
+        wrap_deferred 'when an included module defines dependencies' do
           it 'should return the expected providers' do
             expect(described_class.plumbum_providers).to eq(expected_providers)
           end
         end
 
-        context 'when the class and parent class define providers' do
+        context 'when the class and ancestors define providers' do
           include_deferred 'when the parent class defines providers'
+          include_deferred 'when an included module defines providers'
           include_deferred 'when the class defines providers'
 
           it 'should return the expected providers' do
             expect(described_class.plumbum_providers).to eq(expected_providers)
+          end
+        end
+
+        context 'when the providers change' do
+          let(:generic_provider) { Spec::GenericProvider.new }
+
+          before(:example) do
+            # Memoize value.
+            described_class.plumbum_providers
+
+            described_class.plumbum_provider generic_provider
+          end
+
+          it 'should not update the dependency keys' do
+            expect(described_class.plumbum_providers).to be == []
+          end
+
+          describe 'with cache: false' do
+            it 'should update the dependency keys' do
+              expect(described_class.plumbum_providers(cache: false))
+                .to be == [generic_provider]
+            end
+          end
+
+          describe 'with cache: true' do
+            it 'should not update the dependency keys' do
+              expect(described_class.plumbum_providers(cache: true))
+                .to be == []
+            end
           end
         end
       end
