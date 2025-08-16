@@ -12,8 +12,6 @@ RSpec.describe Plumbum::Providers::Global do
   let(:options)     { {} }
   let(:valid_pairs) { {} }
 
-  it { expect(provider).to be_a Module }
-
   include_deferred 'should implement the Provider interface'
 
   describe '.new' do

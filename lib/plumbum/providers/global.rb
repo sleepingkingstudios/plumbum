@@ -11,7 +11,7 @@ module Plumbum::Providers
   # :mutable flag was set to true. However, if no :value is passed to the
   # constructor, the provider value can be set once using the #value= writer
   # method.
-  class Global < Module
+  class Global
     include Plumbum::Providers::Singular
 
     UNDEFINED = Object.new.freeze
