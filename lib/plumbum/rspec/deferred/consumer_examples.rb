@@ -14,20 +14,6 @@ module Plumbum::RSpec::Deferred
     end
 
     deferred_context 'with example providers' do
-      example_class 'Spec::GenericProvider' do |klass|
-        klass.include Plumbum::Provider
-      end
-
-      example_class 'Spec::ManyProvider', Module do |klass|
-        klass.include Plumbum::Providers::Plural
-
-        klass.define_method :initialize do |values:|
-          tools = SleepingKingStudios::Tools::Toolbelt.instance
-
-          @values = tools.hash_tools.convert_keys_to_strings(values)
-        end
-      end
-
       example_class 'Spec::MutableProvider', Module do |klass|
         klass.include Plumbum::Providers::Singular
 
@@ -37,15 +23,6 @@ module Plumbum::RSpec::Deferred
         end
 
         klass.attr_writer :value
-      end
-
-      example_class 'Spec::OneProvider', Module do |klass|
-        klass.include Plumbum::Providers::Singular
-
-        klass.define_method :initialize do |key:, value:|
-          @key   = key.to_s
-          @value = value
-        end
       end
     end
 
@@ -58,16 +35,15 @@ module Plumbum::RSpec::Deferred
     end
 
     deferred_context 'when an included module defines providers' do
-      let(:expected_providers) do
-        super() << Spec::ContextProvider
+      let(:context_provider) do
+        Plumbum::OneProvider.new(:context, value: Object.new.freeze)
       end
-
-      example_constant 'Spec::ContextProvider' do
-        Spec::OneProvider.new(key: :context, value: Object.new.freeze)
+      let(:expected_providers) do
+        super() << context_provider
       end
 
       before(:example) do
-        included_module.plumbum_provider Spec::ContextProvider
+        included_module.plumbum_provider context_provider
       end
     end
 
@@ -81,23 +57,21 @@ module Plumbum::RSpec::Deferred
     end
 
     deferred_context 'when the class defines providers' do
-      let(:expected_providers) do
-        super() << Spec::ToolsProvider << Spec::ConfigProvider
-      end
-
-      example_constant 'Spec::ConfigProvider' do
-        Spec::ManyProvider.new(
+      let(:config_provider) do
+        Plumbum::ManyProvider.new(
           values: { env: 'test', repository: { books: [] }, tools: {} }
         )
       end
-
-      example_constant 'Spec::ToolsProvider' do
-        Spec::OneProvider.new(key: :tools, value: { string_tools: {} })
+      let(:tools_provider) do
+        Plumbum::OneProvider.new(:tools, value: { string_tools: {} })
+      end
+      let(:expected_providers) do
+        super() << tools_provider << config_provider
       end
 
       before(:example) do
-        described_class.plumbum_provider Spec::ConfigProvider
-        described_class.plumbum_provider Spec::ToolsProvider
+        described_class.plumbum_provider config_provider
+        described_class.plumbum_provider tools_provider
       end
     end
 
@@ -111,16 +85,15 @@ module Plumbum::RSpec::Deferred
     end
 
     deferred_context 'when the parent class defines providers' do
-      let(:expected_providers) do
-        super() << Spec::OptionsProvider
+      let(:options_provider) do
+        Plumbum::OneProvider.new(:options, value: { key: 'value' })
       end
-
-      example_constant 'Spec::OptionsProvider' do
-        Spec::OneProvider.new(key: :options, value: { key: 'value' })
+      let(:expected_providers) do
+        super() << options_provider
       end
 
       before(:example) do
-        parent_class.plumbum_provider Spec::OptionsProvider
+        parent_class.plumbum_provider options_provider
       end
     end
 
@@ -572,7 +545,7 @@ module Plumbum::RSpec::Deferred
         end
 
         describe 'with a provider' do
-          let(:provider) { Spec::GenericProvider.new }
+          let(:provider) { Plumbum::ManyProvider.new }
 
           define_method :defined_providers do
             described_class.plumbum_providers(cache: false)
@@ -645,7 +618,7 @@ module Plumbum::RSpec::Deferred
         end
 
         context 'when the providers change' do
-          let(:generic_provider) { Spec::GenericProvider.new }
+          let(:generic_provider) { Plumbum::ManyProvider.new }
 
           before(:example) do
             # Memoize value.
@@ -806,13 +779,13 @@ module Plumbum::RSpec::Deferred
           describe 'with a matching String' do
             it 'should return the dependency value' do
               expect(subject.get_plumbum_dependency('env'))
-                .to eq(Spec::ConfigProvider.values['env'])
+                .to eq(config_provider.values['env'])
             end
 
             context 'with a String matching multiple providers' do
               it 'should return the value from the last provider' do
                 expect(subject.get_plumbum_dependency('tools'))
-                  .to eq(Spec::ToolsProvider.value)
+                  .to eq(tools_provider.value)
               end
             end
           end
@@ -820,13 +793,13 @@ module Plumbum::RSpec::Deferred
           describe 'with a matching Symbol' do
             it 'should return the dependency value' do
               expect(subject.get_plumbum_dependency(:env))
-                .to eq(Spec::ConfigProvider.values['env'])
+                .to eq(config_provider.values['env'])
             end
 
             context 'with a Symbol matching multiple providers' do
               it 'should return the value from the last provider' do
                 expect(subject.get_plumbum_dependency(:tools))
-                  .to eq(Spec::ToolsProvider.value)
+                  .to eq(tools_provider.value)
               end
             end
           end
@@ -953,7 +926,7 @@ module Plumbum::RSpec::Deferred
           end
 
           wrap_deferred 'when the class defines providers' do
-            it { expect(consumer.tools).to be Spec::ToolsProvider.value }
+            it { expect(consumer.tools).to be tools_provider.value }
 
             context 'when the class overwrites the method' do
               before(:example) do
@@ -964,7 +937,7 @@ module Plumbum::RSpec::Deferred
 
               it 'should use the class definition' do
                 expect(consumer.tools)
-                  .to eq({ tools: Spec::ToolsProvider.value })
+                  .to eq({ tools: tools_provider.value })
               end
             end
           end
@@ -989,16 +962,16 @@ module Plumbum::RSpec::Deferred
           end
 
           context 'when the class includes a provider for the dependency' do
-            example_constant 'Spec::RailtieProvider' do
-              Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
+            let(:railtie_provider) do
+              Plumbum::OneProvider.new(:railtie, value: Object.new.freeze)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::RailtieProvider
+              described_class.plumbum_provider railtie_provider
             end
 
             it 'should return the dependency value' do
-              expect(consumer.integration).to be Spec::RailtieProvider.value
+              expect(consumer.integration).to be railtie_provider.value
             end
           end
         end
@@ -1116,15 +1089,15 @@ module Plumbum::RSpec::Deferred
           end
 
           context 'when the class includes a provider for the dependency' do
-            example_constant 'Spec::RailtieProvider' do
-              Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
+            let(:railtie_provider) do
+              Plumbum::OneProvider.new(:railtie, value: Object.new.freeze)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::RailtieProvider
+              described_class.plumbum_provider railtie_provider
             end
 
-            it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
+            it { expect(consumer.railtie).to be railtie_provider.value }
           end
         end
 
@@ -1138,15 +1111,15 @@ module Plumbum::RSpec::Deferred
           it { expect(consumer.railtie).to be nil }
 
           context 'when the class includes a provider for the dependency' do
-            example_constant 'Spec::RailtieProvider' do
-              Spec::OneProvider.new(key: :railtie, value: Object.new.freeze)
+            let(:railtie_provider) do
+              Plumbum::OneProvider.new(:railtie, value: Object.new.freeze)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::RailtieProvider
+              described_class.plumbum_provider railtie_provider
             end
 
-            it { expect(consumer.railtie).to be Spec::RailtieProvider.value }
+            it { expect(consumer.railtie).to be railtie_provider.value }
           end
         end
 
@@ -1172,13 +1145,12 @@ module Plumbum::RSpec::Deferred
             let(:object_tools) { Object.new.freeze }
             let(:tools)        { Struct.new(:object_tools).new(object_tools) }
             let(:application)  { Struct.new(:tools).new(tools) }
-
-            example_constant 'Spec::ApplicationProvider' do
-              Spec::OneProvider.new(key: :application, value: application)
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::ApplicationProvider
+              described_class.plumbum_provider application_provider
             end
 
             it { expect(consumer.object_tools).to be object_tools }
@@ -1208,13 +1180,12 @@ module Plumbum::RSpec::Deferred
             let(:object_tools) { Object.new.freeze }
             let(:tools)        { Struct.new(:object_tools).new(object_tools) }
             let(:application)  { Struct.new(:tools).new(tools) }
-
-            example_constant 'Spec::ApplicationProvider' do
-              Spec::OneProvider.new(key: :application, value: application)
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::ApplicationProvider
+              described_class.plumbum_provider application_provider
             end
 
             it { expect(consumer.obj).to be object_tools }
@@ -1237,13 +1208,12 @@ module Plumbum::RSpec::Deferred
             let(:object_tools) { Object.new.freeze }
             let(:tools)        { Struct.new(:object_tools).new(object_tools) }
             let(:application)  { Struct.new(:tools).new(tools) }
-
-            example_constant 'Spec::ApplicationProvider' do
-              Spec::OneProvider.new(key: :application, value: application)
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::ApplicationProvider
+              described_class.plumbum_provider application_provider
             end
 
             it { expect(consumer.object_tools).to be object_tools }
@@ -1314,12 +1284,12 @@ module Plumbum::RSpec::Deferred
             it { expect(consumer.flag?).to be false }
 
             context 'when the class defines providers' do
-              example_constant 'Spec::FlagProvider' do
-                Spec::OneProvider.new(key: :flag_enabled, value: false)
+              let(:flag_provider) do
+                Plumbum::OneProvider.new(:flag_enabled, value: false)
               end
 
               before(:example) do
-                described_class.plumbum_provider Spec::FlagProvider
+                described_class.plumbum_provider flag_provider
               end
 
               it { expect(consumer.flag?).to be true }
@@ -1351,12 +1321,12 @@ module Plumbum::RSpec::Deferred
           end
 
           context 'when the class defines providers' do
-            example_constant 'Spec::FlagProvider' do
-              Spec::OneProvider.new(key: :flag_enabled, value: false)
+            let(:flag_provider) do
+              Plumbum::OneProvider.new(:flag_enabled, value: false)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::FlagProvider
+              described_class.plumbum_provider flag_provider
             end
 
             it { expect(consumer.flag_enabled?).to be true }
@@ -1391,12 +1361,12 @@ module Plumbum::RSpec::Deferred
           it { expect(consumer.object_tools?).to be false }
 
           context 'when the class includes a provider for the dependency' do
-            example_constant 'Spec::ApplicationProvider' do
-              Spec::OneProvider.new(key: :application, value: Object.new.freeze)
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: Object.new.freeze)
             end
 
             before(:example) do
-              described_class.plumbum_provider Spec::ApplicationProvider
+              described_class.plumbum_provider application_provider
             end
 
             it { expect(consumer.object_tools?).to be true }

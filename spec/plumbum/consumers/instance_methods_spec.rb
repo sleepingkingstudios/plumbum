@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'plumbum/consumers/instance_methods'
+require 'plumbum/many_provider'
+require 'plumbum/one_provider'
 require 'plumbum/rspec/deferred/consumer_examples'
 
 RSpec.describe Plumbum::Consumers::InstanceMethods do
@@ -9,20 +11,19 @@ RSpec.describe Plumbum::Consumers::InstanceMethods do
   subject(:consumer) { described_class.new }
 
   deferred_context 'when the class defines providers' do
-    example_constant 'Spec::ConfigProvider' do
-      Spec::ManyProvider.new(
+    let(:config_provider) do
+      Plumbum::ManyProvider.new(
         values: { env: 'test', repository: { books: [] }, tools: {} }
       )
     end
-
-    example_constant 'Spec::ToolsProvider' do
-      Spec::OneProvider.new(key: :tools, value: { string_tools: {} })
+    let(:tools_provider) do
+      Plumbum::OneProvider.new(:tools, value: { string_tools: {} })
     end
 
     before(:example) do
       described_class.plumbum_providers = [
-        Spec::ToolsProvider,
-        Spec::ConfigProvider
+        tools_provider,
+        config_provider
       ]
     end
   end

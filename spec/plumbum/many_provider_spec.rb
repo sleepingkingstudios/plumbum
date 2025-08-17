@@ -18,15 +18,15 @@ RSpec.describe Plumbum::ManyProvider do
     let(:keywords) { super().merge(values:) }
   end
 
-  let(:options)  { {} }
-  let(:keywords) { options }
+  let(:options)     { {} }
+  let(:keywords)    { options }
+  let(:valid_pairs) { {} }
 
   define_method :tools do
     SleepingKingStudios::Tools::Toolbelt.instance
   end
 
-  include_deferred 'should implement the Provider interface',
-    has_valid_pairs: false
+  include_deferred 'should implement the Provider interface'
 
   describe '.new' do
     it 'should define the constructor' do
@@ -191,11 +191,35 @@ RSpec.describe Plumbum::ManyProvider do
       expect { provider.values.update('injected' => 'value') }
         .not_to change(provider, :values)
     end
+
+    context 'when initialized with values: a Hash with String keys' do
+      let(:values)   { { 'option' => 'value', 'number' => 123 } }
+      let(:keywords) { super().merge(values:) }
+
+      it { expect(provider.values).to be == values }
+
+      it 'should return a copy' do
+        expect { provider.values.update('injected' => 'value') }
+          .not_to change(provider, :values)
+      end
+    end
+
+    context 'when initialized with values: a Hash with Symbol keys' do
+      let(:values)   { { option: 'value', number: 123 } }
+      let(:keywords) { super().merge(values:) }
+      let(:expected) { values.transform_keys(&:to_s) }
+
+      it { expect(provider.values).to be == expected }
+
+      it 'should return a copy' do
+        expect { provider.values.update('injected' => 'value') }
+          .not_to change(provider, :values)
+      end
+    end
   end
 
   wrap_deferred 'when initialized with values: an empty Hash' do
-    include_deferred 'should implement the Provider interface',
-      has_valid_pairs: false
+    include_deferred 'should implement the Provider interface'
   end
 
   wrap_deferred 'when initialized with values: an non-empty Hash' do

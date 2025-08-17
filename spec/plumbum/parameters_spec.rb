@@ -21,23 +21,13 @@ RSpec.describe Plumbum::Parameters do
   end
 
   deferred_context 'when the class includes providers' do
-    example_class 'Spec::ManyProvider', Module do |klass|
-      klass.include Plumbum::Providers::Plural
-
-      klass.define_method :initialize do |values:|
-        tools = SleepingKingStudios::Tools::Toolbelt.instance
-
-        @values = tools.hash_tools.convert_keys_to_strings(values)
-      end
-    end
-
-    example_constant 'Spec::ConfigProvider' do
-      Spec::ManyProvider.new(
+    let(:config_provider) do
+      Plumbum::ManyProvider.new(
         values: { env: 'test', repository: { books: [] }, tools: {} }
       )
     end
 
-    before(:example) { described_class.provider Spec::ConfigProvider }
+    before(:example) { described_class.provider config_provider }
   end
 
   deferred_context 'when the constructor takes parameters' do
@@ -446,14 +436,14 @@ RSpec.describe Plumbum::Parameters do
         describe 'with a matching String' do
           it 'should return the dependency value' do
             expect(consumer.get_plumbum_dependency('tools'))
-              .to eq(Spec::ConfigProvider.values['tools'])
+              .to eq(config_provider.values['tools'])
           end
         end
 
         describe 'with a matching Symbol' do
           it 'should return the dependency value' do
             expect(consumer.get_plumbum_dependency(:tools))
-              .to eq(Spec::ConfigProvider.values['tools'])
+              .to eq(config_provider.values['tools'])
           end
         end
 

@@ -18,9 +18,10 @@ RSpec.describe Plumbum::OneProvider do
     let(:keywords) { super().merge(value:) }
   end
 
-  let(:key)      { 'option' }
-  let(:options)  { {} }
-  let(:keywords) { options }
+  let(:key)         { 'option' }
+  let(:options)     { {} }
+  let(:keywords)    { options }
+  let(:valid_pairs) { {} }
 
   describe '.new' do
     define_method :call_method do |key|
@@ -38,8 +39,7 @@ RSpec.describe Plumbum::OneProvider do
     include_deferred 'should validate the key'
   end
 
-  include_deferred 'should implement the Provider interface',
-    has_valid_pairs: false
+  include_deferred 'should implement the Provider interface'
 
   describe '#get' do
     describe 'with a valid String' do
