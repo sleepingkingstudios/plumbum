@@ -102,15 +102,12 @@ module Plumbum::RSpec::Deferred
     #
     # - #invalid_key: An example key that does not match the provider. The
     #   default value is :invalid.
-    deferred_examples 'should implement the Provider interface' \
-    do |has_valid_pairs: true|
+    deferred_examples 'should implement the Provider interface' do
       include RSpec::SleepingKingStudios::Deferred::Dependencies
 
-      if has_valid_pairs
-        depends_on :valid_pairs,
-          'a Hash containing the valid keys the provider should return and ' \
-          'the corresponding values.'
-      end
+      depends_on :valid_pairs,
+        'a Hash containing the valid keys the provider should return and ' \
+        'the corresponding values.'
 
       describe '#get' do
         let(:invalid_key) { defined?(super()) ? super() : :invalid }
@@ -130,8 +127,6 @@ module Plumbum::RSpec::Deferred
         describe 'with an invalid Symbol' do
           it { expect(subject.get(invalid_key.to_sym)).to be nil }
         end
-
-        next unless has_valid_pairs
 
         describe 'with a valid String', :aggregate_failures do
           it 'should return the value' do
@@ -168,8 +163,6 @@ module Plumbum::RSpec::Deferred
         describe 'with an invalid Symbol' do
           it { expect(subject.has?(invalid_key.to_sym)).to be false }
         end
-
-        next unless has_valid_pairs
 
         describe 'with a valid String', :aggregate_failures do
           it 'should return true' do

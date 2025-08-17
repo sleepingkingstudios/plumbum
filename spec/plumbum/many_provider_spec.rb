@@ -18,15 +18,15 @@ RSpec.describe Plumbum::ManyProvider do
     let(:keywords) { super().merge(values:) }
   end
 
-  let(:options)  { {} }
-  let(:keywords) { options }
+  let(:options)     { {} }
+  let(:keywords)    { options }
+  let(:valid_pairs) { {} }
 
   define_method :tools do
     SleepingKingStudios::Tools::Toolbelt.instance
   end
 
-  include_deferred 'should implement the Provider interface',
-    has_valid_pairs: false
+  include_deferred 'should implement the Provider interface'
 
   describe '.new' do
     it 'should define the constructor' do
@@ -194,8 +194,7 @@ RSpec.describe Plumbum::ManyProvider do
   end
 
   wrap_deferred 'when initialized with values: an empty Hash' do
-    include_deferred 'should implement the Provider interface',
-      has_valid_pairs: false
+    include_deferred 'should implement the Provider interface'
   end
 
   wrap_deferred 'when initialized with values: an non-empty Hash' do
