@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'plumbum'
-require 'plumbum/provider'
 require 'plumbum/providers/singular'
 
 module Plumbum
@@ -20,7 +19,8 @@ module Plumbum
 
       SleepingKingStudios::Tools::Toolbelt
         .instance
-        .assertions.validate_name(key, as: :key)
+        .assertions
+        .validate_name(key, as: :key)
 
       @key     = key.to_s
       @value   = value
