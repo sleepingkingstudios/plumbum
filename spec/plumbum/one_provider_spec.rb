@@ -67,6 +67,16 @@ RSpec.describe Plumbum::OneProvider do
 
   describe '#options' do
     it { expect(provider.options).to be == options }
+
+    context 'when initialized with options' do
+      let(:options) { super().merge('custom_option' => 'custom value') }
+
+      it { expect(provider.options).to be == options }
+    end
+
+    wrap_deferred 'when initialized with a value' do
+      it { expect(provider.options).to be == options }
+    end
   end
 
   describe '#value' do
