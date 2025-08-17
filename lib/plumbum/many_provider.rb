@@ -15,7 +15,7 @@ module Plumbum
 
       validate_values(values)
 
-      @values  = values
+      @values  = values.transform_keys(&:to_s)
       @options = options
     end
 
