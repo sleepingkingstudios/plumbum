@@ -18,6 +18,11 @@ RSpec.describe Plumbum::OneProvider do
     let(:keywords) { super().merge(value:) }
   end
 
+  deferred_context 'when initialized with value: UNDEFINED' do
+    let(:value)    { Plumbum::UNDEFINED }
+    let(:keywords) { super().merge(value:) }
+  end
+
   let(:key)         { 'option' }
   let(:options)     { {} }
   let(:keywords)    { options }
@@ -75,9 +80,19 @@ RSpec.describe Plumbum::OneProvider do
       it { expect(provider.options).to be == options }
     end
 
+    # rubocop:disable RSpec/RepeatedExampleGroupBody
+    wrap_deferred 'when initialized with value: UNDEFINED' do
+      it { expect(provider.options).to be == options }
+    end
+
+    wrap_deferred 'when initialized with value: nil' do
+      it { expect(provider.options).to be == options }
+    end
+
     wrap_deferred 'when initialized with a value' do
       it { expect(provider.options).to be == options }
     end
+    # rubocop:enable RSpec/RepeatedExampleGroupBody
   end
 
   describe '#set' do
@@ -156,9 +171,15 @@ RSpec.describe Plumbum::OneProvider do
   describe '#value' do
     include_examples 'should define reader', :value, nil
 
+    # rubocop:disable RSpec/RepeatedExampleGroupBody
+    wrap_deferred 'when initialized with value: UNDEFINED' do
+      it { expect(provider.value).to be nil }
+    end
+
     wrap_deferred 'when initialized with value: nil' do
       it { expect(provider.value).to be nil }
     end
+    # rubocop:enable RSpec/RepeatedExampleGroupBody
 
     wrap_deferred 'when initialized with a value' do
       it { expect(provider.value).to be value }
@@ -191,6 +212,16 @@ RSpec.describe Plumbum::OneProvider do
       end
 
       # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with value: UNDEFINED' do
+        it { expect(provider.value = changed_value).to be == changed_value }
+
+        it 'should update the value' do
+          expect { provider.value = changed_value }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+
       wrap_deferred 'when initialized with value: nil' do
         it { expect(provider.value = changed_value).to be == changed_value }
 
@@ -225,6 +256,14 @@ RSpec.describe Plumbum::OneProvider do
         end
       end
     end
+  end
+
+  wrap_deferred 'when initialized with value: UNDEFINED' do
+    let(:valid_pairs) { {} }
+
+    include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the singular Provider interface'
   end
 
   wrap_deferred 'when initialized with value: nil' do

@@ -8,6 +8,11 @@ RSpec.describe Plumbum::ManyProvider do
 
   subject(:provider) { described_class.new(**keywords) }
 
+  deferred_context 'when initialized with values: UNDEFINED' do
+    let(:values)   { Plumbum::UNDEFINED }
+    let(:keywords) { super().merge(values:) }
+  end
+
   deferred_context 'when initialized with values: an empty Hash' do
     let(:values)   { {} }
     let(:keywords) { super().merge(values:) }
@@ -15,6 +20,17 @@ RSpec.describe Plumbum::ManyProvider do
 
   deferred_context 'when initialized with values: an non-empty Hash' do
     let(:values)   { { 'option' => 'value', 'number' => 123 } }
+    let(:keywords) { super().merge(values:) }
+  end
+
+  deferred_context 'when initialized with values: Hash with UNDEFINED values' do
+    let(:values) do
+      {
+        'option' => 'value',
+        'number' => 123,
+        'color'  => Plumbum::UNDEFINED
+      }
+    end
     let(:keywords) { super().merge(values:) }
   end
 
@@ -177,6 +193,10 @@ RSpec.describe Plumbum::ManyProvider do
     end
 
     # rubocop:disable RSpec/RepeatedExampleGroupBody
+    wrap_deferred 'when initialized with values: UNDEFINED' do
+      it { expect(provider.options).to be == options }
+    end
+
     wrap_deferred 'when initialized with values: an empty Hash' do
       it { expect(provider.options).to be == options }
     end
@@ -194,6 +214,16 @@ RSpec.describe Plumbum::ManyProvider do
       expect { provider.values.update('injected' => 'value') }
         .not_to change(provider, :values)
     end
+
+    # rubocop:disable RSpec/RepeatedExampleGroupBody
+    wrap_deferred 'when initialized with values: UNDEFINED' do
+      it { expect(provider.values).to be == {} }
+    end
+
+    wrap_deferred 'when initialized with values: an empty Hash' do
+      it { expect(provider.values).to be == {} }
+    end
+    # rubocop:enable RSpec/RepeatedExampleGroupBody
 
     context 'when initialized with values: a Hash with String keys' do
       let(:values)   { { 'option' => 'value', 'number' => 123 } }
@@ -218,6 +248,10 @@ RSpec.describe Plumbum::ManyProvider do
         expect { provider.values.update('injected' => 'value') }
           .not_to change(provider, :values)
       end
+    end
+
+    wrap_deferred 'when initialized with values: Hash with UNDEFINED values' do
+      it { expect(provider.values).to be == values }
     end
   end
 
@@ -507,6 +541,16 @@ RSpec.describe Plumbum::ManyProvider do
   wrap_deferred 'when initialized with values: an non-empty Hash' do
     let(:valid_keys)  { values.keys }
     let(:valid_pairs) { values }
+
+    include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the plural Provider interface'
+  end
+
+  wrap_deferred 'when initialized with values: Hash with UNDEFINED values' do
+    let(:invalid_key) { 'color' }
+    let(:valid_keys)  { valid_pairs.keys }
+    let(:valid_pairs) { values.except('color') }
 
     include_deferred 'should implement the Provider interface'
 

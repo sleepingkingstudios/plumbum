@@ -10,17 +10,24 @@ module Plumbum
 
     # @param values [Hash{String, Symbol => Object}] the provided values.
     # @param options [Hash] additional options for the provider.
-    def initialize(values: {}, **options)
+    def initialize(values: Plumbum::UNDEFINED, **options)
       super()
 
-      validate_values(values)
+      if values == Plumbum::UNDEFINED
+        @values = values
+      else
+        validate_values(values)
 
-      @values  = values.transform_keys(&:to_s)
+        @values = values.transform_keys(&:to_s)
+      end
+
       @options = options
     end
 
     # (see Plumbum::Providers::Plural#values)
-    def values = super.dup
+    def values
+      @values == Plumbum::UNDEFINED ? {} : super.dup
+    end
 
     # @param values [Hash{String, Symbol => Object}] the updated values.
     def values=(values)
@@ -34,6 +41,14 @@ module Plumbum
     end
 
     private
+
+    def get_value(key)
+      value = super
+
+      value == Plumbum::UNDEFINED ? nil : value
+    end
+
+    def has_value?(key) = super && @values[key] != Plumbum::UNDEFINED # rubocop:disable Naming/PredicatePrefix
 
     def validate_values(values)
       assertions = SleepingKingStudios::Tools::Toolbelt.instance.assertions
