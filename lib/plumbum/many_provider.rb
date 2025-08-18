@@ -22,6 +22,17 @@ module Plumbum
     # (see Plumbum::Providers::Plural#values)
     def values = super.dup
 
+    # @param values [Hash{String, Symbol => Object}] the updated values.
+    def values=(values)
+      validate_values(values)
+
+      values = values.transform_keys(&:to_s)
+
+      values.each_key { |key| require_mutable(key) }
+
+      @values = values
+    end
+
     private
 
     def validate_values(values)

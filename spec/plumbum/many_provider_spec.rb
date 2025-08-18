@@ -20,6 +20,7 @@ RSpec.describe Plumbum::ManyProvider do
 
   let(:options)     { {} }
   let(:keywords)    { options }
+  let(:valid_keys)  { [] }
   let(:valid_pairs) { {} }
 
   define_method :tools do
@@ -27,6 +28,8 @@ RSpec.describe Plumbum::ManyProvider do
   end
 
   include_deferred 'should implement the Provider interface'
+
+  include_deferred 'should implement the plural Provider interface'
 
   describe '.new' do
     it 'should define the constructor' do
@@ -218,13 +221,282 @@ RSpec.describe Plumbum::ManyProvider do
     end
   end
 
+  describe '#values=' do
+    include_examples 'should define writer', :values=
+
+    describe 'with nil' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :values,
+            expected: Hash
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = nil }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: an Object' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :values,
+            expected: Hash
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = Object.new.freeze }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with nil keys' do
+      let(:changed_values) do
+        {
+          'color' => 'red',
+          nil     => 'value',
+          shape:     'circle'
+        }
+      end
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with Object keys' do
+      let(:changed_values) do
+        {
+          'color'           => 'red',
+          Object.new.freeze => 'value',
+          shape:               'circle'
+        }
+      end
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.name',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with empty String keys' do
+      let(:changed_values) do
+        {
+          'color' => 'red',
+          ''      => 'value',
+          shape:     'circle'
+        }
+      end
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with empty Symbol keys' do
+      let(:changed_values) do
+        {
+          'color' => 'red',
+          :''     => 'value',
+          shape:     'circle'
+        }
+      end
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with String keys' do
+      let(:changed_values) do
+        {
+          'color' => 'red',
+          'shape' => 'circle'
+        }
+      end
+      let(:error_message) do
+        "unable to change immutable value for #{described_class} with key " \
+          "#{changed_values.keys.first.to_s.inspect}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      end
+    end
+
+    describe 'with values: a Hash with Symbol keys' do
+      let(:changed_values) do
+        {
+          color: 'red',
+          shape: 'circle'
+        }
+      end
+      let(:error_message) do
+        "unable to change immutable value for #{described_class} with key " \
+          "#{changed_values.keys.first.to_s.inspect}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = changed_values }
+          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      end
+    end
+
+    context 'when initialized with read_only: false' do
+      let(:options) { super().merge(read_only: false) }
+
+      describe 'with values: a Hash with String keys' do
+        let(:changed_values) do
+          {
+            'color' => 'red',
+            'shape' => 'circle'
+          }
+        end
+
+        it 'should update the values' do
+          expect { provider.values = changed_values }
+            .to change(provider, :values)
+            .to be == changed_values.transform_keys(&:to_s)
+        end
+      end
+
+      describe 'with values: a Hash with Symbol keys' do
+        let(:changed_values) do
+          {
+            color: 'red',
+            shape: 'circle'
+          }
+        end
+
+        it 'should update the values' do
+          expect { provider.values = changed_values }
+            .to change(provider, :values)
+            .to be == changed_values.transform_keys(&:to_s)
+        end
+      end
+
+      # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with values: an empty Hash' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+      end
+
+      wrap_deferred 'when initialized with values: an non-empty Hash' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+      end
+      # rubocop:enable RSpec/RepeatedExampleGroupBody
+    end
+  end
+
   wrap_deferred 'when initialized with values: an empty Hash' do
     include_deferred 'should implement the Provider interface'
   end
 
   wrap_deferred 'when initialized with values: an non-empty Hash' do
+    let(:valid_keys)  { values.keys }
     let(:valid_pairs) { values }
 
     include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the plural Provider interface'
   end
 end

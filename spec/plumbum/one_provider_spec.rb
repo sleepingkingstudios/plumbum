@@ -189,6 +189,28 @@ RSpec.describe Plumbum::OneProvider do
           change { provider.get(valid_key) }.to(be == changed_value)
         )
       end
+
+      # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with value: nil' do
+        it { expect(provider.value = changed_value).to be == changed_value }
+
+        it 'should update the value' do
+          expect { provider.value = changed_value }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+
+      wrap_deferred 'when initialized with a value' do
+        it { expect(provider.value = changed_value).to be == changed_value }
+
+        it 'should update the value' do
+          expect { provider.value = changed_value }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+      # rubocop:enable RSpec/RepeatedExampleGroupBody
     end
   end
 
