@@ -20,7 +20,7 @@ RSpec.describe Plumbum::Providers::Plural do
     end
   end
 
-  include_deferred 'should implement the Provider interface'
+  include_deferred 'should implement the Provider interface', has_options: false
 
   describe '#set' do
     let(:invalid_key) { :invalid }

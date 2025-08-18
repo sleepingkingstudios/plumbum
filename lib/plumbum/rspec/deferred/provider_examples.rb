@@ -102,7 +102,8 @@ module Plumbum::RSpec::Deferred
     #
     # - #invalid_key: An example key that does not match the provider. The
     #   default value is :invalid.
-    deferred_examples 'should implement the Provider interface' do
+    deferred_examples 'should implement the Provider interface' \
+    do |has_options: true|
       include RSpec::SleepingKingStudios::Deferred::Dependencies
 
       depends_on :valid_pairs,
@@ -183,6 +184,48 @@ module Plumbum::RSpec::Deferred
 
       describe '#options' do
         include_examples 'should define reader', :options, -> { be_a Hash }
+
+        next unless has_options
+
+        it { expect(provider.options).to be == options }
+
+        context 'when initialized with options' do
+          let(:options) { super().merge(custom_option: 'custom value') }
+
+          it { expect(provider.options).to be == options }
+        end
+
+        context 'when initialized with read_only: false' do
+          let(:options) { super().merge(read_only: false) }
+
+          it { expect(provider.options).to be == options }
+        end
+
+        context 'when initialized with read_only: true' do
+          let(:options) { super().merge(read_only: true) }
+
+          it { expect(provider.options).to be == options }
+        end
+      end
+
+      describe '#read_only?' do
+        include_examples 'should define predicate', :read_only?
+
+        next unless has_options
+
+        it { expect(provider.read_only?).to be true }
+
+        context 'when initialized with read_only: false' do
+          let(:options) { super().merge(read_only: false) }
+
+          it { expect(provider.read_only?).to be false }
+        end
+
+        context 'when initialized with read_only: true' do
+          let(:options) { super().merge(read_only: true) }
+
+          it { expect(provider.read_only?).to be true }
+        end
       end
 
       describe '#set' do
@@ -195,6 +238,98 @@ module Plumbum::RSpec::Deferred
         it { expect(subject).to respond_to(:set).with(2).arguments }
 
         include_deferred 'should validate the key'
+      end
+    end
+
+    # Asserts that the object implements the interface for a singular Provider.
+    #
+    # The following methods must be defined in the example group:
+    #
+    # - #valid_key: The valid key configured for the provider.
+    #
+    # The behavior can be customized by defining the following methods:
+    #
+    # - #invalid_key: An example key that does not match the provider. The
+    #   default value is :invalid.
+    deferred_examples 'should implement the singular Provider interface' \
+    do |has_options: true|
+      include RSpec::SleepingKingStudios::Deferred::Dependencies
+
+      depends_on :valid_key, 'the valid key configured for the provider'
+
+      describe '#set' do
+        let(:invalid_key)   { defined?(super()) ? super() : :invalid }
+        let(:changed_value) { Object.new.freeze }
+
+        describe 'with an invalid String', :aggregate_failures do
+          let(:error_message) do
+            "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.set(invalid_key.to_s, changed_value) }
+              .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+          end
+        end
+
+        describe 'with an invalid Symbol', :aggregate_failures do
+          let(:error_message) do
+            "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.set(invalid_key.to_sym, changed_value) }
+              .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+          end
+        end
+
+        describe 'with an valid String', :aggregate_failures do
+          let(:error_message) do
+            "unable to change immutable value for #{provider.class} with key " \
+              "#{valid_key.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.set(valid_key.to_s, changed_value) }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with a valid Symbol', :aggregate_failures do
+          let(:error_message) do
+            "unable to change immutable value for #{provider.class} with key " \
+              "#{valid_key.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.set(valid_key.to_sym, changed_value) }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        next unless has_options
+
+        context 'when initialized with read_only: false' do
+          let(:options) { super().merge(read_only: false) }
+
+          it { expect(provider.read_only?).to be false }
+
+          describe 'with an valid String', :aggregate_failures do
+            it 'should update the value' do
+              expect { provider.set(valid_key.to_s, changed_value) }.to(
+                change { provider.get(valid_key) }.to(be == changed_value)
+              )
+            end
+          end
+
+          describe 'with an valid Symbol', :aggregate_failures do
+            it 'should update the value' do
+              expect { provider.set(valid_key.to_sym, changed_value) }.to(
+                change { provider.get(valid_key) }.to(be == changed_value)
+              )
+            end
+          end
+        end
       end
     end
   end

@@ -11,6 +11,7 @@ RSpec.describe Plumbum::Providers::Singular do
   let(:described_class) { Spec::Provider }
   let(:key)             { 'option' }
   let(:value)           { 'value' }
+  let(:valid_key)       { key }
   let(:valid_pairs)     { { key => value } }
 
   example_class 'Spec::Provider' do |klass|
@@ -22,61 +23,14 @@ RSpec.describe Plumbum::Providers::Singular do
     end
   end
 
-  include_deferred 'should implement the Provider interface'
+  include_deferred 'should implement the Provider interface',
+    has_options: false
+
+  include_deferred 'should implement the singular Provider interface',
+    has_options: false
 
   describe '#key' do
     include_examples 'should define reader', :key, -> { key }
-  end
-
-  describe '#set' do
-    let(:invalid_key) { :invalid }
-    let(:value)       { Object.new.freeze }
-
-    describe 'with an invalid String', :aggregate_failures do
-      let(:error_message) do
-        "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
-      end
-
-      it 'should raise an exception' do
-        expect { provider.set(invalid_key.to_s, value) }
-          .to raise_error Plumbum::Errors::InvalidKeyError, error_message
-      end
-    end
-
-    describe 'with an invalid Symbol', :aggregate_failures do
-      let(:error_message) do
-        "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
-      end
-
-      it 'should raise an exception' do
-        expect { provider.set(invalid_key.to_sym, value) }
-          .to raise_error Plumbum::Errors::InvalidKeyError, error_message
-      end
-    end
-
-    describe 'with an valid String', :aggregate_failures do
-      let(:error_message) do
-        "unable to change immutable value for #{provider.class} with key " \
-          "#{key.to_s.inspect}"
-      end
-
-      it 'should raise an exception' do
-        expect { provider.set('option', value) }
-          .to raise_error Plumbum::Errors::ImmutableError, error_message
-      end
-    end
-
-    describe 'with a valid Symbol', :aggregate_failures do
-      let(:error_message) do
-        "unable to change immutable value for #{provider.class} with key " \
-          "#{key.to_s.inspect}"
-      end
-
-      it 'should raise an exception' do
-        expect { provider.set(:option, value) }
-          .to raise_error Plumbum::Errors::ImmutableError, error_message
-      end
-    end
   end
 
   describe '#value' do

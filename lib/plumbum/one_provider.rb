@@ -30,10 +30,17 @@ module Plumbum
     # @return [String, Symbol] the key used to identify the provided value.
     attr_reader :key
 
-    # param [Object, nil] the provided value, or nil if the value is not
+    # @return [Object, nil] the provided value, or nil if the value is not
     #   defined.
     def value
       @value == UNDEFINED ? nil : @value
+    end
+
+    # @param [Object] the changed value.
+    def value=(value)
+      require_mutable(key)
+
+      set_value(key, value)
     end
 
     private

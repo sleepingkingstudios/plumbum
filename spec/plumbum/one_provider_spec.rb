@@ -21,6 +21,7 @@ RSpec.describe Plumbum::OneProvider do
   let(:key)         { 'option' }
   let(:options)     { {} }
   let(:keywords)    { options }
+  let(:valid_key)   { key }
   let(:valid_pairs) { {} }
 
   describe '.new' do
@@ -79,6 +80,79 @@ RSpec.describe Plumbum::OneProvider do
     end
   end
 
+  describe '#set' do
+    let(:invalid_key)   { defined?(super()) ? super() : :invalid }
+    let(:changed_value) { Object.new.freeze }
+
+    describe 'with an invalid String', :aggregate_failures do
+      let(:error_message) do
+        "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.set(invalid_key.to_s, changed_value) }
+          .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+      end
+    end
+
+    describe 'with an invalid Symbol', :aggregate_failures do
+      let(:error_message) do
+        "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.set(invalid_key.to_sym, changed_value) }
+          .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+      end
+    end
+
+    describe 'with an valid String', :aggregate_failures do
+      let(:error_message) do
+        "unable to change immutable value for #{provider.class} with key " \
+          "#{valid_key.to_s.inspect}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.set(valid_key.to_s, changed_value) }
+          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      end
+    end
+
+    describe 'with a valid Symbol', :aggregate_failures do
+      let(:error_message) do
+        "unable to change immutable value for #{provider.class} with key " \
+          "#{valid_key.to_s.inspect}"
+      end
+
+      it 'should raise an exception' do
+        expect { provider.set(valid_key.to_sym, changed_value) }
+          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      end
+    end
+
+    context 'when initialized with read_only: false' do
+      let(:options) { super().merge(read_only: false) }
+
+      it { expect(provider.read_only?).to be false }
+
+      describe 'with an valid String', :aggregate_failures do
+        it 'should update the value' do
+          expect { provider.set(valid_key.to_s, changed_value) }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+
+      describe 'with an valid Symbol', :aggregate_failures do
+        it 'should update the value' do
+          expect { provider.set(valid_key.to_sym, changed_value) }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+    end
+  end
+
   describe '#value' do
     include_examples 'should define reader', :value, nil
 
@@ -91,15 +165,46 @@ RSpec.describe Plumbum::OneProvider do
     end
   end
 
+  describe '#value=' do
+    let(:changed_value) { Object.new.freeze }
+    let(:error_message) do
+      "unable to change immutable value for #{provider.class} with key " \
+        "#{provider.key.inspect}"
+    end
+
+    include_examples 'should define writer', :value=
+
+    it 'should raise an exception' do
+      expect { provider.value = changed_value }
+        .to raise_error Plumbum::Errors::ImmutableError, error_message
+    end
+
+    context 'when initialized with read_only: false' do
+      let(:options) { super().merge(read_only: false) }
+
+      it { expect(provider.value = changed_value).to be == changed_value }
+
+      it 'should update the value' do
+        expect { provider.value = changed_value }.to(
+          change { provider.get(valid_key) }.to(be == changed_value)
+        )
+      end
+    end
+  end
+
   wrap_deferred 'when initialized with value: nil' do
     let(:valid_pairs) { { key => nil } }
 
     include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the singular Provider interface'
   end
 
   wrap_deferred 'when initialized with a value' do
     let(:valid_pairs) { { key => value } }
 
     include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the singular Provider interface'
   end
 end

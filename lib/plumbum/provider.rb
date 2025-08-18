@@ -70,6 +70,12 @@ module Plumbum
       @options ||= {}
     end
 
+    # @return [true, false] if true, indicates the provider is read only, and an
+    #   exception will be raised when attempting to set or change its value(s).
+    def read_only?
+      options.fetch(:read_only, true)
+    end
+
     private
 
     def get_value(_key) = nil
@@ -78,7 +84,7 @@ module Plumbum
 
     def set_value(_key, _value) = nil
 
-    def mutable?(_key) = false
+    def mutable?(_key) = !read_only?
 
     def normalize_key(key)
       tools.assertions.validate_name(key, as: :key)

@@ -10,7 +10,7 @@ RSpec.describe Plumbum::Provider do
 
   let(:valid_pairs) { {} }
 
-  include_deferred 'should implement the Provider interface'
+  include_deferred 'should implement the Provider interface', has_options: false
 
   describe '#options' do
     it { expect(provider.options).to be == {} }
