@@ -58,6 +58,10 @@ module Plumbum
     # @raise [Plumbum::Errors::ImmutableError] when attempting to assign a value
     #   to an immutable provider.
     def set(key, value)
+      if frozen?
+        raise FrozenError, "can't modify frozen #{self.class}: #{inspect}"
+      end
+
       key
         .then { |obj| normalize_key(obj) }
         .tap  { |key| validate_key(key) }

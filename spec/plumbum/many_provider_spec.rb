@@ -484,6 +484,19 @@ RSpec.describe Plumbum::ManyProvider do
         end
       end
       # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+      context 'when the provider is frozen' do
+        let(:error_message) do
+          "can't modify frozen #{described_class}: #{provider.inspect}"
+        end
+
+        before(:example) { provider.freeze }
+
+        it 'should raise an exception' do
+          expect { provider.values = {} }
+            .to raise_error FrozenError, error_message
+        end
+      end
     end
   end
 

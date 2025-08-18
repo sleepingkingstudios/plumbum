@@ -357,6 +357,46 @@ module Plumbum::RSpec::Deferred
               end
             end
           end
+
+          context 'when the provider is frozen' do
+            let(:error_message) do
+              "can't modify frozen #{described_class}: #{provider.inspect}"
+            end
+
+            before(:example) { provider.freeze }
+
+            describe 'with an invalid String', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(invalid_key.to_s, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
+            end
+
+            describe 'with an invalid Symbol', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(invalid_key.to_sym, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
+            end
+
+            describe 'with an valid String', :aggregate_failures do
+              it 'should raise an exception' do
+                valid_keys.each do |valid_key|
+                  expect { provider.set(valid_key.to_s, changed_value) }
+                    .to raise_error FrozenError, error_message
+                end
+              end
+            end
+
+            describe 'with an valid Symbol', :aggregate_failures do
+              it 'should raise an exception' do
+                valid_keys.each do |valid_key|
+                  expect { provider.set(valid_key.to_sym, changed_value) }
+                    .to raise_error FrozenError, error_message
+                end
+              end
+            end
+          end
         end
       end
     end
@@ -467,6 +507,42 @@ module Plumbum::RSpec::Deferred
               expect { provider.set(valid_key.to_sym, changed_value) }.to(
                 change { provider.get(valid_key) }.to(be == changed_value)
               )
+            end
+          end
+
+          context 'when the provider is frozen' do
+            let(:error_message) do
+              "can't modify frozen #{described_class}: #{provider.inspect}"
+            end
+
+            before(:example) { provider.freeze }
+
+            describe 'with an invalid String', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(invalid_key.to_s, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
+            end
+
+            describe 'with an invalid Symbol', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(invalid_key.to_sym, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
+            end
+
+            describe 'with a valid String', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(valid_key.to_s, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
+            end
+
+            describe 'with a valid Symbol', :aggregate_failures do
+              it 'should raise an exception' do
+                expect { provider.set(valid_key.to_sym, changed_value) }
+                  .to raise_error FrozenError, error_message
+              end
             end
           end
         end
