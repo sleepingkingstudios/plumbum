@@ -30,10 +30,6 @@ RSpec.describe Plumbum::OneProvider do
   let(:valid_pairs) { {} }
 
   describe '.new' do
-    define_method :call_method do |key|
-      described_class.new(key)
-    end
-
     it 'should define the constructor' do
       expect(described_class)
         .to be_constructible
@@ -42,7 +38,17 @@ RSpec.describe Plumbum::OneProvider do
         .and_any_keywords
     end
 
-    include_deferred 'should validate the key'
+    wrap_deferred 'should validate the key' do # rubocop:disable RSpec/EmptyExampleGroup
+      define_method :call_method do |key|
+        described_class.new(key)
+      end
+    end
+
+    wrap_deferred 'should validate the options' do # rubocop:disable RSpec/EmptyExampleGroup
+      define_method :call_method do |options|
+        described_class.new('key', **options)
+      end
+    end
   end
 
   include_deferred 'should implement the Provider interface'
@@ -148,7 +154,47 @@ RSpec.describe Plumbum::OneProvider do
     context 'when initialized with read_only: false' do
       let(:options) { super().merge(read_only: false) }
 
-      it { expect(provider.read_only?).to be false }
+      describe 'with an valid String', :aggregate_failures do
+        it 'should update the value' do
+          expect { provider.set(valid_key.to_s, changed_value) }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+
+      describe 'with an valid Symbol', :aggregate_failures do
+        it 'should update the value' do
+          expect { provider.set(valid_key.to_sym, changed_value) }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+    end
+
+    context 'when initialized with write_once: true' do
+      let(:options) { super().merge(write_once: true) }
+
+      describe 'with an invalid String', :aggregate_failures do
+        let(:error_message) do
+          "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+        end
+
+        it 'should raise an exception' do
+          expect { provider.set(invalid_key.to_s, changed_value) }
+            .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+        end
+      end
+
+      describe 'with an invalid Symbol', :aggregate_failures do
+        let(:error_message) do
+          "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+        end
+
+        it 'should raise an exception' do
+          expect { provider.set(invalid_key.to_sym, changed_value) }
+            .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+        end
+      end
 
       describe 'with an valid String', :aggregate_failures do
         it 'should update the value' do
@@ -256,6 +302,57 @@ RSpec.describe Plumbum::OneProvider do
         end
       end
     end
+
+    context 'when initialized with write_once: true' do
+      let(:options) { super().merge(write_once: true) }
+
+      it { expect(provider.value = changed_value).to be == changed_value }
+
+      it 'should update the value' do
+        expect { provider.value = changed_value }.to(
+          change { provider.get(valid_key) }.to(be == changed_value)
+        )
+      end
+
+      wrap_deferred 'when initialized with value: UNDEFINED' do
+        it { expect(provider.value = changed_value).to be == changed_value }
+
+        it 'should update the value' do
+          expect { provider.value = changed_value }.to(
+            change { provider.get(valid_key) }.to(be == changed_value)
+          )
+        end
+      end
+
+      # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with value: nil' do
+        it 'should raise an exception' do
+          expect { provider.value = changed_value }
+            .to raise_error Plumbum::Errors::ImmutableError, error_message
+        end
+      end
+
+      wrap_deferred 'when initialized with a value' do
+        it 'should raise an exception' do
+          expect { provider.value = changed_value }
+            .to raise_error Plumbum::Errors::ImmutableError, error_message
+        end
+      end
+      # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+      context 'when the provider is frozen' do
+        let(:error_message) do
+          "can't modify frozen #{described_class}: #{provider.inspect}"
+        end
+
+        before(:example) { provider.freeze }
+
+        it 'should raise an exception' do
+          expect { provider.value = changed_value }
+            .to raise_error FrozenError, error_message
+        end
+      end
+    end
   end
 
   wrap_deferred 'when initialized with value: UNDEFINED' do
@@ -263,7 +360,8 @@ RSpec.describe Plumbum::OneProvider do
 
     include_deferred 'should implement the Provider interface'
 
-    include_deferred 'should implement the singular Provider interface'
+    include_deferred 'should implement the singular Provider interface',
+      mutable_value: true
   end
 
   wrap_deferred 'when initialized with value: nil' do

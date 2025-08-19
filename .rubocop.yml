@@ -71,6 +71,10 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Max: 5
 
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/integration/**/*
+
 Style/AccessorGrouping:
   Enabled: false
 

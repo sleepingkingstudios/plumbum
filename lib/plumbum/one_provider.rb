@@ -21,7 +21,7 @@ module Plumbum
 
       @key     = key.to_s
       @value   = value
-      @options = options
+      @options = validate_options(options)
     end
 
     # @return [String, Symbol] the key used to identify the provided value.

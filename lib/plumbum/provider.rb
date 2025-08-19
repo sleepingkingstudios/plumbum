@@ -80,15 +80,24 @@ module Plumbum
       options.fetch(:read_only, true)
     end
 
+    # @return [true, false] if true, indicates the provider permits overwriting
+    #   undefined values, and an exception will be raised when attemption to
+    #   set or change any other values.
+    def write_once?
+      options.fetch(:write_once, false)
+    end
+
     private
 
-    def get_value(_key) = nil
+    def get_value(key) = raw_value(key)
 
     def has_value?(_key) = false # rubocop:disable Naming/PredicatePrefix
 
-    def set_value(_key, _value) = nil
+    def mutable?(key)
+      return true if write_once? && raw_value(key) == Plumbum::UNDEFINED
 
-    def mutable?(_key) = !read_only?
+      !read_only?
+    end
 
     def normalize_key(key)
       tools.assertions.validate_name(key, as: :key)
@@ -98,6 +107,8 @@ module Plumbum
 
     def provider_name = respond_to?(:name) ? name : self.class.name
 
+    def raw_value(_key) = nil
+
     def require_mutable(key)
       return if mutable?(key)
 
@@ -105,6 +116,8 @@ module Plumbum
         "unable to change immutable value for #{provider_name} with key " \
         "#{key.inspect}"
     end
+
+    def set_value(_key, _value) = nil
 
     def tools = SleepingKingStudios::Tools::Toolbelt.instance
 
@@ -115,6 +128,14 @@ module Plumbum
 
       raise Plumbum::Errors::InvalidKeyError,
         "invalid key #{key.inspect} for #{provider_name}"
+    end
+
+    def validate_options(options)
+      if options.key?(:read_only) && options.key?(:write_once)
+        raise ArgumentError, 'incompatible options :read_only and :write_once'
+      end
+
+      options
     end
   end
 end
