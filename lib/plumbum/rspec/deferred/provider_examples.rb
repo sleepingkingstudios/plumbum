@@ -311,8 +311,10 @@ module Plumbum::RSpec::Deferred
     #
     # - #invalid_key: An example key that does not match the provider. The
     #   default value is :invalid.
+    # - #mutable_keys: The keys with mutable values. Defaults to the value of
+    #     #valid_keys.
     deferred_examples 'should implement the plural Provider interface' \
-    do |has_options: true|
+    do |has_options: true, mutable_values: false|
       include RSpec::SleepingKingStudios::Deferred::Dependencies
 
       depends_on :valid_keys, 'the valid keys configured for the provider'
@@ -371,6 +373,34 @@ module Plumbum::RSpec::Deferred
           end
         end
 
+        if mutable_values
+          describe 'with a String for an mutable key' do
+            let(:mutable_key) { mutable_keys.first }
+            let(:error_message) do
+              "unable to change immutable value for #{provider.class} with " \
+                "key #{mutable_key.to_s.inspect}"
+            end
+
+            it 'should raise an exception' do
+              expect { provider.set(mutable_key.to_s, changed_value) }
+                .to raise_error Plumbum::Errors::ImmutableError, error_message
+            end
+          end
+
+          describe 'with a Symbol for an mutable key' do
+            let(:mutable_key) { mutable_keys.first }
+            let(:error_message) do
+              "unable to change immutable value for #{provider.class} with " \
+                "key #{mutable_key.to_s.inspect}"
+            end
+
+            it 'should raise an exception' do
+              expect { provider.set(mutable_key.to_sym, changed_value) }
+                .to raise_error Plumbum::Errors::ImmutableError, error_message
+            end
+          end
+        end
+
         next unless has_options
 
         context 'when initialized with read_only: false' do
@@ -418,6 +448,28 @@ module Plumbum::RSpec::Deferred
             end
           end
 
+          if mutable_values
+            describe 'with a String for an mutable key' do
+              let(:mutable_key) { mutable_keys.first }
+
+              it 'should update the value' do
+                expect { provider.set(mutable_key.to_s, changed_value) }.to(
+                  change { provider.get(mutable_key) }.to(be == changed_value)
+                )
+              end
+            end
+
+            describe 'with a Symbol for an mutable key' do
+              let(:mutable_key) { mutable_keys.first }
+
+              it 'should update the value' do
+                expect { provider.set(mutable_key.to_sym, changed_value) }.to(
+                  change { provider.get(mutable_key) }.to(be == changed_value)
+                )
+              end
+            end
+          end
+
           context 'when the provider is frozen' do
             let(:error_message) do
               "can't modify frozen #{described_class}: #{provider.inspect}"
@@ -455,6 +507,81 @@ module Plumbum::RSpec::Deferred
                     .to raise_error FrozenError, error_message
                 end
               end
+            end
+          end
+        end
+
+        context 'when initialized with write_once: true' do
+          let(:options)       { super().merge(write_once: true) }
+          let(:mutable_keys)  { defined?(super()) ? super() : [] }
+          let(:mutable_key)   { mutable_keys.first }
+          let(:immutable_key) { (valid_keys - mutable_keys).first }
+
+          describe 'with an invalid String', :aggregate_failures do
+            let(:error_message) do
+              "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+            end
+
+            it 'should raise an exception' do
+              expect { provider.set(invalid_key.to_s, changed_value) }
+                .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+            end
+          end
+
+          describe 'with an invalid Symbol', :aggregate_failures do
+            let(:error_message) do
+              "invalid key #{invalid_key.to_s.inspect} for #{provider.class}"
+            end
+
+            it 'should raise an exception' do
+              expect { provider.set(invalid_key.to_sym, changed_value) }
+                .to raise_error Plumbum::Errors::InvalidKeyError, error_message
+            end
+          end
+
+          describe 'with a String for an immutable key' do
+            let(:error_message) do
+              "unable to change immutable value for #{provider.class} with " \
+                "key #{valid_keys.first.to_s.inspect}"
+            end
+
+            it 'should raise an exception' do
+              next if valid_keys.empty?
+
+              expect { provider.set(immutable_key.to_s, changed_value) }
+                .to raise_error Plumbum::Errors::ImmutableError, error_message
+            end
+          end
+
+          describe 'with a Symbol for an immutable key' do
+            let(:error_message) do
+              "unable to change immutable value for #{provider.class} with " \
+                "key #{valid_keys.first.to_s.inspect}"
+            end
+
+            it 'should raise an exception' do
+              next if valid_keys.empty?
+
+              expect { provider.set(immutable_key.to_sym, changed_value) }
+                .to raise_error Plumbum::Errors::ImmutableError, error_message
+            end
+          end
+
+          next unless mutable_values
+
+          describe 'with a String for an mutable key' do
+            it 'should update the value' do
+              expect { provider.set(mutable_key.to_s, changed_value) }.to(
+                change { provider.get(mutable_key) }.to(be == changed_value)
+              )
+            end
+          end
+
+          describe 'with a Symbol for an mutable key' do
+            it 'should update the value' do
+              expect { provider.set(mutable_key.to_sym, changed_value) }.to(
+                change { provider.get(mutable_key) }.to(be == changed_value)
+              )
             end
           end
         end

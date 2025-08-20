@@ -126,6 +126,8 @@ module Plumbum
     def validate_key(key)
       return if valid_key?(key)
 
+      return if raw_value(key) == Plumbum::UNDEFINED
+
       raise Plumbum::Errors::InvalidKeyError,
         "invalid key #{key.inspect} for #{provider_name}"
     end

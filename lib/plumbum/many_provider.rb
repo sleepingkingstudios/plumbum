@@ -21,7 +21,7 @@ module Plumbum
         @values = values.transform_keys(&:to_s)
       end
 
-      @options = options
+      @options = validate_options(options)
     end
 
     # (see Plumbum::Providers::Plural#values)

@@ -181,6 +181,12 @@ RSpec.describe Plumbum::ManyProvider do
           .to raise_error ArgumentError, error_message
       end
     end
+
+    wrap_deferred 'should validate the options' do # rubocop:disable RSpec/EmptyExampleGroup
+      define_method :call_method do |options|
+        described_class.new(**options)
+      end
+    end
   end
 
   describe '#options' do
@@ -454,6 +460,38 @@ RSpec.describe Plumbum::ManyProvider do
       end
 
       # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with values: UNDEFINED' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+      end
+
       wrap_deferred 'when initialized with values: an empty Hash' do
         describe 'with values: a Hash with String keys' do
           let(:changed_values) do
@@ -532,11 +570,178 @@ RSpec.describe Plumbum::ManyProvider do
         end
       end
     end
+
+    context 'when initialized with write_once: true' do
+      let(:options) { super().merge(write_once: true) }
+
+      describe 'with values: a Hash with String keys' do
+        let(:changed_values) do
+          {
+            'color' => 'red',
+            'shape' => 'circle'
+          }
+        end
+
+        it 'should update the values' do
+          expect { provider.values = changed_values }
+            .to change(provider, :values)
+            .to be == changed_values.transform_keys(&:to_s)
+        end
+      end
+
+      describe 'with values: a Hash with Symbol keys' do
+        let(:changed_values) do
+          {
+            color: 'red',
+            shape: 'circle'
+          }
+        end
+
+        it 'should update the values' do
+          expect { provider.values = changed_values }
+            .to change(provider, :values)
+            .to be == changed_values.transform_keys(&:to_s)
+        end
+      end
+
+      wrap_deferred 'when initialized with values: UNDEFINED' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+      end
+
+      # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with values: an empty Hash' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+      end
+
+      wrap_deferred 'when initialized with values: an non-empty Hash' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+      end
+      # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+      context 'when the provider is frozen' do
+        let(:error_message) do
+          "can't modify frozen #{described_class}: #{provider.inspect}"
+        end
+
+        before(:example) { provider.freeze }
+
+        it 'should raise an exception' do
+          expect { provider.values = {} }
+            .to raise_error FrozenError, error_message
+        end
+      end
+    end
+  end
+
+  # rubocop:disable RSpec/RepeatedExampleGroupBody
+  wrap_deferred 'when initialized with values: UNDEFINED' do
+    include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the plural Provider interface'
   end
 
   wrap_deferred 'when initialized with values: an empty Hash' do
     include_deferred 'should implement the Provider interface'
+
+    include_deferred 'should implement the plural Provider interface'
   end
+  # rubocop:enable RSpec/RepeatedExampleGroupBody
 
   wrap_deferred 'when initialized with values: an non-empty Hash' do
     let(:valid_keys)  { values.keys }
@@ -548,12 +753,17 @@ RSpec.describe Plumbum::ManyProvider do
   end
 
   wrap_deferred 'when initialized with values: Hash with UNDEFINED values' do
-    let(:invalid_key) { 'color' }
     let(:valid_keys)  { valid_pairs.keys }
     let(:valid_pairs) { values.except('color') }
+    let(:mutable_keys) do
+      values
+        .select { |_, value| value == Plumbum::UNDEFINED }
+        .keys
+    end
 
     include_deferred 'should implement the Provider interface'
 
-    include_deferred 'should implement the plural Provider interface'
+    include_deferred 'should implement the plural Provider interface',
+      mutable_values: true
   end
 end

@@ -16,6 +16,14 @@ module Plumbum::Providers
 
     def has_value?(key) = values.key?(key) # rubocop:disable Naming/PredicatePrefix
 
+    def mutable?(key)
+      return true if write_once? && @values == Plumbum::UNDEFINED
+
+      super
+    end
+
+    def raw_value(key) = values[key]
+
     def set_value(key, value)
       @values[key.to_s] = value
     end
