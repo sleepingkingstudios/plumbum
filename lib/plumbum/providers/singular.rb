@@ -15,9 +15,11 @@ module Plumbum::Providers
 
     private
 
-    def get_value(key) = key == self.key ? value : nil
-
     def has_value?(key) = key == self.key # rubocop:disable Naming/PredicatePrefix
+
+    def raw_value(key) = key == self.key ? @value : nil
+
+    def set_value(key, value) = key == self.key ? @value = value : nil
 
     def valid_key?(key) = key == self.key
   end

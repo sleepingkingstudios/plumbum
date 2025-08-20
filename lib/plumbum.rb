@@ -10,6 +10,9 @@ module Plumbum
   autoload :Provider,     'plumbum/provider'
   autoload :Providers,    'plumbum/providers'
 
+  # Object representing an undefined or uninitialized value.
+  UNDEFINED = Object.new.freeze
+
   class << self
     # @return [String] the current version of the gem.
     def version
