@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sleeping_king_studios/tools'
+
 require 'plumbum'
 require 'plumbum/errors/immutable_error'
 require 'plumbum/errors/invalid_key_error'

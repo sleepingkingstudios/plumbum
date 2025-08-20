@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sleeping_king_studios/tools'
+
 require 'plumbum/consumers'
 
 module Plumbum::Consumers
@@ -19,7 +21,8 @@ module Plumbum::Consumers
     def get_plumbum_dependency(key, optional: false)
       SleepingKingStudios::Tools::Toolbelt
         .instance
-        .assertions.validate_name(key, as: :key)
+        .assertions
+        .validate_name(key, as: :key)
 
       find_plumbum_dependency(key) do
         handle_missing_plumbum_dependency(key, optional:)
@@ -36,7 +39,8 @@ module Plumbum::Consumers
     def has_plumbum_dependency?(key) # rubocop:disable Naming/PredicatePrefix
       SleepingKingStudios::Tools::Toolbelt
         .instance
-        .assertions.validate_name(key, as: :key)
+        .assertions
+        .validate_name(key, as: :key)
 
       find_plumbum_dependency(key) { return false }
 
