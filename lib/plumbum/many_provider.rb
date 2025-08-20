@@ -51,12 +51,10 @@ module Plumbum
     def has_value?(key) = super && @values[key] != Plumbum::UNDEFINED # rubocop:disable Naming/PredicatePrefix
 
     def validate_values(values)
-      assertions = SleepingKingStudios::Tools::Toolbelt.instance.assertions
-
-      assertions.validate_instance_of(values, as: :values, expected: Hash)
+      tools.assertions.validate_instance_of(values, as: :values, expected: Hash)
 
       values.each_key.with_index do |key, index|
-        assertions.validate_name(key, as: :"values.keys[#{index}]")
+        tools.assertions.validate_name(key, as: :"values.keys[#{index}]")
       end
     end
   end

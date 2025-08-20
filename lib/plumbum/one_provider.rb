@@ -14,8 +14,7 @@ module Plumbum
     def initialize(key, value: Plumbum::UNDEFINED, **options)
       super()
 
-      SleepingKingStudios::Tools::Toolbelt
-        .instance
+      tools
         .assertions
         .validate_name(key, as: :key)
 
