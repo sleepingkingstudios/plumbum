@@ -7,6 +7,7 @@ module Plumbum
   autoload :Errors,       'plumbum/errors'
   autoload :ManyProvider, 'plumbum/many_provider'
   autoload :OneProvider,  'plumbum/one_provider'
+  autoload :Parameters,   'plumbum/parameters'
   autoload :Provider,     'plumbum/provider'
   autoload :Providers,    'plumbum/providers'
 

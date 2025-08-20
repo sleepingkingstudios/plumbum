@@ -14,9 +14,9 @@ module Plumbum
     def initialize(*, **keywords, &)
       values, keywords = extract_plumbum_dependencies(keywords)
 
-      super
-
       @plumbum_parameters_provider = Plumbum::ManyProvider.new(values:)
+
+      super
     end
 
     private
