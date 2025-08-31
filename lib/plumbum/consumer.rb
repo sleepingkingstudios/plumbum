@@ -76,6 +76,16 @@ module Plumbum
       alias dependency_keys plumbum_dependency_keys
 
       alias provider plumbum_provider
+
+      # Callback invoked when Consumer is included in another module or class.
+      #
+      # This ensures that the Consumer methods propagate correctly across a
+      # chain of included modules.
+      def included(other)
+        super
+
+        other.extend(ClassMethods)
+      end
     end
 
     class << self

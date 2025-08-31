@@ -5,6 +5,14 @@ require 'plumbum'
 RSpec.describe Plumbum::Parameters do
   subject(:consumer) { described_class.new(**keywords) }
 
+  let(:described_class) { Spec::Consumer }
+  let(:keywords) do
+    {
+      injected:  'injected value',
+      parameter: 'parameter value'
+    }
+  end
+
   example_class 'Spec::Consumer' do |klass|
     klass.include Plumbum::Consumer
     klass.prepend Plumbum::Parameters # rubocop:disable RSpec/DescribedClass
@@ -25,14 +33,6 @@ RSpec.describe Plumbum::Parameters do
     klass.define_method(:validate_presence) do |value|
       raise "value can't be blank" if value.nil?
     end
-  end
-
-  let(:described_class) { Spec::Consumer }
-  let(:keywords) do
-    {
-      injected:  'injected value',
-      parameter: 'parameter value'
-    }
   end
 
   describe '.new' do
