@@ -65,7 +65,6 @@ module Plumbum
   #   action.request
   #   #=> returns the new request
   module Consumer
-    extend  SleepingKingStudios::Tools::Toolbox::Mixin
     include Plumbum::Consumers::InstanceMethods
 
     # Class methods to extend when including Plumbum::Consumer.
@@ -77,6 +76,15 @@ module Plumbum
       alias dependency_keys plumbum_dependency_keys
 
       alias provider plumbum_provider
+    end
+
+    class << self
+      # Callback invoked when Consumer is included in another module or class.
+      def included(other)
+        super
+
+        other.extend(ClassMethods)
+      end
     end
   end
 end
