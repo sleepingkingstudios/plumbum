@@ -181,7 +181,12 @@ module Plumbum::RSpec::Deferred
           subject.has?(key)
         end
 
-        it { expect(subject).to respond_to(:has?).with(1).argument }
+        it 'should define the method' do
+          expect(subject)
+            .to respond_to(:has?)
+            .with(1).argument
+            .and_keywords(:allow_undefined)
+        end
 
         include_deferred 'should validate the key'
 

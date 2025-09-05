@@ -25,17 +25,17 @@ RSpec.describe Plumbum::Provider do
     example_class 'Spec::Provider' do |klass|
       klass.include Plumbum::Provider # rubocop:disable RSpec/DescribedClass
 
-      klass.define_method :initialize do |**options|
+      klass.define_method :initialize do |value = 'value', **options|
         @options = options
-        @value   = 'value'
+        @value   = value
       end
 
       klass.define_method :get_value do |key|
         key == 'option' ? @value : nil # rubocop:disable RSpec/InstanceVariable
       end
 
-      klass.define_method :has_value? do |key|
-        key == 'option'
+      klass.define_method :has_value? do |key, allow_undefined: false|
+        key == 'option' && (allow_undefined || @value != Plumbum::UNDEFINED) # rubocop:disable RSpec/InstanceVariable
       end
 
       klass.define_method :valid_key? do |key|
@@ -44,6 +44,46 @@ RSpec.describe Plumbum::Provider do
     end
 
     include_deferred 'should implement the Provider interface'
+
+    describe '#has?' do
+      context 'when initialized with value: UNDEFINED' do
+        subject(:provider) { Spec::Provider.new(Plumbum::UNDEFINED, **options) }
+
+        # rubocop:disable RSpec/NestedGroups
+        describe 'with a valid String' do
+          it { expect(provider.has?('option')).to be false }
+
+          describe 'with allow_undefined: false' do
+            let(:allow_undefined) { false }
+
+            it { expect(provider.has?('option', allow_undefined:)).to be false }
+          end
+
+          describe 'with allow_undefined: true' do
+            let(:allow_undefined) { true }
+
+            it { expect(provider.has?('option', allow_undefined:)).to be true }
+          end
+        end
+
+        describe 'with a valid Symbol' do
+          it { expect(provider.has?(:option)).to be false }
+
+          describe 'with allow_undefined: false' do
+            let(:allow_undefined) { false }
+
+            it { expect(provider.has?(:option, allow_undefined:)).to be false }
+          end
+
+          describe 'with allow_undefined: true' do
+            let(:allow_undefined) { true }
+
+            it { expect(provider.has?(:option, allow_undefined:)).to be true }
+          end
+        end
+        # rubocop:enable RSpec/NestedGroups
+      end
+    end
 
     describe '#options' do
       it { expect(provider.options).to be == {} }

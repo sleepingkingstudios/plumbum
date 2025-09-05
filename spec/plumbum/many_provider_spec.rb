@@ -765,5 +765,43 @@ RSpec.describe Plumbum::ManyProvider do
 
     include_deferred 'should implement the plural Provider interface',
       mutable_values: true
+
+    describe '#has?' do
+      describe 'with a valid String' do
+        let(:key) { mutable_keys.first }
+
+        it { expect(provider.has?(key.to_s)).to be false }
+
+        describe 'with allow_undefined: false' do
+          let(:allow_undefined) { false }
+
+          it { expect(provider.has?(key.to_s, allow_undefined:)).to be false }
+        end
+
+        describe 'with allow_undefined: true' do
+          let(:allow_undefined) { true }
+
+          it { expect(provider.has?(key.to_s, allow_undefined:)).to be true }
+        end
+      end
+
+      describe 'with a valid Symbol' do
+        let(:key) { mutable_keys.first }
+
+        it { expect(provider.has?(key.to_sym)).to be false }
+
+        describe 'with allow_undefined: false' do
+          let(:allow_undefined) { false }
+
+          it { expect(provider.has?(key.to_sym, allow_undefined:)).to be false }
+        end
+
+        describe 'with allow_undefined: true' do
+          let(:allow_undefined) { true }
+
+          it { expect(provider.has?(key.to_sym, allow_undefined:)).to be true }
+        end
+      end
+    end
   end
 end
