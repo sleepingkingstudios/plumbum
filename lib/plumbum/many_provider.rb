@@ -48,7 +48,9 @@ module Plumbum
       value == Plumbum::UNDEFINED ? nil : value
     end
 
-    def has_value?(key) = super && @values[key] != Plumbum::UNDEFINED # rubocop:disable Naming/PredicatePrefix
+    def has_value?(key, allow_undefined: false) # rubocop:disable Naming/PredicatePrefix
+      super && (allow_undefined || @values[key] != Plumbum::UNDEFINED)
+    end
 
     def validate_values(values)
       tools.assertions.validate_instance_of(values, as: :values, expected: Hash)

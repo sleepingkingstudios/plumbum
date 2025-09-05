@@ -66,10 +66,34 @@ RSpec.describe Plumbum::OneProvider do
   describe '#has?' do
     describe 'with a valid String' do
       it { expect(provider.has?(key.to_s)).to be false }
+
+      describe 'with allow_undefined: false' do
+        let(:allow_undefined) { false }
+
+        it { expect(provider.has?(key.to_s, allow_undefined:)).to be false }
+      end
+
+      describe 'with allow_undefined: true' do
+        let(:allow_undefined) { true }
+
+        it { expect(provider.has?(key.to_s, allow_undefined:)).to be true }
+      end
     end
 
     describe 'with a valid Symbol' do
       it { expect(provider.has?(key.to_sym)).to be false }
+
+      describe 'with allow_undefined: false' do
+        let(:allow_undefined) { false }
+
+        it { expect(provider.has?(key.to_sym, allow_undefined:)).to be false }
+      end
+
+      describe 'with allow_undefined: true' do
+        let(:allow_undefined) { true }
+
+        it { expect(provider.has?(key.to_sym, allow_undefined:)).to be true }
+      end
     end
   end
 
@@ -362,6 +386,36 @@ RSpec.describe Plumbum::OneProvider do
 
     include_deferred 'should implement the singular Provider interface',
       mutable_value: true
+
+    describe '#has?' do
+      describe 'with a valid String' do
+        describe 'with allow_undefined: false' do
+          let(:allow_undefined) { false }
+
+          it { expect(provider.has?(key.to_s, allow_undefined:)).to be false }
+        end
+
+        describe 'with allow_undefined: true' do
+          let(:allow_undefined) { true }
+
+          it { expect(provider.has?(key.to_s, allow_undefined:)).to be true }
+        end
+      end
+
+      describe 'with a valid Symbol' do
+        describe 'with allow_undefined: false' do
+          let(:allow_undefined) { false }
+
+          it { expect(provider.has?(key.to_sym, allow_undefined:)).to be false }
+        end
+
+        describe 'with allow_undefined: true' do
+          let(:allow_undefined) { true }
+
+          it { expect(provider.has?(key.to_sym, allow_undefined:)).to be true }
+        end
+      end
+    end
   end
 
   wrap_deferred 'when initialized with value: nil' do

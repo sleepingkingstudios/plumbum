@@ -25,6 +25,8 @@ RSpec.describe Plumbum::OneProvider do
 
     it { expect(provider.has?('option')).to be false }
 
+    it { expect(provider.has?('option', allow_undefined: true)).to be true }
+
     context 'when initialized with a value' do
       let(:value)   { 'original value' }
       let(:options) { super().merge(value:) }

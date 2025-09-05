@@ -41,13 +41,15 @@ module Plumbum
     # Checks if the provider has a value for the given key.
     #
     # @param key [String, Symbol] the key for the requested value.
+    # @param allow_undefined [true, false] if true, returns true even if the key
+    #   exists but the value is undefined.
     #
     # @return [true, false] true if the provider has a value for the requested
     #   key, otherwise false.
-    def has?(key)
+    def has?(key, allow_undefined: false)
       key
         .then { |obj| normalize_key(obj) }
-        .then { |str| has_value?(str) } # rubocop:disable Style/PreferredHashMethods
+        .then { |str| has_value?(str, allow_undefined:) }
     end
 
     # Sets the value for the given key.
@@ -93,7 +95,7 @@ module Plumbum
 
     def get_value(key) = raw_value(key)
 
-    def has_value?(_key) = false # rubocop:disable Naming/PredicatePrefix
+    def has_value?(_key, **) = false # rubocop:disable Naming/PredicatePrefix
 
     def mutable?(key)
       return true if write_once? && raw_value(key) == Plumbum::UNDEFINED

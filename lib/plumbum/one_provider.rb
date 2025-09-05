@@ -47,8 +47,8 @@ module Plumbum
       super
     end
 
-    def has_value?(key) # rubocop:disable Naming/PredicatePrefix
-      return false if @value == Plumbum::UNDEFINED
+    def has_value?(key, allow_undefined: false) # rubocop:disable Naming/PredicatePrefix
+      return false if !allow_undefined && @value == Plumbum::UNDEFINED
 
       super
     end
