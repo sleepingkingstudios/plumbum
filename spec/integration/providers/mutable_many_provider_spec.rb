@@ -34,12 +34,16 @@ RSpec.describe Plumbum::ManyProvider do
 
     it { expect(provider.has?('hidden')).to be false }
 
+    it { expect(provider.has?('hidden', allow_undefined: true)).to be false }
+
     it { expect(provider.has?('option')).to be false }
 
     context 'when initialized with values' do
       let(:options) { super().merge(values:) }
 
       it { expect(provider.has?('hidden')).to be false }
+
+      it { expect(provider.has?('hidden', allow_undefined: true)).to be true }
 
       it { expect(provider.has?('option')).to be true }
     end
