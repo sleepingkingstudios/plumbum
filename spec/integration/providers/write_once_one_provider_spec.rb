@@ -3,13 +3,9 @@
 require 'plumbum'
 
 RSpec.describe Plumbum::OneProvider do
-  subject(:provider) { Spec::LazyOneProvider.new('option', **options) }
+  subject(:provider) { described_class.new('option', **options) }
 
-  let(:options) { {} }
-
-  example_class 'Spec::LazyOneProvider', described_class do |klass|
-    klass.include Plumbum::Providers::Lazy
-  end
+  let(:options) { { write_once: true } }
 
   describe '#get' do
     it { expect(provider.get('invalid')).to be nil }
@@ -21,13 +17,6 @@ RSpec.describe Plumbum::OneProvider do
       let(:options) { super().merge(value:) }
 
       it { expect(provider.get('option')).to be == value }
-    end
-
-    context 'when initialized with a Proc' do
-      let(:value)   { -> { 'original value' } }
-      let(:options) { super().merge(value:) }
-
-      it { expect(provider.get('option')).to be == value.call }
     end
   end
 
@@ -44,13 +33,6 @@ RSpec.describe Plumbum::OneProvider do
 
       it { expect(provider.has?('option')).to be true }
     end
-
-    context 'when initialized with a Proc' do
-      let(:value)   { -> { 'original value' } }
-      let(:options) { super().merge(value:) }
-
-      it { expect(provider.has?('option')).to be true }
-    end
   end
 
   describe '#key' do
@@ -62,7 +44,7 @@ RSpec.describe Plumbum::OneProvider do
 
     describe 'with an invalid key' do
       let(:error_message) do
-        'invalid key "invalid" for Spec::LazyOneProvider'
+        'invalid key "invalid" for Plumbum::OneProvider'
       end
 
       it 'should raise an exception' do
@@ -72,14 +54,10 @@ RSpec.describe Plumbum::OneProvider do
     end
 
     describe 'with a valid key' do
-      let(:error_message) do
-        'unable to change immutable value for Spec::LazyOneProvider with key ' \
-          '"option"'
-      end
-
-      it 'should raise an exception' do
-        expect { provider.set('option', changed_value) }
-          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      it 'should update the value' do
+        expect { provider.set('option', changed_value) }.to(
+          change { provider.get('option') }.to(be == changed_value)
+        )
       end
     end
 
@@ -89,7 +67,7 @@ RSpec.describe Plumbum::OneProvider do
 
       describe 'with an invalid key' do
         let(:error_message) do
-          'invalid key "invalid" for Spec::LazyOneProvider'
+          'invalid key "invalid" for Plumbum::OneProvider'
         end
 
         it 'should raise an exception' do
@@ -100,7 +78,7 @@ RSpec.describe Plumbum::OneProvider do
 
       describe 'with a valid key' do
         let(:error_message) do
-          'unable to change immutable value for Spec::LazyOneProvider with ' \
+          'unable to change immutable value for Plumbum::OneProvider with ' \
             'key "option"'
         end
 
@@ -121,40 +99,24 @@ RSpec.describe Plumbum::OneProvider do
 
       it { expect(provider.value).to be == value }
     end
-
-    context 'when initialized with a Proc' do
-      let(:value)   { -> { 'original value' } }
-      let(:options) { super().merge(value:) }
-
-      it { expect(provider.value).to be == value }
-    end
   end
 
   describe '#value=' do
     let(:changed_value) { 'changed value' }
-    let(:error_message) do
-      'unable to change immutable value for Spec::LazyOneProvider with ' \
-        'key "option"'
-    end
 
-    it 'should raise an exception' do
-      expect { provider.value = changed_value }
-        .to raise_error Plumbum::Errors::ImmutableError, error_message
+    it 'should update the value' do
+      expect { provider.value = changed_value }.to(
+        change { provider.get('option') }.to(be == changed_value)
+      )
     end
 
     context 'when initialized with a value' do
       let(:value)   { 'original value' }
       let(:options) { super().merge(value:) }
-
-      it 'should raise an exception' do
-        expect { provider.value = changed_value }
-          .to raise_error Plumbum::Errors::ImmutableError, error_message
+      let(:error_message) do
+        'unable to change immutable value for Plumbum::OneProvider with ' \
+          'key "option"'
       end
-    end
-
-    context 'when initialized with a Proc' do
-      let(:value)   { -> { 'original value' } }
-      let(:options) { super().merge(value:) }
 
       it 'should raise an exception' do
         expect { provider.value = changed_value }
