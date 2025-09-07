@@ -3,18 +3,14 @@
 require 'plumbum'
 
 RSpec.describe Plumbum::ManyProvider do
-  subject(:provider) { Spec::LazyManyProvider.new(**options) }
+  subject(:provider) { described_class.new(**options) }
 
-  let(:options) { {} }
+  let(:options) { { write_once: true } }
   let(:values) do
     {
       'option' => 'original value',
       'hidden' => Plumbum::UNDEFINED
     }
-  end
-
-  example_class 'Spec::LazyManyProvider', described_class do |klass|
-    klass.include Plumbum::Providers::Lazy
   end
 
   describe '#get' do
@@ -30,17 +26,6 @@ RSpec.describe Plumbum::ManyProvider do
       it { expect(provider.get('hidden')).to be nil }
 
       it { expect(provider.get('option')).to be == values['option'] }
-    end
-
-    context 'when initialized with values including Procs' do
-      let(:options) { super().merge(values:) }
-      let(:values)  { super().merge('lazy' => -> { 'lazy value' }) }
-
-      it { expect(provider.get('hidden')).to be nil }
-
-      it { expect(provider.get('option')).to be == values['option'] }
-
-      it { expect(provider.get('lazy')).to be == values['lazy'].call }
     end
   end
 
@@ -62,19 +47,6 @@ RSpec.describe Plumbum::ManyProvider do
 
       it { expect(provider.has?('option')).to be true }
     end
-
-    context 'when initialized with values including Procs' do
-      let(:options) { super().merge(values:) }
-      let(:values)  { super().merge('lazy' => -> { 'lazy value' }) }
-
-      it { expect(provider.has?('hidden')).to be false }
-
-      it { expect(provider.has?('hidden', allow_undefined: true)).to be true }
-
-      it { expect(provider.has?('option')).to be true }
-
-      it { expect(provider.has?('lazy')).to be true }
-    end
   end
 
   describe '#set' do
@@ -82,7 +54,7 @@ RSpec.describe Plumbum::ManyProvider do
 
     describe 'with an invalid key' do
       let(:error_message) do
-        'invalid key "invalid" for Spec::LazyManyProvider'
+        'invalid key "invalid" for Plumbum::ManyProvider'
       end
 
       it 'should raise an exception' do
@@ -93,7 +65,7 @@ RSpec.describe Plumbum::ManyProvider do
 
     describe 'with an uninitialized key' do
       let(:error_message) do
-        'invalid key "hidden" for Spec::LazyManyProvider'
+        'invalid key "hidden" for Plumbum::ManyProvider'
       end
 
       it 'should raise an exception' do
@@ -107,7 +79,7 @@ RSpec.describe Plumbum::ManyProvider do
 
       describe 'with an invalid key' do
         let(:error_message) do
-          'invalid key "invalid" for Spec::LazyManyProvider'
+          'invalid key "invalid" for Plumbum::ManyProvider'
         end
 
         it 'should raise an exception' do
@@ -117,20 +89,16 @@ RSpec.describe Plumbum::ManyProvider do
       end
 
       describe 'with an uninitialized key' do
-        let(:error_message) do
-          'unable to change immutable value for Spec::LazyManyProvider with ' \
-            'key "hidden"'
-        end
-
-        it 'should raise an exception' do
-          expect { provider.set('hidden', changed_value) }
-            .to raise_error Plumbum::Errors::ImmutableError, error_message
+        it 'should update the value' do
+          expect { provider.set('hidden', changed_value) }.to(
+            change { provider.get('hidden') }.to(be == changed_value)
+          )
         end
       end
 
       describe 'with a valid key' do
         let(:error_message) do
-          'unable to change immutable value for Spec::LazyManyProvider with ' \
+          'unable to change immutable value for Plumbum::ManyProvider with ' \
             'key "option"'
         end
 
@@ -155,29 +123,23 @@ RSpec.describe Plumbum::ManyProvider do
 
       it { expect(provider.values).to be == values }
     end
-
-    context 'when initialized with values including Procs' do
-      let(:options) { super().merge(values:) }
-      let(:values)  { super().merge('lazy' => -> { 'lazy value' }) }
-
-      it { expect(provider.values).to be == values }
-    end
   end
 
   describe '#values=' do
     let(:changed_value) { { 'option' => 'changed value' } }
-    let(:error_message) do
-      'unable to change immutable value for Spec::LazyManyProvider with ' \
-        'key "option"'
-    end
 
-    it 'should raise an exception' do
-      expect { provider.values = changed_value }
-        .to raise_error Plumbum::Errors::ImmutableError, error_message
+    it 'should update the values' do
+      expect { provider.values = changed_value }.to(
+        change(provider, :values).to(be == changed_value)
+      )
     end
 
     context 'when initialized with values' do
       let(:options) { super().merge(values:) }
+      let(:error_message) do
+        'unable to change immutable value for Plumbum::ManyProvider with ' \
+          'key "option"'
+      end
 
       it 'should raise an exception' do
         expect { provider.values = changed_value }
