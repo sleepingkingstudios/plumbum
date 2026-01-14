@@ -86,7 +86,7 @@ module Plumbum::Consumers
     #   @param keys [Array<String, Symbol>] the keys for the dependency. A new
     #     dependency will be defined for each key using the same options.
     #   @param as [String, Symbol] the method name used to define dependency
-    #     methods. Defaults to the key.
+    #     methods. Defaults to the key. Cannot be used with multiple keys.
     #   @param memoize [true, false] if true, memoizes the value of the
     #     dependency the first time it is successfully called. Defaults to true.
     #   @param optional [true, false] if true, calling the dependency returns
@@ -107,6 +107,10 @@ module Plumbum::Consumers
       optional:  false,
       predicate: false
     )
+      if keys.size > 1 && as
+        raise ArgumentError, 'invalid option :as when providing multiple keys'
+      end
+
       scoped_keys = keys.map do |key|
         define_plumbum_dependency(key, as:, memoize:, optional:, predicate:)
       end

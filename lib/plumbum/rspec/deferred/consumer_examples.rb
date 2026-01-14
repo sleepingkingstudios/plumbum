@@ -100,7 +100,7 @@ module Plumbum::RSpec::Deferred
     deferred_examples 'should implement the Consumer class methods' do
       describe '.plumbum_dependency' do
         deferred_examples 'should define dependency' \
-        do |dependency_name, to: nil|
+        do |dependency_name, allow_as: true, to: nil|
           let(:expected_key) { (to || dependency_name).to_s.split('.').first }
           let(:reader_name)  { dependency_name.to_sym }
 
@@ -118,114 +118,116 @@ module Plumbum::RSpec::Deferred
             expect(subject).to respond_to(reader_name).with(0).arguments
           end
 
-          describe 'with as: nil' do
-            let(:options) { super().merge(as: nil) }
+          if allow_as
+            describe 'with as: nil' do
+              let(:options) { super().merge(as: nil) }
 
-            it 'should add the key to the dependency keys' do
-              expect { define_dependencies }.to(
-                change { dependency_keys }.to(include(expected_key))
-              )
-            end
-
-            it 'should define the reader method', :aggregate_failures do
-              expect(subject).not_to respond_to(reader_name)
-
-              define_dependencies
-
-              expect(subject).to respond_to(reader_name).with(0).arguments
-            end
-          end
-
-          describe 'with as: an Object' do
-            let(:options) { super().merge(as: Object.new.freeze) }
-            let(:error_message) do
-              tools
-                .assertions
-                .error_message_for(
-                  'sleeping_king_studios.tools.assertions.name',
-                  as: :as
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }.to(
+                  change { dependency_keys }.to(include(expected_key))
                 )
+              end
+
+              it 'should define the reader method', :aggregate_failures do
+                expect(subject).not_to respond_to(reader_name)
+
+                define_dependencies
+
+                expect(subject).to respond_to(reader_name).with(0).arguments
+              end
             end
 
-            it 'should raise an exception' do
-              expect { define_dependencies }
-                .to raise_error ArgumentError, error_message
-            end
-          end
+            describe 'with as: an Object' do
+              let(:options) { super().merge(as: Object.new.freeze) }
+              let(:error_message) do
+                tools
+                  .assertions
+                  .error_message_for(
+                    'sleeping_king_studios.tools.assertions.name',
+                    as: :as
+                  )
+              end
 
-          describe 'with as: an empty String' do
-            let(:options) { super().merge(as: '') }
-            let(:error_message) do
-              tools
-                .assertions
-                .error_message_for(
-                  'sleeping_king_studios.tools.assertions.presence',
-                  as: :as
-                )
-            end
-
-            it 'should raise an exception' do
-              expect { define_dependencies }
-                .to raise_error ArgumentError, error_message
-            end
-          end
-
-          describe 'with as: an empty Symbol' do
-            let(:options) { super().merge(as: :'') }
-            let(:error_message) do
-              tools
-                .assertions
-                .error_message_for(
-                  'sleeping_king_studios.tools.assertions.presence',
-                  as: :as
-                )
+              it 'should raise an exception' do
+                expect { define_dependencies }
+                  .to raise_error ArgumentError, error_message
+              end
             end
 
-            it 'should raise an exception' do
-              expect { define_dependencies }
-                .to raise_error ArgumentError, error_message
-            end
-          end
+            describe 'with as: an empty String' do
+              let(:options) { super().merge(as: '') }
+              let(:error_message) do
+                tools
+                  .assertions
+                  .error_message_for(
+                    'sleeping_king_studios.tools.assertions.presence',
+                    as: :as
+                  )
+              end
 
-          describe 'with as: a String' do
-            let(:scoped_name) { :"scoped_#{reader_name}" }
-            let(:method_name) { scoped_name.to_s }
-            let(:options)     { super().merge(as: method_name) }
-
-            it 'should add the key to the dependency keys' do
-              expect { define_dependencies }
-                .to(change { dependency_keys }.to(include(expected_key)))
-            end
-
-            it 'should define the reader method', :aggregate_failures do
-              expect(subject).not_to respond_to(reader_name)
-              expect(subject).not_to respond_to(scoped_name)
-
-              define_dependencies
-
-              expect(subject).not_to respond_to(reader_name)
-              expect(subject).to respond_to(scoped_name).with(0).arguments
-            end
-          end
-
-          describe 'with as: a Symbol' do
-            let(:scoped_name) { :"scoped_#{reader_name}" }
-            let(:method_name) { scoped_name }
-            let(:options)     { super().merge(as: method_name) }
-
-            it 'should add the key to the dependency keys' do
-              expect { define_dependencies }
-                .to change { dependency_keys }.to(include(expected_key))
+              it 'should raise an exception' do
+                expect { define_dependencies }
+                  .to raise_error ArgumentError, error_message
+              end
             end
 
-            it 'should define the reader method', :aggregate_failures do
-              expect(subject).not_to respond_to(reader_name)
-              expect(subject).not_to respond_to(scoped_name)
+            describe 'with as: an empty Symbol' do
+              let(:options) { super().merge(as: :'') }
+              let(:error_message) do
+                tools
+                  .assertions
+                  .error_message_for(
+                    'sleeping_king_studios.tools.assertions.presence',
+                    as: :as
+                  )
+              end
 
-              define_dependencies
+              it 'should raise an exception' do
+                expect { define_dependencies }
+                  .to raise_error ArgumentError, error_message
+              end
+            end
 
-              expect(subject).not_to respond_to(reader_name)
-              expect(subject).to respond_to(scoped_name).with(0).arguments
+            describe 'with as: a String' do
+              let(:scoped_name) { :"scoped_#{reader_name}" }
+              let(:method_name) { scoped_name.to_s }
+              let(:options)     { super().merge(as: method_name) }
+
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }
+                  .to(change { dependency_keys }.to(include(expected_key)))
+              end
+
+              it 'should define the reader method', :aggregate_failures do
+                expect(subject).not_to respond_to(reader_name)
+                expect(subject).not_to respond_to(scoped_name)
+
+                define_dependencies
+
+                expect(subject).not_to respond_to(reader_name)
+                expect(subject).to respond_to(scoped_name).with(0).arguments
+              end
+            end
+
+            describe 'with as: a Symbol' do
+              let(:scoped_name) { :"scoped_#{reader_name}" }
+              let(:method_name) { scoped_name }
+              let(:options)     { super().merge(as: method_name) }
+
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }
+                  .to change { dependency_keys }.to(include(expected_key))
+              end
+
+              it 'should define the reader method', :aggregate_failures do
+                expect(subject).not_to respond_to(reader_name)
+                expect(subject).not_to respond_to(scoped_name)
+
+                define_dependencies
+
+                expect(subject).not_to respond_to(reader_name)
+                expect(subject).to respond_to(scoped_name).with(0).arguments
+              end
             end
           end
 
@@ -254,26 +256,31 @@ module Plumbum::RSpec::Deferred
               expect(subject).to respond_to(reader_name).with(0).arguments
             end
 
-            describe 'with as: value' do
-              let(:scoped_name)    { :"scoped_#{reader_name}" }
-              let(:method_name)    { scoped_name.to_s }
-              let(:options)        { super().merge(as: method_name) }
-              let(:predicate_name) { :"#{scoped_name}?" }
+            if allow_as
+              describe 'with as: value' do
+                let(:scoped_name)    { :"scoped_#{reader_name}" }
+                let(:method_name)    { scoped_name.to_s }
+                let(:options)        { super().merge(as: method_name) }
+                let(:predicate_name) { :"#{scoped_name}?" }
 
-              it 'should define the predicate method', :aggregate_failures do
-                expect(subject).not_to respond_to(predicate_name)
+                it 'should define the predicate method', :aggregate_failures do
+                  expect(subject).not_to respond_to(predicate_name)
 
-                define_dependencies
+                  define_dependencies
 
-                expect(subject).to respond_to(predicate_name).with(0).arguments
-              end
+                  expect(subject)
+                    .to respond_to(predicate_name)
+                    .with(0)
+                    .arguments
+                end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(scoped_name)
+                it 'should define the reader method', :aggregate_failures do
+                  expect(subject).not_to respond_to(scoped_name)
 
-                define_dependencies
+                  define_dependencies
 
-                expect(subject).to respond_to(scoped_name).with(0).arguments
+                  expect(subject).to respond_to(scoped_name).with(0).arguments
+                end
               end
             end
           end
@@ -453,6 +460,61 @@ module Plumbum::RSpec::Deferred
             it 'should return the reader name' do
               expect(described_class.plumbum_dependency(key, as: method_name))
                 .to be :scoped_object_tools
+            end
+          end
+        end
+
+        describe 'with multiple invalid keys' do
+          let(:keys) do
+            [
+              'valid',
+              nil,
+              'application.tools.object_tools'
+            ]
+          end
+          let(:error_message) do
+            tools
+              .assertions
+              .error_message_for(
+                'sleeping_king_studios.tools.assertions.presence',
+                as: :key
+              )
+          end
+
+          it 'should raise an exception' do
+            expect { described_class.plumbum_dependency(*keys) }
+              .to raise_error ArgumentError, error_message
+          end
+        end
+
+        describe 'with multiple valid keys' do
+          let(:keys) do
+            [
+              'valid',
+              'application.tools.object_tools'
+            ]
+          end
+
+          include_deferred 'should define dependency',
+            'valid',
+            allow_as: false
+
+          include_deferred 'should define dependency',
+            :object_tools,
+            to:       'application.tools',
+            allow_as: false
+
+          describe 'with as: value' do
+            let(:method_name) { 'scoped_valid' }
+            let(:error_message) do
+              'invalid option :as when providing multiple keys'
+            end
+
+            it 'should raise an exception' do
+              expect do
+                described_class.plumbum_dependency(*keys, as: method_name)
+              end
+                .to raise_error ArgumentError, error_message
             end
           end
         end

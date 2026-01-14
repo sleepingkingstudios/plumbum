@@ -64,6 +64,18 @@ module Plumbum
   #   RequestProvider.value = request
   #   action.request
   #   #=> returns the new request
+  #
+  # @example Define multiple dependencies.
+  #   class Rocket
+  #     include Plumbum::Consumer
+  #     include RocketPartsProvider
+  #
+  #     dependency :engine, :fusilage, :payload
+  #   end
+  #
+  #   rocket = Rocket.new
+  #   rocket.engine
+  #   #=> returns the value of RocketPartsProvider.values[:engine]
   module Consumer
     include Plumbum::Consumers::InstanceMethods
 
