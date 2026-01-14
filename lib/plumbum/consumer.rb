@@ -100,6 +100,18 @@ module Plumbum
   #   server = Server.new
   #   server.port
   #   #=> returns the value of ConfigurationProvider.values[:config][:network][:port]
+  #
+  # @example Define a method depndency.
+  #   class Application
+  #     include Plumbum::Consumer
+  #     include ProcessManagerProvider
+  #
+  #     dependency '#restart', scope: :process_manager
+  #   end
+  #
+  #   application = Application.new
+  #   application.restart(force: true)
+  #   #=> calls ProcessManagerProvider.values[:process_manager].restart(force: true)
   module Consumer
     include Plumbum::Consumers::InstanceMethods
 

@@ -286,6 +286,104 @@ module Plumbum::RSpec::Deferred
           end
         end
 
+        deferred_examples 'should define method dependency' \
+        do |dependency_name, allow_as: true, to: nil|
+          let(:expected_key)   { (to || dependency_name).to_s.split('.').first }
+          let(:delegated_name) { dependency_name.to_sym }
+
+          it 'should add the key to the dependency keys' do
+            expect { define_dependencies }.to(
+              change { dependency_keys }.to(include(expected_key))
+            )
+          end
+
+          it 'should define the delegated method', :aggregate_failures do
+            expect(subject).not_to respond_to(delegated_name)
+
+            define_dependencies
+
+            expect(subject)
+              .to respond_to(delegated_name)
+              .with_unlimited_arguments
+              .and_any_keywords
+              .and_a_block
+          end
+
+          if allow_as
+            describe 'with as: nil' do
+              let(:options) { super().merge(as: nil) }
+
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }.to(
+                  change { dependency_keys }.to(include(expected_key))
+                )
+              end
+
+              it 'should define the delegated method', :aggregate_failures do
+                expect(subject).not_to respond_to(delegated_name)
+
+                define_dependencies
+
+                expect(subject)
+                  .to respond_to(delegated_name)
+                  .with_unlimited_arguments
+                  .and_any_keywords
+                  .and_a_block
+              end
+            end
+
+            describe 'with as: a String' do
+              let(:scoped_name) { :"scoped_#{delegated_name}" }
+              let(:method_name) { scoped_name.to_s }
+              let(:options)     { super().merge(as: method_name) }
+
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }
+                  .to(change { dependency_keys }.to(include(expected_key)))
+              end
+
+              it 'should define the reader method', :aggregate_failures do
+                expect(subject).not_to respond_to(delegated_name)
+                expect(subject).not_to respond_to(scoped_name)
+
+                define_dependencies
+
+                expect(subject).not_to respond_to(delegated_name)
+                expect(subject)
+                  .to respond_to(scoped_name)
+                  .with_unlimited_arguments
+                  .and_any_keywords
+                  .and_a_block
+              end
+            end
+
+            describe 'with as: a Symbol' do
+              let(:scoped_name) { :"scoped_#{delegated_name}" }
+              let(:method_name) { scoped_name.to_sym }
+              let(:options)     { super().merge(as: method_name) }
+
+              it 'should add the key to the dependency keys' do
+                expect { define_dependencies }
+                  .to(change { dependency_keys }.to(include(expected_key)))
+              end
+
+              it 'should define the reader method', :aggregate_failures do
+                expect(subject).not_to respond_to(delegated_name)
+                expect(subject).not_to respond_to(scoped_name)
+
+                define_dependencies
+
+                expect(subject).not_to respond_to(delegated_name)
+                expect(subject)
+                  .to respond_to(scoped_name)
+                  .with_unlimited_arguments
+                  .and_any_keywords
+                  .and_a_block
+              end
+            end
+          end
+        end
+
         let(:keys)    { [key] }
         let(:options) { {} }
 
@@ -562,6 +660,168 @@ module Plumbum::RSpec::Deferred
               :object_tools,
               to:       'config.application.tools',
               allow_as: false
+          end
+        end
+
+        describe 'with a bare method name' do
+          let(:error_message) do
+            'delegated methods must have a scope - use a scoped key or pass ' \
+              'the :scope option to #dependency'
+          end
+
+          it 'should raise an exception' do
+            expect { described_class.plumbum_dependency('#launch') }
+              .to raise_error ArgumentError, error_message
+          end
+        end
+
+        describe 'with a method name String with scope: value' do
+          let(:options) { super().merge(scope: 'application.tools') }
+          let(:key)     { '#fetch' }
+
+          include_deferred 'should define method dependency',
+            :fetch,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key, **options))
+              .to be :fetch
+          end
+
+          describe 'with memoize: value' do
+            let(:options) { super().merge(memoize: false) }
+            let(:error_message) do
+              'invalid option :memoize for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+
+          describe 'with predicate: value' do
+            let(:options) { super().merge(predicate: true) }
+            let(:error_message) do
+              'invalid option :predicate for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+        end
+
+        describe 'with a method name Symbol with scope: value' do
+          let(:options) { super().merge(scope: 'application.tools') }
+          let(:key)     { :'#fetch' }
+
+          include_deferred 'should define method dependency',
+            :fetch,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key, **options))
+              .to be :fetch
+          end
+
+          describe 'with memoize: value' do
+            let(:options) { super().merge(memoize: false) }
+            let(:error_message) do
+              'invalid option :memoize for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+
+          describe 'with predicate: value' do
+            let(:options) { super().merge(predicate: true) }
+            let(:error_message) do
+              'invalid option :predicate for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+        end
+
+        describe 'with a dot-separated method name String' do
+          let(:key) { 'application.tools.#fetch' }
+
+          include_deferred 'should define method dependency',
+            :fetch,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key))
+              .to be :fetch
+          end
+
+          describe 'with memoize: value' do
+            let(:options) { super().merge(memoize: false) }
+            let(:error_message) do
+              'invalid option :memoize for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+
+          describe 'with predicate: value' do
+            let(:options) { super().merge(predicate: true) }
+            let(:error_message) do
+              'invalid option :predicate for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+        end
+
+        describe 'with a dot-separated method name Symbol' do
+          let(:key) { :'application.tools.#fetch' }
+
+          include_deferred 'should define method dependency',
+            :fetch,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key))
+              .to be :fetch
+          end
+
+          describe 'with memoize: value' do
+            let(:options) { super().merge(memoize: false) }
+            let(:error_message) do
+              'invalid option :memoize for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
+          end
+
+          describe 'with predicate: value' do
+            let(:options) { super().merge(predicate: true) }
+            let(:error_message) do
+              'invalid option :predicate for method dependency'
+            end
+
+            it 'should raise an exception' do
+              expect { define_dependencies }
+                .to raise_error ArgumentError, error_message
+            end
           end
         end
       end
@@ -1274,7 +1534,44 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        context 'when the class defines a drilled dependency' do
+        context 'when the class defines a dependency with scope: value' do
+          let(:error_message) do
+            'dependency not found with key "application"'
+          end
+
+          before(:example) do
+            described_class.plumbum_dependency(
+              'object_tools',
+              scope: 'application.tools'
+            )
+          end
+
+          it { expect(consumer).to respond_to(:object_tools).with(0).arguments }
+
+          it 'should raise an exception' do
+            expect { consumer.object_tools }.to raise_error(
+              Plumbum::Errors::MissingDependencyError,
+              error_message
+            )
+          end
+
+          context 'when the class includes a provider for the dependency' do
+            let(:object_tools) { Object.new.freeze }
+            let(:tools)        { Struct.new(:object_tools).new(object_tools) }
+            let(:application)  { Struct.new(:tools).new(tools) }
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
+            end
+
+            before(:example) do
+              described_class.plumbum_provider application_provider
+            end
+
+            it { expect(consumer.object_tools).to be object_tools }
+          end
+        end
+
+        context 'when the class defines a scoped dependency' do
           let(:error_message) do
             'dependency not found with key "application"'
           end
@@ -1308,7 +1605,7 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        context 'when the class defines a drilled dependency with as: value' do
+        context 'when the class defines a scoped dependency with as: value' do
           let(:error_message) do
             'dependency not found with key "application"'
           end
@@ -1343,7 +1640,7 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        context 'when the class defines an optional drilled dependency' do
+        context 'when the class defines an optional scoped dependency' do
           before(:example) do
             described_class.plumbum_dependency(
               'application.tools.object_tools',
@@ -1368,6 +1665,70 @@ module Plumbum::RSpec::Deferred
             end
 
             it { expect(consumer.object_tools).to be object_tools }
+          end
+        end
+
+        context 'when the class defines a method dependency' do
+          let(:error_message) do
+            'dependency not found with key "application"'
+          end
+
+          before(:example) do
+            described_class.plumbum_dependency(
+              '#restart',
+              scope: 'application.manager'
+            )
+          end
+
+          it 'should define the delegator method' do
+            expect(consumer)
+              .to respond_to(:restart)
+              .with_unlimited_arguments
+              .and_any_keywords
+              .and_a_block
+          end
+
+          it 'should raise an exception' do
+            expect { consumer.restart }.to raise_error(
+              Plumbum::Errors::MissingDependencyError,
+              error_message
+            )
+          end
+
+          context 'when the class includes a provider for the dependency' do
+            let(:manager)      { double('application_manager', restart: nil) }
+            let(:application)  { Struct.new(:manager).new(manager) }
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
+            end
+
+            before(:example) do
+              described_class.plumbum_provider application_provider
+            end
+
+            it 'should delegate to the dependency' do
+              consumer.restart
+
+              expect(manager).to have_received(:restart).with(no_args)
+            end
+
+            describe 'with parameters' do
+              let(:arguments) { ['all-applications'] }
+              let(:keywords)  { { force: true } }
+
+              it 'should delegate to the dependency', :aggregate_failures do
+                restarted = false
+
+                allow(manager).to receive(:restart) { restarted = true }
+
+                consumer.restart(*arguments, **keywords)
+                expect(manager)
+                  .to have_received(:restart)
+                  .with(*arguments, **keywords)
+
+                expect(restarted).to be true
+              end
+            end
           end
         end
 
