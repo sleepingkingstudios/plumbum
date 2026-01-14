@@ -6,12 +6,12 @@ require 'plumbum/rspec/deferred/consumer_examples'
 RSpec.describe Plumbum::Consumer do
   include Plumbum::RSpec::Deferred::ConsumerExamples
 
-  subject(:consumer) { described_class.new(**options) }
+  subject(:consumer) { described_class.new(**constructor_options) }
 
-  let(:described_class) { Spec::ExampleConsumer }
-  let(:included_module) { Spec::IncludedConsumer }
-  let(:parent_class)    { Spec::ParentConsumer }
-  let(:options)         { {} }
+  let(:described_class)     { Spec::ExampleConsumer }
+  let(:included_module)     { Spec::IncludedConsumer }
+  let(:parent_class)        { Spec::ParentConsumer }
+  let(:constructor_options) { {} }
 
   example_constant 'Spec::IncludedConsumer' do
     Module.new do

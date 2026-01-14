@@ -80,46 +80,38 @@ module Plumbum::Consumers
       end
     end
 
-    # Defines an injected dependency for instances of the class.
+    # @overload plumbum_dependency(*keys, as: nil, memoize: true, optional: false, predicate: false)
+    #   Defines injected dependencies for instances of the class.
     #
-    # @param key [String, Symbol] the key for the dependency.
-    # @param as [String, Symbol] the method name used to define dependency
-    #   methods. Defaults to the key.
-    # @param memoize [true, false] if true, memoizes the value of the
-    #   dependency the first time it is successfully called. Defaults to true.
-    # @param optional [true, false] if true, calling the dependency returns
-    #   nil if the dependency is not defined. Defaults to false.
-    # @param predicate [true, false] if true, also defines a predicate method
-    #   that returns true if the dependency has a defined value. Defaults to
-    #   false.
+    #   @param keys [Array<String, Symbol>] the keys for the dependency. A new
+    #     dependency will be defined for each key using the same options.
+    #   @param as [String, Symbol] the method name used to define dependency
+    #     methods. Defaults to the key.
+    #   @param memoize [true, false] if true, memoizes the value of the
+    #     dependency the first time it is successfully called. Defaults to true.
+    #   @param optional [true, false] if true, calling the dependency returns
+    #     nil if the dependency is not defined. Defaults to false.
+    #   @param predicate [true, false] if true, also defines a predicate method
+    #     that returns true if the dependency has a defined value. Defaults to
+    #     false.
     #
-    # @return [Symbol] the name of the generated method.
+    #   @return [Symbol, Array<Symbol>] the name of the generated method, or the
+    #     method names if given more than one key.
     #
-    # @raise [ArgumentError] if the key is not a String or Symbol, or is
-    #   empty.
-    def plumbum_dependency( # rubocop:disable Metrics/MethodLength
-      key,
+    #   @raise [ArgumentError] if any key is not a String or Symbol, or is
+    #     empty.
+    def plumbum_dependency(
+      *keys,
       as:        nil,
       memoize:   true,
       optional:  false,
       predicate: false
     )
-      ClassMethods.validate_name(key, as: :key)
-      ClassMethods.validate_name(as,  as: :as) unless as.nil?
+      scoped_keys = keys.map do |key|
+        define_plumbum_dependency(key, as:, memoize:, optional:, predicate:)
+      end
 
-      key, method_name, path = ClassMethods.split_key(key, as:)
-
-      own_plumbum_dependency_keys << key.to_s
-
-      ClassMethods.define_methods(
-        self,
-        key:,
-        method_name:,
-        memoize:,
-        optional:,
-        path:,
-        predicate:
-      )
+      scoped_keys.size == 1 ? scoped_keys.first : scoped_keys
     end
 
     # @param cache [true, false] if false,.clears the memoized value and
@@ -185,6 +177,17 @@ module Plumbum::Consumers
     end
 
     private
+
+    def define_plumbum_dependency(key, as: nil, **)
+      ClassMethods.validate_name(key, as: :key)
+      ClassMethods.validate_name(as,  as: :as) unless as.nil?
+
+      key, method_name, path = ClassMethods.split_key(key, as:)
+
+      own_plumbum_dependency_keys << key.to_s
+
+      ClassMethods.define_methods(self, key:, method_name:, path:, **)
+    end
 
     def each_plumbum_provider(&)
       return enum_for(:each_plumbum_provider) unless block_given?

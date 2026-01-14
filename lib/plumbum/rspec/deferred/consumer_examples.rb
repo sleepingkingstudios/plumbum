@@ -99,16 +99,13 @@ module Plumbum::RSpec::Deferred
 
     deferred_examples 'should implement the Consumer class methods' do
       describe '.plumbum_dependency' do
-        deferred_examples 'should define the dependency' do
-          let(:reader_name) { defined?(super()) ? super() : key.to_sym }
-
-          it 'should return the reader name' do
-            expect(described_class.plumbum_dependency(key))
-              .to be reader_name.to_sym
-          end
+        deferred_examples 'should define dependency' \
+        do |dependency_name, to: nil|
+          let(:expected_key) { (to || dependency_name).to_s.split('.').first }
+          let(:reader_name)  { dependency_name.to_sym }
 
           it 'should add the key to the dependency keys' do
-            expect { described_class.plumbum_dependency(key) }.to(
+            expect { define_dependencies }.to(
               change { dependency_keys }.to(include(expected_key))
             )
           end
@@ -116,19 +113,16 @@ module Plumbum::RSpec::Deferred
           it 'should define the reader method', :aggregate_failures do
             expect(subject).not_to respond_to(reader_name)
 
-            described_class.plumbum_dependency(key)
+            define_dependencies
 
             expect(subject).to respond_to(reader_name).with(0).arguments
           end
 
           describe 'with as: nil' do
-            it 'should return the reader name' do
-              expect(described_class.plumbum_dependency(key))
-                .to be reader_name.to_sym
-            end
+            let(:options) { super().merge(as: nil) }
 
             it 'should add the key to the dependency keys' do
-              expect { described_class.plumbum_dependency(key) }.to(
+              expect { define_dependencies }.to(
                 change { dependency_keys }.to(include(expected_key))
               )
             end
@@ -136,13 +130,14 @@ module Plumbum::RSpec::Deferred
             it 'should define the reader method', :aggregate_failures do
               expect(subject).not_to respond_to(reader_name)
 
-              described_class.plumbum_dependency(key)
+              define_dependencies
 
               expect(subject).to respond_to(reader_name).with(0).arguments
             end
           end
 
           describe 'with as: an Object' do
+            let(:options) { super().merge(as: Object.new.freeze) }
             let(:error_message) do
               tools
                 .assertions
@@ -153,14 +148,13 @@ module Plumbum::RSpec::Deferred
             end
 
             it 'should raise an exception' do
-              expect do
-                described_class.plumbum_dependency(key, as: Object.new.freeze)
-              end
+              expect { define_dependencies }
                 .to raise_error ArgumentError, error_message
             end
           end
 
           describe 'with as: an empty String' do
+            let(:options) { super().merge(as: '') }
             let(:error_message) do
               tools
                 .assertions
@@ -171,12 +165,13 @@ module Plumbum::RSpec::Deferred
             end
 
             it 'should raise an exception' do
-              expect { described_class.plumbum_dependency(key, as: '') }
+              expect { define_dependencies }
                 .to raise_error ArgumentError, error_message
             end
           end
 
           describe 'with as: an empty Symbol' do
+            let(:options) { super().merge(as: :'') }
             let(:error_message) do
               tools
                 .assertions
@@ -187,7 +182,7 @@ module Plumbum::RSpec::Deferred
             end
 
             it 'should raise an exception' do
-              expect { described_class.plumbum_dependency(key, as: :'') }
+              expect { define_dependencies }
                 .to raise_error ArgumentError, error_message
             end
           end
@@ -195,16 +190,10 @@ module Plumbum::RSpec::Deferred
           describe 'with as: a String' do
             let(:scoped_name) { :"scoped_#{reader_name}" }
             let(:method_name) { scoped_name.to_s }
-
-            it 'should return the reader name' do
-              expect(described_class.plumbum_dependency(key, as: method_name))
-                .to be scoped_name
-            end
+            let(:options)     { super().merge(as: method_name) }
 
             it 'should add the key to the dependency keys' do
-              expect do
-                described_class.plumbum_dependency(key, as: method_name)
-              end
+              expect { define_dependencies }
                 .to(change { dependency_keys }.to(include(expected_key)))
             end
 
@@ -212,7 +201,7 @@ module Plumbum::RSpec::Deferred
               expect(subject).not_to respond_to(reader_name)
               expect(subject).not_to respond_to(scoped_name)
 
-              described_class.plumbum_dependency(key, as: method_name)
+              define_dependencies
 
               expect(subject).not_to respond_to(reader_name)
               expect(subject).to respond_to(scoped_name).with(0).arguments
@@ -222,16 +211,10 @@ module Plumbum::RSpec::Deferred
           describe 'with as: a Symbol' do
             let(:scoped_name) { :"scoped_#{reader_name}" }
             let(:method_name) { scoped_name }
-
-            it 'should return the reader name' do
-              expect(described_class.plumbum_dependency(key, as: method_name))
-                .to be scoped_name
-            end
+            let(:options)     { super().merge(as: method_name) }
 
             it 'should add the key to the dependency keys' do
-              expect do
-                described_class.plumbum_dependency(key, as: method_name)
-              end
+              expect { define_dependencies }
                 .to change { dependency_keys }.to(include(expected_key))
             end
 
@@ -239,7 +222,7 @@ module Plumbum::RSpec::Deferred
               expect(subject).not_to respond_to(reader_name)
               expect(subject).not_to respond_to(scoped_name)
 
-              described_class.plumbum_dependency(key, as: method_name)
+              define_dependencies
 
               expect(subject).not_to respond_to(reader_name)
               expect(subject).to respond_to(scoped_name).with(0).arguments
@@ -248,23 +231,17 @@ module Plumbum::RSpec::Deferred
 
           describe 'with predicate: true' do
             let(:predicate_name) { :"#{reader_name}?" }
-
-            it 'should return the reader name' do
-              expect(described_class.plumbum_dependency(key, predicate: true))
-                .to be reader_name
-            end
+            let(:options)        { super().merge(predicate: true) }
 
             it 'should add the key to the dependency keys' do
-              expect do
-                described_class.plumbum_dependency(key, predicate: true)
-              end
+              expect { define_dependencies }
                 .to change { dependency_keys }.to(include(expected_key))
             end
 
             it 'should define the predicate method', :aggregate_failures do
               expect(subject).not_to respond_to(predicate_name)
 
-              described_class.plumbum_dependency(key, predicate: true)
+              define_dependencies
 
               expect(subject).to respond_to(predicate_name).with(0).arguments
             end
@@ -272,7 +249,7 @@ module Plumbum::RSpec::Deferred
             it 'should define the reader method', :aggregate_failures do
               expect(subject).not_to respond_to(reader_name)
 
-              described_class.plumbum_dependency(key, predicate: true)
+              define_dependencies
 
               expect(subject).to respond_to(reader_name).with(0).arguments
             end
@@ -280,13 +257,13 @@ module Plumbum::RSpec::Deferred
             describe 'with as: value' do
               let(:scoped_name)    { :"scoped_#{reader_name}" }
               let(:method_name)    { scoped_name.to_s }
+              let(:options)        { super().merge(as: method_name) }
               let(:predicate_name) { :"#{scoped_name}?" }
 
               it 'should define the predicate method', :aggregate_failures do
                 expect(subject).not_to respond_to(predicate_name)
 
-                described_class
-                  .plumbum_dependency(key, as: method_name, predicate: true)
+                define_dependencies
 
                 expect(subject).to respond_to(predicate_name).with(0).arguments
               end
@@ -294,13 +271,19 @@ module Plumbum::RSpec::Deferred
               it 'should define the reader method', :aggregate_failures do
                 expect(subject).not_to respond_to(scoped_name)
 
-                described_class
-                  .plumbum_dependency(key, as: method_name, predicate: true)
+                define_dependencies
 
                 expect(subject).to respond_to(scoped_name).with(0).arguments
               end
             end
           end
+        end
+
+        let(:keys)    { [key] }
+        let(:options) { {} }
+
+        define_method :define_dependencies do
+          described_class.plumbum_dependency(*keys, **options)
         end
 
         define_method :dependency_keys do
@@ -315,6 +298,7 @@ module Plumbum::RSpec::Deferred
           expect(described_class)
             .to respond_to(:plumbum_dependency)
             .with(1).argument
+            .and_unlimited_arguments
             .and_keywords(:as, :memoize, :optional, :predicate)
         end
 
@@ -383,35 +367,94 @@ module Plumbum::RSpec::Deferred
         end
 
         describe 'with a valid String' do
-          let(:key)          { 'valid' }
-          let(:expected_key) { 'valid' }
-          let(:reader_name)  { :valid }
+          let(:key) { 'valid' }
 
-          include_deferred 'should define the dependency'
+          include_deferred 'should define dependency', 'valid'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key)).to be :valid
+          end
+
+          describe 'with as: value' do
+            let(:scoped_name) { :scoped_valid }
+            let(:method_name) { scoped_name.to_s }
+            let(:options)     { super().merge(as: method_name) }
+
+            it 'should return the reader name' do
+              expect(described_class.plumbum_dependency(key, as: method_name))
+                .to be :scoped_valid
+            end
+          end
         end
 
         describe 'with a valid Symbol' do
-          let(:key)          { :valid }
-          let(:expected_key) { 'valid' }
-          let(:reader_name)  { :valid }
+          let(:key) { :valid }
 
-          include_deferred 'should define the dependency'
+          include_deferred 'should define dependency', 'valid'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key))
+              .to be :valid
+          end
+
+          describe 'with as: value' do
+            let(:scoped_name) { :scoped_valid }
+            let(:method_name) { scoped_name.to_s }
+            let(:options)     { super().merge(as: method_name) }
+
+            it 'should return the reader name' do
+              expect(described_class.plumbum_dependency(key, as: method_name))
+                .to be :scoped_valid
+            end
+          end
         end
 
         describe 'with a dot-separated String' do
-          let(:key)          { 'application.tools.object_tools' }
-          let(:expected_key) { 'application' }
-          let(:reader_name)  { :object_tools }
+          let(:key) { 'application.tools.object_tools' }
 
-          include_deferred 'should define the dependency'
+          include_deferred 'should define dependency',
+            :object_tools,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key))
+              .to be :object_tools
+          end
+
+          describe 'with as: value' do
+            let(:scoped_name) { :scoped_object_tools }
+            let(:method_name) { scoped_name.to_s }
+            let(:options)     { super().merge(as: method_name) }
+
+            it 'should return the reader name' do
+              expect(described_class.plumbum_dependency(key, as: method_name))
+                .to be :scoped_object_tools
+            end
+          end
         end
 
         describe 'with a dot-separated Symbol' do
-          let(:key)          { :'application.tools.object_tools' }
-          let(:expected_key) { 'application' }
-          let(:reader_name)  { :object_tools }
+          let(:key) { :'application.tools.object_tools' }
 
-          include_deferred 'should define the dependency'
+          include_deferred 'should define dependency',
+            :object_tools,
+            to: 'application.tools'
+
+          it 'should return the reader name' do
+            expect(described_class.plumbum_dependency(key))
+              .to be :object_tools
+          end
+
+          describe 'with as: value' do
+            let(:scoped_name) { :scoped_object_tools }
+            let(:method_name) { scoped_name.to_s }
+            let(:options)     { super().merge(as: method_name) }
+
+            it 'should return the reader name' do
+              expect(described_class.plumbum_dependency(key, as: method_name))
+                .to be :scoped_object_tools
+            end
+          end
         end
       end
 
