@@ -65,7 +65,7 @@ module Plumbum::Consumers
       SleepingKingStudios::Tools::Toolbelt
         .instance
         .object_tools
-        .dig(dependency, *path)
+        .dig(dependency, *path, indifferent_keys: true)
     end
 
     def handle_missing_plumbum_dependency(key, optional: false)
