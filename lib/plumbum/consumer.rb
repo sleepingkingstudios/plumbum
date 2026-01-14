@@ -64,6 +64,42 @@ module Plumbum
   #   RequestProvider.value = request
   #   action.request
   #   #=> returns the new request
+  #
+  # @example Define a dependency with scoped key.
+  #   class Client
+  #     include Plumbum::Consumer
+  #     include ConfigurationProvider
+  #
+  #     dependency 'config.network.default_server'
+  #   end
+  #
+  #   client = Client.new
+  #   client.default_server
+  #   #=> returns the value of ConfigurationProvider.values[:config][:network][:default_server]
+  #
+  # @example Define multiple dependencies.
+  #   class Rocket
+  #     include Plumbum::Consumer
+  #     include RocketPartsProvider
+  #
+  #     dependency :engine, :fusilage, :payload
+  #   end
+  #
+  #   rocket = Rocket.new
+  #   rocket.engine
+  #   #=> returns the value of RocketPartsProvider.values[:engine]
+  #
+  # @example Define multiple dependencies with scoped keys.
+  #   class Server
+  #     include Plumbum::Consumer
+  #     include ConfigurationProvider
+  #
+  #     dependency :port, :protocol, :timeout, scope: 'config.network'
+  #   end
+  #
+  #   server = Server.new
+  #   server.port
+  #   #=> returns the value of ConfigurationProvider.values[:config][:network][:port]
   module Consumer
     include Plumbum::Consumers::InstanceMethods
 
