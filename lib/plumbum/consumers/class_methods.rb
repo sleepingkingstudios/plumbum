@@ -8,6 +8,28 @@ module Plumbum::Consumers
   # Class methods for defining the Consumer interface.
   module ClassMethods # rubocop:disable Metrics/ModuleLength
     class << self
+      INVALID_OPTIONS_FOR_METHOD_DEPENDENCY = {
+        memoize:   true,
+        predicate: false
+      }.freeze
+      private_constant :INVALID_OPTIONS_FOR_METHOD_DEPENDENCY
+
+      # @api private
+      def define_delegated_method(receiver, key:, method_name:, path:, **)
+        validate_delegated_method_options(path:, **)
+
+        *path, inner_name = path
+        method_name       = method_name[1..] if method_name.start_with?('#')
+        inner_name        = inner_name[1..]
+
+        dependency_methods_for(receiver).define_method(method_name) \
+        do |*args, **keywords, &block|
+          inner = get_scoped_plumbum_dependency(key, path:)
+
+          inner.public_send(inner_name, *args, **keywords, &block)
+        end
+      end
+
       # @api private
       def define_memoized_reader(receiver, key:, method_name:, optional:, path:)
         dependency_methods_for(receiver).define_method(method_name) do
@@ -63,7 +85,12 @@ module Plumbum::Consumers
       end
 
       # @api private
-      def split_key(key, as:)
+      def split_key(key, as:, scope:)
+        ClassMethods.validate_name(key, as: :key)
+        ClassMethods.validate_name(scope, as: :scope) if scope
+
+        key = "#{scope}.#{key}" if scope
+
         segments = key.to_s.split('.')
 
         return [key, as || key, nil] if segments.size == 1
@@ -77,6 +104,26 @@ module Plumbum::Consumers
           .instance
           .assertions
           .validate_name(value, as:)
+      end
+
+      private
+
+      def validate_delegated_method_options(path: nil, **options) # rubocop:disable Metrics/MethodLength
+        if path.nil?
+          message =
+            'delegated methods must have a scope - use a scoped key or pass ' \
+            'the :scope option to #dependency'
+
+          raise ArgumentError, message
+        end
+
+        INVALID_OPTIONS_FOR_METHOD_DEPENDENCY.each \
+        do |option_name, default_value|
+          next if options[option_name] == default_value
+
+          raise ArgumentError,
+            "invalid option #{option_name.inspect} for method dependency"
+        end
       end
     end
 
@@ -194,17 +241,18 @@ module Plumbum::Consumers
     private
 
     def define_plumbum_dependency(key, as: nil, scope: nil, **)
-      ClassMethods.validate_name(key,   as: :key)
-      ClassMethods.validate_name(as,    as: :as)    unless as.nil?
-      ClassMethods.validate_name(scope, as: :scope) unless scope.nil?
+      ClassMethods.validate_name(as, as: :as) unless as.nil?
 
-      key = "#{scope}.#{key}" if scope
-
-      key, method_name, path = ClassMethods.split_key(key, as:)
+      key, method_name, path = ClassMethods.split_key(key, as:, scope:)
 
       own_plumbum_dependency_keys << key.to_s
 
-      ClassMethods.define_methods(self, key:, method_name:, path:, **)
+      if method_name.start_with?('#') || path&.last&.start_with?('#')
+        ClassMethods
+          .define_delegated_method(self, key:, method_name:, path:, **)
+      else
+        ClassMethods.define_methods(self, key:, method_name:, path:, **)
+      end
     end
 
     def each_plumbum_provider(&)
