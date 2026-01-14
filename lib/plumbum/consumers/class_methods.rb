@@ -80,7 +80,7 @@ module Plumbum::Consumers
       end
     end
 
-    # @overload plumbum_dependency(*keys, as: nil, memoize: true, optional: false, predicate: false)
+    # @overload plumbum_dependency(*keys, as: nil, memoize: true, optional: false, predicate: false, scope: nil)
     #   Defines injected dependencies for instances of the class.
     #
     #   @param keys [Array<String, Symbol>] the keys for the dependency. A new
@@ -94,25 +94,36 @@ module Plumbum::Consumers
     #   @param predicate [true, false] if true, also defines a predicate method
     #     that returns true if the dependency has a defined value. Defaults to
     #     false.
+    #   @param scope [String, Symbol] if given, combined with the key or keys to
+    #     determine the dependency name and the path from the dependency to the
+    #     returned value.
     #
     #   @return [Symbol, Array<Symbol>] the name of the generated method, or the
     #     method names if given more than one key.
     #
     #   @raise [ArgumentError] if any key is not a String or Symbol, or is
     #     empty.
-    def plumbum_dependency(
+    def plumbum_dependency( # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
       *keys,
       as:        nil,
       memoize:   true,
       optional:  false,
-      predicate: false
+      predicate: false,
+      scope:     nil
     )
       if keys.size > 1 && as
         raise ArgumentError, 'invalid option :as when providing multiple keys'
       end
 
       scoped_keys = keys.map do |key|
-        define_plumbum_dependency(key, as:, memoize:, optional:, predicate:)
+        define_plumbum_dependency(
+          key,
+          as:,
+          memoize:,
+          optional:,
+          predicate:,
+          scope:
+        )
       end
 
       scoped_keys.size == 1 ? scoped_keys.first : scoped_keys
@@ -182,9 +193,12 @@ module Plumbum::Consumers
 
     private
 
-    def define_plumbum_dependency(key, as: nil, **)
-      ClassMethods.validate_name(key, as: :key)
-      ClassMethods.validate_name(as,  as: :as) unless as.nil?
+    def define_plumbum_dependency(key, as: nil, scope: nil, **)
+      ClassMethods.validate_name(key,   as: :key)
+      ClassMethods.validate_name(as,    as: :as)    unless as.nil?
+      ClassMethods.validate_name(scope, as: :scope) unless scope.nil?
+
+      key = "#{scope}.#{key}" if scope
 
       key, method_name, path = ClassMethods.split_key(key, as:)
 

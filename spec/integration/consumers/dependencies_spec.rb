@@ -14,6 +14,12 @@ RSpec.describe Plumbum::Consumer do
         errors: {
           failure: 'not going to space'
         }
+      },
+      rockets:      {
+        parts: {
+          engines:    %w[small medium large],
+          fuel_tanks: %w[short medium long]
+        }
       }
     }
   end
@@ -49,10 +55,18 @@ RSpec.describe Plumbum::Consumer do
     klass.dependency 'messages.errors.failure', as: :failure_message
 
     klass.dependency :earth, :moon
+
+    klass.dependency :engines, :fuel_tanks, scope: 'rockets.parts'
   end
 
   describe '#earth' do
     it { expect(consumer.earth).to be == planets[:earth] }
+  end
+
+  describe '#engines' do
+    let(:expected) { provider_values.dig(:rockets, :parts, :engines) }
+
+    it { expect(consumer.engines).to be == expected }
   end
 
   describe '#failure_message' do
@@ -63,6 +77,12 @@ RSpec.describe Plumbum::Consumer do
 
   describe '#fuel_options' do
     it { expect(consumer.fuel_options).to be == provider_values[:fuel_types] }
+  end
+
+  describe '#fuel_tanks' do
+    let(:expected) { provider_values.dig(:rockets, :parts, :fuel_tanks) }
+
+    it { expect(consumer.fuel_tanks).to be == expected }
   end
 
   describe '#launch_sites' do

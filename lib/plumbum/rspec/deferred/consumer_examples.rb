@@ -306,7 +306,7 @@ module Plumbum::RSpec::Deferred
             .to respond_to(:plumbum_dependency)
             .with(1).argument
             .and_unlimited_arguments
-            .and_keywords(:as, :memoize, :optional, :predicate)
+            .and_keywords(:as, :memoize, :optional, :predicate, :scope)
         end
 
         describe 'with nil' do
@@ -392,6 +392,14 @@ module Plumbum::RSpec::Deferred
                 .to be :scoped_valid
             end
           end
+
+          describe 'with scope: value' do
+            let(:options) { super().merge(scope: 'application.data') }
+
+            include_deferred 'should define dependency',
+              'valid',
+              to: 'application.data'
+          end
         end
 
         describe 'with a valid Symbol' do
@@ -413,6 +421,14 @@ module Plumbum::RSpec::Deferred
               expect(described_class.plumbum_dependency(key, as: method_name))
                 .to be :scoped_valid
             end
+          end
+
+          describe 'with scope: value' do
+            let(:options) { super().merge(scope: 'application.data') }
+
+            include_deferred 'should define dependency',
+              'valid',
+              to: 'application.data'
           end
         end
 
@@ -438,6 +454,14 @@ module Plumbum::RSpec::Deferred
                 .to be :scoped_object_tools
             end
           end
+
+          describe 'with scope: value' do
+            let(:options) { super().merge(scope: 'config') }
+
+            include_deferred 'should define dependency',
+              'object_tools',
+              to: 'config.application.tools'
+          end
         end
 
         describe 'with a dot-separated Symbol' do
@@ -461,6 +485,14 @@ module Plumbum::RSpec::Deferred
               expect(described_class.plumbum_dependency(key, as: method_name))
                 .to be :scoped_object_tools
             end
+          end
+
+          describe 'with scope: value' do
+            let(:options) { super().merge(scope: 'config') }
+
+            include_deferred 'should define dependency',
+              'object_tools',
+              to: 'config.application.tools'
           end
         end
 
@@ -516,6 +548,20 @@ module Plumbum::RSpec::Deferred
               end
                 .to raise_error ArgumentError, error_message
             end
+          end
+
+          describe 'with scope: value' do
+            let(:options) { super().merge(scope: 'config') }
+
+            include_deferred 'should define dependency',
+              'valid',
+              to:       'config',
+              allow_as: false
+
+            include_deferred 'should define dependency',
+              :object_tools,
+              to:       'config.application.tools',
+              allow_as: false
           end
         end
       end
