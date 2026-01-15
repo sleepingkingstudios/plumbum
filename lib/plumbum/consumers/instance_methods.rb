@@ -57,15 +57,22 @@ module Plumbum::Consumers
       yield
     end
 
-    def get_scoped_plumbum_dependency(key, path:, optional: false)
+    def get_scoped_plumbum_dependency(key, path:, optional: false) # rubocop:disable Metrics/MethodLength
       dependency = get_plumbum_dependency(key, optional:)
 
+      return dependency if dependency.nil?
       return dependency if path.nil? || path.empty?
 
-      SleepingKingStudios::Tools::Toolbelt
-        .instance
-        .object_tools
-        .dig(dependency, *path, indifferent_keys: true)
+      path.reduce(dependency) do |memo, method_name|
+        SleepingKingStudios::Tools::Toolbelt
+          .instance
+          .object_tools
+          .fetch(memo, method_name, indifferent_key: true)
+      end
+    rescue KeyError, IndexError, NoMethodError => exception # rubocop:disable Lint/ShadowedException
+      raise Plumbum::Errors::MissingDependencyError,
+        exception.message,
+        cause: exception
     end
 
     def handle_missing_plumbum_dependency(key, optional: false)
