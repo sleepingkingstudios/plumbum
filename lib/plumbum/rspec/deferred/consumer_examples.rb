@@ -1640,6 +1640,48 @@ module Plumbum::RSpec::Deferred
           end
         end
 
+        context 'when the class defines a scoped dependency with invalid path' \
+        do
+          let(:error_message) do
+            'dependency not found with key "application"'
+          end
+
+          before(:example) do
+            described_class.plumbum_dependency('application.tools.basic_tools')
+          end
+
+          it { expect(consumer).to respond_to(:basic_tools).with(0).arguments }
+
+          it 'should raise an exception' do
+            expect { consumer.basic_tools }.to raise_error(
+              Plumbum::Errors::MissingDependencyError,
+              error_message
+            )
+          end
+
+          context 'when the class includes a provider for the dependency' do
+            let(:object_tools) { Object.new.freeze }
+            let(:tools)        { Struct.new(:object_tools).new(object_tools) }
+            let(:application)  { Struct.new(:tools).new(tools) }
+            let(:application_provider) do
+              Plumbum::OneProvider.new(:application, value: application)
+            end
+            let(:error_message) { 'undefined method "basic_tools"' }
+
+            before(:example) do
+              described_class.plumbum_provider application_provider
+            end
+
+            it 'should raise an exception' do
+              expect { consumer.basic_tools }
+                .to raise_error(
+                  Plumbum::Errors::MissingDependencyError,
+                  error_message
+                )
+            end
+          end
+        end
+
         context 'when the class defines an optional scoped dependency' do
           before(:example) do
             described_class.plumbum_dependency(
