@@ -1,0 +1,19 @@
+---
+name: Plumbum::Consumers::InstanceMethods
+slug: instance-methods
+type: module
+files:
+- lib/plumbum/consumers/instance_methods.rb
+parent_path: plumbum/consumers
+short_description: Instance methods for defining the Consumer interface.
+instance_methods:
+- name: get_plumbum_dependency
+  path: plumbum/consumers/instance-methods/i-get-plumbum-dependency
+  slug: get-plumbum-dependency
+  inherited: false
+- name: has_plumbum_dependency?
+  path: plumbum/consumers/instance-methods/i-has-plumbum-dependency?
+  slug: has-plumbum-dependency?
+  inherited: false
+data_path: plumbum/consumers/instance-methods
+version: "*"

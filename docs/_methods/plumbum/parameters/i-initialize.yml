@@ -1,0 +1,23 @@
+---
+name: Plumbum::Parameters#initialize
+parent_path: plumbum/parameters
+signature: initialize(*arguments, **keywords, &block)
+slug: initialize
+constructor: false
+data_path: plumbum/parameters/i-initialize
+params:
+- description: the arguments passed to the constructor.
+  name: arguments
+  type:
+  - name: Array
+- description: |-
+    the keywords passed to the constructor, including
+    any injected dependencies.
+  name: keywords
+  type:
+  - name: Hash
+- description: the block passed to the constructor.
+  name: block
+  type:
+  - name: Proc
+version: "*"

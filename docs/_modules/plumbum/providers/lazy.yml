@@ -1,0 +1,18 @@
+---
+name: Plumbum::Providers::Lazy
+slug: lazy
+type: module
+files:
+- lib/plumbum/providers/lazy.rb
+parent_path: plumbum/providers
+short_description: Provider that calls proc values and returns the result.
+instance_methods:
+- name: get
+  path: plumbum/providers/lazy/i-get
+  slug: get
+  inherited: false
+data_path: plumbum/providers/lazy
+description: |-
+  Add Plumbum::Providers::Lazy for values that have a consistent definition
+  but changing value, such as class definitions under code reloading.
+version: "*"

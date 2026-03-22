@@ -1,0 +1,43 @@
+---
+name: Plumbum::Version
+slug: version
+type: module
+files:
+- lib/plumbum/version.rb
+parent_path: plumbum
+short_description: The current version of the gem.
+class_methods:
+- name: to_gem_version
+  path: plumbum/version/c-to-gem-version
+  slug: to-gem-version
+  inherited: false
+constants:
+- name: BUILD
+  path: plumbum/version/build
+  slug: build
+  inherited: false
+- name: MAJOR
+  path: plumbum/version/major
+  slug: major
+  inherited: false
+- name: MINOR
+  path: plumbum/version/minor
+  slug: minor
+  inherited: false
+- name: PATCH
+  path: plumbum/version/patch
+  slug: patch
+  inherited: false
+- name: PRERELEASE
+  path: plumbum/version/prerelease
+  slug: prerelease
+  inherited: false
+data_path: plumbum/version
+metadata:
+  api: private
+  see:
+  - label: http://semver.org/
+    path: http://semver.org/
+    text:
+    type: link
+version: "*"

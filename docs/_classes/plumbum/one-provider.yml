@@ -1,0 +1,66 @@
+---
+name: Plumbum::OneProvider
+slug: one-provider
+type: class
+files:
+- lib/plumbum/one_provider.rb
+parent_path: plumbum
+short_description: Provider that provides a single value for a specified key.
+instance_attributes:
+- name: key
+  read: true
+  write: false
+  path: plumbum/one-provider/i-key
+  slug: key
+  inherited: false
+- name: value
+  read: true
+  write: false
+  path: plumbum/providers/singular/i-value
+  slug: value
+  inherited: true
+instance_methods:
+- name: get
+  path: plumbum/provider/i-get
+  slug: get
+  inherited: true
+- name: has?
+  path: plumbum/provider/i-has?
+  slug: has?
+  inherited: true
+- name: initialize
+  path: plumbum/one-provider/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: options
+  path: plumbum/provider/i-options
+  slug: options
+  inherited: true
+- name: read_only?
+  path: plumbum/provider/i-read-only?
+  slug: read-only?
+  inherited: true
+- name: set
+  path: plumbum/provider/i-set
+  slug: set
+  inherited: true
+- name: value
+  path: plumbum/one-provider/i-value
+  slug: value
+  inherited: false
+- name: value=
+  path: plumbum/one-provider/i-value=
+  slug: value=
+  inherited: false
+- name: write_once?
+  path: plumbum/provider/i-write-once?
+  slug: write-once?
+  inherited: true
+data_path: plumbum/one-provider
+included_modules:
+- name: Plumbum::Providers::Singular
+  slug: singular
+  path: plumbum/providers/singular
+constructor: true
+version: "*"

@@ -1,0 +1,31 @@
+---
+name: Plumbum::Consumers::ScopedConsumer::ClassMethods
+slug: class-methods
+type: module
+files:
+- lib/plumbum/consumers/scoped_consumer.rb
+parent_path: plumbum/consumers/scoped-consumer
+short_description: Class methods to extend when including Plumbum::Consumer.
+instance_methods:
+- name: plumbum_dependency
+  path: plumbum/consumers/class-methods/i-plumbum-dependency
+  slug: plumbum-dependency
+  inherited: true
+- name: plumbum_dependency_keys
+  path: plumbum/consumers/class-methods/i-plumbum-dependency-keys
+  slug: plumbum-dependency-keys
+  inherited: true
+- name: plumbum_provider
+  path: plumbum/consumers/class-methods/i-plumbum-provider
+  slug: plumbum-provider
+  inherited: true
+- name: plumbum_providers
+  path: plumbum/consumers/class-methods/i-plumbum-providers
+  slug: plumbum-providers
+  inherited: true
+data_path: plumbum/consumers/scoped-consumer/class-methods
+included_modules:
+- name: Plumbum::Consumers::ClassMethods
+  slug: class-methods
+  path: plumbum/consumers/class-methods
+version: "*"

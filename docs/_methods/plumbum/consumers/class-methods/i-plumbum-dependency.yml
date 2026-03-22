@@ -1,0 +1,84 @@
+---
+name: Plumbum::Consumers::ClassMethods#plumbum_dependency
+parent_path: plumbum/consumers/class-methods
+signature: 'plumbum_dependency(*keys, as: nil, memoize: true, optional: false, predicate:
+  false, scope: nil)'
+slug: plumbum-dependency
+constructor: false
+data_path: plumbum/consumers/class-methods/i-plumbum-dependency
+params:
+- description: |-
+    the keys for the dependency. A new
+    dependency will be defined for each key using the same options.
+  name: keys
+  type:
+  - name: Array
+    items:
+    - name: String
+    - name: Symbol
+- description: |-
+    the method name used to define dependency
+    methods. Defaults to the key. Cannot be used with multiple keys.
+  name: as
+  type:
+  - name: String
+  - name: Symbol
+  default: nil
+- description: |-
+    if true, memoizes the value of the
+    dependency the first time it is successfully called. Defaults to true.
+  name: memoize
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'true'
+- description: |-
+    if true, calling the dependency returns
+    nil if the dependency is not defined. Defaults to false.
+  name: optional
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+- description: |-
+    if true, also defines a predicate method
+    that returns true if the dependency has a defined value. Defaults to
+    false.
+  name: predicate
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+- description: |-
+    if true, the generated methods will be
+    generated with private visibility. Defaults to false.
+  name: private
+  type:
+  - name: 'true'
+  - name: 'false'
+- description: |-
+    if given, combined with the key or keys to
+    determine the dependency name and the path from the dependency to the
+    returned value.
+  name: scope
+  type:
+  - name: String
+  - name: Symbol
+  default: nil
+raises:
+- description: |-
+    if any key is not a String or Symbol, or is
+    empty.
+  type:
+  - name: ArgumentError
+returns:
+- description: |-
+    the name of the generated method, or the
+    method names if given more than one key.
+  type:
+  - name: Symbol
+  - name: Array
+    items:
+    - name: Symbol
+short_description: Defines injected dependencies for instances of the class.
+version: "*"

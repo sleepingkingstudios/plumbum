@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.dependency_methods_for
+parent_path: plumbum/consumers/class-methods
+signature: dependency_methods_for(receiver)
+slug: dependency-methods-for
+constructor: false
+data_path: plumbum/consumers/class-methods/c-dependency-methods-for
+metadata:
+  api: private
+version: "*"

@@ -1,0 +1,17 @@
+---
+name: Plumbum::RSpec::Deferred
+slug: deferred
+type: module
+files:
+- lib/plumbum/rspec/deferred.rb
+- lib/plumbum/rspec/deferred/consumer_examples.rb
+- lib/plumbum/rspec/deferred/provider_examples.rb
+parent_path: plumbum/r-spec
+short_description: Namespace for deferred example groups that assert on Plumbum objects.
+defined_modules:
+- name: ConsumerExamples
+  slug: consumer-examples
+- name: ProviderExamples
+  slug: provider-examples
+data_path: plumbum/r-spec/deferred
+version: "*"

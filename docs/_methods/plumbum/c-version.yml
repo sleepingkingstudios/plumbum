@@ -1,0 +1,12 @@
+---
+name: Plumbum.version
+parent_path: plumbum
+signature: version
+slug: version
+constructor: false
+data_path: plumbum/c-version
+returns:
+- description: the current version of the gem.
+  type:
+  - name: String
+version: "*"

@@ -1,0 +1,22 @@
+---
+name: Plumbum::Provider#get
+parent_path: plumbum/provider
+signature: get(key)
+slug: get
+constructor: false
+data_path: plumbum/provider/i-get
+params:
+- description: the key for the requested value.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+returns:
+- description: |-
+    the requested object, or nil if the provider does
+    not have a value for the requested key.
+  type:
+  - name: Object
+  - name: nil
+short_description: Retrieves the provided value for the given key.
+version: "*"

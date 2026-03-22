@@ -1,0 +1,33 @@
+---
+name: Plumbum::RSpec::StubProvider.validate_key
+parent_path: plumbum/r-spec/stub-provider
+signature: validate_key(provider, key)
+slug: validate-key
+constructor: false
+data_path: plumbum/r-spec/stub-provider/c-validate-key
+params:
+- description: the provider to stub.
+  name: provider
+  type:
+  - name: Plumbum::Provider
+    path: plumbum/provider
+- description: the key to verify.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+raises:
+- description: if the key is not a valid String or Symbol.
+  type:
+  - name: ArgumentError
+- description: |-
+    if the key is not supported
+    by the provider.
+  type:
+  - name: Plumbum::Errors::InvalidKeyError
+    path: plumbum/errors/invalid-key-error
+returns:
+- description: void
+  type: []
+short_description: Verifies the provider has the given key.
+version: "*"

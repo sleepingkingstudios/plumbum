@@ -1,0 +1,12 @@
+---
+name: Plumbum::Providers::Singular#key
+parent_path: plumbum/providers/singular
+signature: key
+slug: key
+constructor: false
+data_path: plumbum/providers/singular/i-key
+returns:
+- description: the key matched by the provider.
+  type:
+  - name: String
+version: "*"

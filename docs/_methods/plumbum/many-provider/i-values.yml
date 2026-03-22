@@ -1,0 +1,12 @@
+---
+name: Plumbum::ManyProvider#values
+parent_path: plumbum/many-provider
+signature: values
+slug: values
+constructor: false
+data_path: plumbum/many-provider/i-values
+returns:
+- description: the key-value pairs returned by the provider.
+  type:
+  - name: Hash
+version: "*"

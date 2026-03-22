@@ -1,0 +1,46 @@
+---
+name: Plumbum::Providers::Plural
+slug: plural
+type: module
+files:
+- lib/plumbum/providers/plural.rb
+parent_path: plumbum/providers
+short_description: Provider implementation that wraps a multiple key-value pairs.
+instance_attributes:
+- name: values
+  read: true
+  write: false
+  path: plumbum/providers/plural/i-values
+  slug: values
+  inherited: false
+instance_methods:
+- name: get
+  path: plumbum/provider/i-get
+  slug: get
+  inherited: true
+- name: has?
+  path: plumbum/provider/i-has?
+  slug: has?
+  inherited: true
+- name: options
+  path: plumbum/provider/i-options
+  slug: options
+  inherited: true
+- name: read_only?
+  path: plumbum/provider/i-read-only?
+  slug: read-only?
+  inherited: true
+- name: set
+  path: plumbum/provider/i-set
+  slug: set
+  inherited: true
+- name: write_once?
+  path: plumbum/provider/i-write-once?
+  slug: write-once?
+  inherited: true
+data_path: plumbum/providers/plural
+included_modules:
+- name: Plumbum::Provider
+  slug: provider
+  path: plumbum/provider
+version: "*"

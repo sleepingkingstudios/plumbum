@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.validate_name
+parent_path: plumbum/consumers/class-methods
+signature: 'validate_name(value, as: nil)'
+slug: validate-name
+constructor: false
+data_path: plumbum/consumers/class-methods/c-validate-name
+metadata:
+  api: private
+version: "*"

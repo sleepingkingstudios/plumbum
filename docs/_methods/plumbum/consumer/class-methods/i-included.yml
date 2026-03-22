@@ -1,0 +1,13 @@
+---
+name: Plumbum::Consumer::ClassMethods#included
+parent_path: plumbum/consumer/class-methods
+signature: included(other)
+slug: included
+constructor: false
+data_path: plumbum/consumer/class-methods/i-included
+description: |-
+  This ensures that the Consumer methods propagate correctly across a
+  chain of included modules.
+short_description: Callback invoked when Consumer is included in another module or
+  class.
+version: "*"

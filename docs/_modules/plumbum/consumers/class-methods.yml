@@ -1,0 +1,60 @@
+---
+name: Plumbum::Consumers::ClassMethods
+slug: class-methods
+type: module
+files:
+- lib/plumbum/consumers/class_methods.rb
+parent_path: plumbum/consumers
+short_description: Class methods for defining the Consumer interface.
+class_methods:
+- name: define_delegated_method
+  path: plumbum/consumers/class-methods/c-define-delegated-method
+  slug: define-delegated-method
+  inherited: false
+- name: define_memoized_reader
+  path: plumbum/consumers/class-methods/c-define-memoized-reader
+  slug: define-memoized-reader
+  inherited: false
+- name: define_methods
+  path: plumbum/consumers/class-methods/c-define-methods
+  slug: define-methods
+  inherited: false
+- name: define_predicate
+  path: plumbum/consumers/class-methods/c-define-predicate
+  slug: define-predicate
+  inherited: false
+- name: define_reader
+  path: plumbum/consumers/class-methods/c-define-reader
+  slug: define-reader
+  inherited: false
+- name: dependency_methods_for
+  path: plumbum/consumers/class-methods/c-dependency-methods-for
+  slug: dependency-methods-for
+  inherited: false
+- name: split_key
+  path: plumbum/consumers/class-methods/c-split-key
+  slug: split-key
+  inherited: false
+- name: validate_name
+  path: plumbum/consumers/class-methods/c-validate-name
+  slug: validate-name
+  inherited: false
+instance_methods:
+- name: plumbum_dependency
+  path: plumbum/consumers/class-methods/i-plumbum-dependency
+  slug: plumbum-dependency
+  inherited: false
+- name: plumbum_dependency_keys
+  path: plumbum/consumers/class-methods/i-plumbum-dependency-keys
+  slug: plumbum-dependency-keys
+  inherited: false
+- name: plumbum_provider
+  path: plumbum/consumers/class-methods/i-plumbum-provider
+  slug: plumbum-provider
+  inherited: false
+- name: plumbum_providers
+  path: plumbum/consumers/class-methods/i-plumbum-providers
+  slug: plumbum-providers
+  inherited: false
+data_path: plumbum/consumers/class-methods
+version: "*"

@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.define_delegated_method
+parent_path: plumbum/consumers/class-methods
+signature: define_delegated_method(receiver, key:, method_name:, path:, **options)
+slug: define-delegated-method
+constructor: false
+data_path: plumbum/consumers/class-methods/c-define-delegated-method
+metadata:
+  api: private
+version: "*"

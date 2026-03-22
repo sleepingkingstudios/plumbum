@@ -1,0 +1,13 @@
+---
+name: Plumbum::OneProvider#key
+parent_path: plumbum/one-provider
+signature: key
+slug: key
+constructor: false
+data_path: plumbum/one-provider/i-key
+returns:
+- description: the key used to identify the provided value.
+  type:
+  - name: String
+  - name: Symbol
+version: "*"

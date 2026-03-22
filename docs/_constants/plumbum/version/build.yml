@@ -1,0 +1,10 @@
+---
+name: Plumbum::Version::BUILD
+parent_path: plumbum/version
+slug: build
+short_description: Build metadata.
+value: nil
+data_path: plumbum/version/build
+metadata:
+  api: private
+version: "*"

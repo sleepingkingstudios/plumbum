@@ -1,0 +1,20 @@
+---
+name: Plumbum::Providers
+slug: providers
+type: module
+files:
+- lib/plumbum/providers.rb
+- lib/plumbum/providers/lazy.rb
+- lib/plumbum/providers/plural.rb
+- lib/plumbum/providers/singular.rb
+parent_path: plumbum
+short_description: Namespace for Provider implementations.
+defined_modules:
+- name: Lazy
+  slug: lazy
+- name: Plural
+  slug: plural
+- name: Singular
+  slug: singular
+data_path: plumbum/providers
+version: "*"

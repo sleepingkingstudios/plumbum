@@ -1,0 +1,137 @@
+---
+name: Plumbum::Consumer
+slug: consumer
+type: module
+files:
+- lib/plumbum/consumer.rb
+parent_path: plumbum
+short_description: Provides methods for defining and accessing injected dependencies.
+class_methods:
+- name: included
+  path: plumbum/consumer/c-included
+  slug: included
+  inherited: false
+defined_modules:
+- name: ClassMethods
+  slug: class-methods
+instance_methods:
+- name: get_plumbum_dependency
+  path: plumbum/consumers/instance-methods/i-get-plumbum-dependency
+  slug: get-plumbum-dependency
+  inherited: true
+- name: has_plumbum_dependency?
+  path: plumbum/consumers/instance-methods/i-has-plumbum-dependency?
+  slug: has-plumbum-dependency?
+  inherited: true
+data_path: plumbum/consumer
+included_modules:
+- name: Plumbum::Consumers::InstanceMethods
+  slug: instance-methods
+  path: plumbum/consumers/instance-methods
+metadata:
+  examples:
+  - name: Define a basic dependency.
+    text: |-
+      class Orchestrator
+        include Plumbum::Consumer
+        include ApplicationProvider
+
+        dependency :application
+      end
+
+      Orchestrator.new.application
+      #=> returns the value of ApplicationProvider.value
+  - name: Define an aliased dependency.
+    text: |-
+      class Orchestrator
+        include Plumbum::Consumer
+        include ApplicationProvider
+
+        dependency :application, as: :app
+      end
+
+      Orchestrator.new.app
+      #=> returns the value of ApplicationProvider.value
+  - name: Define an optional dependency.
+    text: |-
+      class BillCustomer
+        include Plumbum::Consumer
+
+        dependency :rewards
+      end
+
+      class BillRewardsCustomer < BillCustomer
+        include RewardsProvider
+      end
+
+      BillCustomer.new.rewards
+      #=> returns nil
+
+      BillRewardsCustomer.new.rewards
+      #=> returns RewardsProvider.value
+  - name: Define an unmemoized dependency.
+    text: |-
+      class Action
+        include Plumbum::Consumer
+        include RequestProvider
+
+        dependency :request, memoize: false
+      end
+
+      action = Action.new
+      action.request
+      #=> returns the value of RequestProvider.value
+
+      request = Request.new
+      RequestProvider.value = request
+      action.request
+      #=> returns the new request
+  - name: Define a dependency with scoped key.
+    text: |-
+      class Client
+        include Plumbum::Consumer
+        include ConfigurationProvider
+
+        dependency 'config.network.default_server'
+      end
+
+      client = Client.new
+      client.default_server
+      #=> returns the value of ConfigurationProvider.values[:config][:network][:default_server]
+  - name: Define multiple dependencies.
+    text: |-
+      class Rocket
+        include Plumbum::Consumer
+        include RocketPartsProvider
+
+        dependency :engine, :fusilage, :payload
+      end
+
+      rocket = Rocket.new
+      rocket.engine
+      #=> returns the value of RocketPartsProvider.values[:engine]
+  - name: Define multiple dependencies with scoped keys.
+    text: |-
+      class Server
+        include Plumbum::Consumer
+        include ConfigurationProvider
+
+        dependency :port, :protocol, :timeout, scope: 'config.network'
+      end
+
+      server = Server.new
+      server.port
+      #=> returns the value of ConfigurationProvider.values[:config][:network][:port]
+  - name: Define a method depndency.
+    text: |-
+      class Application
+        include Plumbum::Consumer
+        include ProcessManagerProvider
+
+        dependency '#restart', scope: :process_manager
+      end
+
+      application = Application.new
+      application.restart(force: true)
+      #=> calls ProcessManagerProvider.values[:process_manager].restart(force: true)
+version: "*"

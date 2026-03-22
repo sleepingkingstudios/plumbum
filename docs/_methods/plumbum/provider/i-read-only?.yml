@@ -1,0 +1,15 @@
+---
+name: Plumbum::Provider#read_only?
+parent_path: plumbum/provider
+signature: read_only?
+slug: read-only?
+constructor: false
+data_path: plumbum/provider/i-read-only?
+returns:
+- description: |-
+    if true, indicates the provider is read only, and an
+    exception will be raised when attempting to set or change its value(s).
+  type:
+  - name: 'true'
+  - name: 'false'
+version: "*"

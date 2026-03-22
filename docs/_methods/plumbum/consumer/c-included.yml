@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumer.included
+parent_path: plumbum/consumer
+signature: included(other)
+slug: included
+constructor: false
+data_path: plumbum/consumer/c-included
+short_description: Callback invoked when Consumer is included in another module or
+  class.
+version: "*"

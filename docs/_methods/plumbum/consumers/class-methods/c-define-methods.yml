@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.define_methods
+parent_path: plumbum/consumers/class-methods
+signature: define_methods(receiver, key:, method_name:, memoize:, predicate:, **)
+slug: define-methods
+constructor: false
+data_path: plumbum/consumers/class-methods/c-define-methods
+metadata:
+  api: private
+version: "*"

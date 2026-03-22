@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.split_key
+parent_path: plumbum/consumers/class-methods
+signature: split_key(key, as:, scope:)
+slug: split-key
+constructor: false
+data_path: plumbum/consumers/class-methods/c-split-key
+metadata:
+  api: private
+version: "*"

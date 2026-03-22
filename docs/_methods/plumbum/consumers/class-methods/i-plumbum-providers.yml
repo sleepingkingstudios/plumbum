@@ -1,0 +1,24 @@
+---
+name: Plumbum::Consumers::ClassMethods#plumbum_providers
+parent_path: plumbum/consumers/class-methods
+signature: 'plumbum_providers(cache: true)'
+slug: plumbum-providers
+constructor: false
+data_path: plumbum/consumers/class-methods/i-plumbum-providers
+params:
+- description: |-
+    if false,.clears the memoized value and
+    reaggregates the providers.
+  name: cache
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'true'
+returns:
+- description: the providers defined for the class.
+  type:
+  - name: Array
+    items:
+    - name: Plumbum::Provider
+      path: plumbum/provider
+version: "*"

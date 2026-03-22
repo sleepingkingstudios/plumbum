@@ -1,0 +1,25 @@
+---
+name: Plumbum::Consumers::ClassMethods#plumbum_dependency_keys
+parent_path: plumbum/consumers/class-methods
+signature: 'plumbum_dependency_keys(cache: true)'
+slug: plumbum-dependency-keys
+constructor: false
+data_path: plumbum/consumers/class-methods/i-plumbum-dependency-keys
+params:
+- description: |-
+    if false,.clears the memoized value and
+    recalculates the keys.
+  name: cache
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'true'
+returns:
+- description: |-
+    the keys of the dependencies declared by the class
+    and its ancestors.
+  type:
+  - name: Set
+    items:
+    - name: String
+version: "*"

@@ -1,0 +1,24 @@
+---
+name: Plumbum::Consumers::InstanceMethods#has_plumbum_dependency?
+parent_path: plumbum/consumers/instance-methods
+signature: has_plumbum_dependency?(key)
+slug: has-plumbum-dependency?
+constructor: false
+data_path: plumbum/consumers/instance-methods/i-has-plumbum-dependency?
+params:
+- description: the key for the requested dependency.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+raises:
+- description: if the key is not a String or Symbol, or is empty.
+  type:
+  - name: ArgumentError
+returns:
+- description: true if the dependency is defined, otherwise false.
+  type:
+  - name: 'true'
+  - name: 'false'
+short_description: Checks if the dependency with the given key is defined.
+version: "*"

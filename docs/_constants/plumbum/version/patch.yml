@@ -1,0 +1,10 @@
+---
+name: Plumbum::Version::PATCH
+parent_path: plumbum/version
+slug: patch
+short_description: Patch version.
+value: '0'
+data_path: plumbum/version/patch
+metadata:
+  api: private
+version: "*"

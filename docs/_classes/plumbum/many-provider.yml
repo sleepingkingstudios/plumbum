@@ -1,0 +1,60 @@
+---
+name: Plumbum::ManyProvider
+slug: many-provider
+type: class
+files:
+- lib/plumbum/many_provider.rb
+parent_path: plumbum
+short_description: Provider that provides a mapping of keys to values.
+instance_attributes:
+- name: values
+  read: true
+  write: false
+  path: plumbum/providers/plural/i-values
+  slug: values
+  inherited: true
+instance_methods:
+- name: get
+  path: plumbum/provider/i-get
+  slug: get
+  inherited: true
+- name: has?
+  path: plumbum/provider/i-has?
+  slug: has?
+  inherited: true
+- name: initialize
+  path: plumbum/many-provider/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: options
+  path: plumbum/provider/i-options
+  slug: options
+  inherited: true
+- name: read_only?
+  path: plumbum/provider/i-read-only?
+  slug: read-only?
+  inherited: true
+- name: set
+  path: plumbum/provider/i-set
+  slug: set
+  inherited: true
+- name: values
+  path: plumbum/many-provider/i-values
+  slug: values
+  inherited: false
+- name: values=
+  path: plumbum/many-provider/i-values=
+  slug: values=
+  inherited: false
+- name: write_once?
+  path: plumbum/provider/i-write-once?
+  slug: write-once?
+  inherited: true
+data_path: plumbum/many-provider
+included_modules:
+- name: Plumbum::Providers::Plural
+  slug: plural
+  path: plumbum/providers/plural
+constructor: true
+version: "*"

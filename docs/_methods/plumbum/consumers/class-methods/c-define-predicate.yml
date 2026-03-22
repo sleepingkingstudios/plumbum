@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.define_predicate
+parent_path: plumbum/consumers/class-methods
+signature: define_predicate(receiver, key:, method_name:, **options)
+slug: define-predicate
+constructor: false
+data_path: plumbum/consumers/class-methods/c-define-predicate
+metadata:
+  api: private
+version: "*"

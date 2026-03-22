@@ -1,0 +1,30 @@
+---
+plugins:
+  - sleeping_king_studios/docs/jekyll/plugins/required
+collections:
+  classes:
+    output: false
+  constants:
+    output: false
+  methods:
+    output: false
+  modules:
+    output: false
+  namespaces:
+    output: false
+defaults:
+- scope:
+    path: ''
+    type: 'pages'
+  values:
+    encoding: 'utf-8'
+    layout: 'default'
+    title: 'Plumbum'
+description: |
+  A minimal dependency injection framework for Ruby, using vanilla Ruby semantics to define and reference dependencies from different providers.
+github:
+  repository_url: https://github.com/sleepingkingstudios/plumbum
+markdown: kramdown
+repository: sleepingkingstudios/plumbum
+theme: jekyll-theme-dinky
+title: Plumbum

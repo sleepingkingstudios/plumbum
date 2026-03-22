@@ -1,0 +1,20 @@
+---
+name: Plumbum::Consumers
+slug: consumers
+type: module
+files:
+- lib/plumbum/consumers.rb
+- lib/plumbum/consumers/class_methods.rb
+- lib/plumbum/consumers/scoped_consumer.rb
+- lib/plumbum/consumers/instance_methods.rb
+parent_path: plumbum
+short_description: Functionality for defining consumers.
+defined_modules:
+- name: ClassMethods
+  slug: class-methods
+- name: InstanceMethods
+  slug: instance-methods
+- name: ScopedConsumer
+  slug: scoped-consumer
+data_path: plumbum/consumers
+version: "*"
