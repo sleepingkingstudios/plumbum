@@ -1,0 +1,12 @@
+---
+name: Plumbum::Providers::Singular#value
+parent_path: plumbum/providers/singular
+signature: value
+slug: value
+constructor: false
+data_path: plumbum/providers/singular/i-value
+returns:
+- description: the value returned by the provider.
+  type:
+  - name: Object
+version: "*"

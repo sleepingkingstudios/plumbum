@@ -1,0 +1,36 @@
+---
+name: Plumbum::RSpec::StubProvider#stub_provider
+parent_path: plumbum/r-spec/stub-provider
+signature: stub_provider(provider, key, value)
+slug: stub-provider
+constructor: false
+data_path: plumbum/r-spec/stub-provider/i-stub-provider
+params:
+- description: the provider to stub.
+  name: provider
+  type:
+  - name: Plumbum::Provider
+    path: plumbum/provider
+- description: the key to stub.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+- description: the temporary value to assign for the key.
+  name: value
+  type:
+  - name: Object
+raises:
+- description: |-
+    if the key is not supported by
+    the provider.
+  type:
+  - name: Plumbum::Errors::InvalidKeyError
+    path: plumbum/errors/invalid-key-error
+returns:
+- description: the stubbed key.
+  type:
+  - name: Symbol
+short_description: Stubs the value of a specific key for a provider for the current
+  spec.
+version: "*"

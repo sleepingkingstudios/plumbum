@@ -1,0 +1,16 @@
+---
+name: Plumbum::Provider#write_once?
+parent_path: plumbum/provider
+signature: write_once?
+slug: write-once?
+constructor: false
+data_path: plumbum/provider/i-write-once?
+returns:
+- description: |-
+    if true, indicates the provider permits overwriting
+    undefined values, and an exception will be raised when attemption to
+    set or change any other values.
+  type:
+  - name: 'true'
+  - name: 'false'
+version: "*"

@@ -1,0 +1,13 @@
+---
+name: Plumbum::RSpec::Deferred::ProviderExamples
+slug: provider-examples
+type: module
+files:
+- lib/plumbum/rspec/deferred/provider_examples.rb
+parent_path: plumbum/r-spec/deferred
+short_description: Deferred examples for validating Plumbum::Provider implementations.
+data_path: plumbum/r-spec/deferred/provider-examples
+included_modules:
+- name: RSpec::SleepingKingStudios::Deferred::Provider
+  slug: provider
+version: "*"

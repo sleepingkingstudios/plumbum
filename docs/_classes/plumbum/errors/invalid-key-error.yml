@@ -1,0 +1,14 @@
+---
+name: Plumbum::Errors::InvalidKeyError
+slug: invalid-key-error
+type: class
+files:
+- lib/plumbum/errors/invalid_key_error.rb
+parent_path: plumbum/errors
+short_description: Exception raised when attempting to set an invalid key for a provider.
+data_path: plumbum/errors/invalid-key-error
+constructor: false
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"

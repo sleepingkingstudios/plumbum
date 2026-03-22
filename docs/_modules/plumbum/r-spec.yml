@@ -1,0 +1,17 @@
+---
+name: Plumbum::RSpec
+slug: r-spec
+type: module
+files:
+- lib/plumbum/rspec.rb
+- lib/plumbum/rspec/deferred.rb
+- lib/plumbum/rspec/stub_provider.rb
+parent_path: plumbum
+short_description: Namespace for RSpec examples for testing Plumbum implementations.
+defined_modules:
+- name: Deferred
+  slug: deferred
+- name: StubProvider
+  slug: stub-provider
+data_path: plumbum/r-spec
+version: "*"

@@ -1,0 +1,10 @@
+---
+name: Plumbum::Version::MAJOR
+parent_path: plumbum/version
+slug: major
+short_description: Major version.
+value: '0'
+data_path: plumbum/version/major
+metadata:
+  api: private
+version: "*"

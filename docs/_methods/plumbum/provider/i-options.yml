@@ -1,0 +1,8 @@
+---
+name: Plumbum::Provider#options
+parent_path: plumbum/provider
+signature: options
+slug: options
+constructor: false
+data_path: plumbum/provider/i-options
+version: "*"

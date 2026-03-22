@@ -1,0 +1,15 @@
+---
+name: Plumbum::Parameters
+slug: parameters
+type: module
+files:
+- lib/plumbum/parameters.rb
+parent_path: plumbum
+short_description: Utility module that converts constructor parameters to a Provider.
+instance_methods:
+- name: initialize
+  path: plumbum/parameters/i-initialize
+  slug: initialize
+  inherited: false
+data_path: plumbum/parameters
+version: "*"

@@ -1,0 +1,15 @@
+---
+name: Plumbum::OneProvider#value
+parent_path: plumbum/one-provider
+signature: value
+slug: value
+constructor: false
+data_path: plumbum/one-provider/i-value
+returns:
+- description: |-
+    the provided value, or nil if the value is not
+    defined.
+  type:
+  - name: Object
+  - name: nil
+version: "*"

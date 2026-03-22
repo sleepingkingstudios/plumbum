@@ -1,0 +1,14 @@
+---
+name: Plumbum::Errors::ImmutableError
+slug: immutable-error
+type: class
+files:
+- lib/plumbum/errors/immutable_error.rb
+parent_path: plumbum/errors
+short_description: Exception raised when attempting to change an immutable value.
+data_path: plumbum/errors/immutable-error
+constructor: false
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"

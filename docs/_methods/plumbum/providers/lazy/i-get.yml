@@ -1,0 +1,25 @@
+---
+name: Plumbum::Providers::Lazy#get
+parent_path: plumbum/providers/lazy
+signature: get(key)
+slug: get
+constructor: false
+data_path: plumbum/providers/lazy/i-get
+description: |-
+  If the value is a Proc, the Proc is called and the value returned by the
+  Proc is returned by #get. Otherwise, #get returns the value directly.
+params:
+- description: the key for the requested value.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+returns:
+- description: |-
+    the requested object, or nil if the provider does
+    not have a value for the requested key.
+  type:
+  - name: Object
+  - name: nil
+short_description: Retrieves the provided value for the given key.
+version: "*"

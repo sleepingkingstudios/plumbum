@@ -1,0 +1,30 @@
+---
+name: Plumbum::Provider#set
+parent_path: plumbum/provider
+signature: set(key, value)
+slug: set
+constructor: false
+data_path: plumbum/provider/i-set
+params:
+- description: the key for the assigned value.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+- description: the value to assign.
+  name: value
+  type:
+  - name: Object
+raises:
+- description: |-
+    when attempting to assign a value
+    to an immutable provider.
+  type:
+  - name: Plumbum::Errors::ImmutableError
+    path: plumbum/errors/immutable-error
+returns:
+- description: the assigned value.
+  type:
+  - name: Object
+short_description: Sets the value for the given key.
+version: "*"

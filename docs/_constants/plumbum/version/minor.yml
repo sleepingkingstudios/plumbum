@@ -1,0 +1,10 @@
+---
+name: Plumbum::Version::MINOR
+parent_path: plumbum/version
+slug: minor
+short_description: Minor version.
+value: '1'
+data_path: plumbum/version/minor
+metadata:
+  api: private
+version: "*"

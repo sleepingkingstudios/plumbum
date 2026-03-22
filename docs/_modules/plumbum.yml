@@ -1,0 +1,56 @@
+---
+name: Plumbum
+slug: plumbum
+type: module
+files:
+- lib/plumbum.rb
+- lib/plumbum/rspec.rb
+- lib/plumbum/errors.rb
+- lib/plumbum/version.rb
+- lib/plumbum/consumer.rb
+- lib/plumbum/provider.rb
+- lib/plumbum/consumers.rb
+- lib/plumbum/providers.rb
+- lib/plumbum/parameters.rb
+- lib/plumbum/one_provider.rb
+- lib/plumbum/many_provider.rb
+parent_path: ''
+short_description: Dependency injection and management library for Ruby.
+class_methods:
+- name: version
+  path: plumbum/c-version
+  slug: version
+  inherited: false
+constants:
+- name: UNDEFINED
+  path: plumbum/undefined
+  slug: undefined
+  inherited: false
+- name: VERSION
+  path: plumbum/version
+  slug: version
+  inherited: false
+defined_classes:
+- name: ManyProvider
+  slug: many-provider
+- name: OneProvider
+  slug: one-provider
+defined_modules:
+- name: Consumer
+  slug: consumer
+- name: Consumers
+  slug: consumers
+- name: Errors
+  slug: errors
+- name: Parameters
+  slug: parameters
+- name: Provider
+  slug: provider
+- name: Providers
+  slug: providers
+- name: RSpec
+  slug: r-spec
+- name: Version
+  slug: version
+data_path: plumbum
+version: "*"

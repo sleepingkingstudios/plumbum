@@ -1,0 +1,62 @@
+---
+name: Plumbum::Provider
+slug: provider
+type: module
+files:
+- lib/plumbum/provider.rb
+parent_path: plumbum
+short_description: Abstract module defining the Provider interface.
+instance_methods:
+- name: get
+  path: plumbum/provider/i-get
+  slug: get
+  inherited: false
+- name: has?
+  path: plumbum/provider/i-has?
+  slug: has?
+  inherited: false
+- name: options
+  path: plumbum/provider/i-options
+  slug: options
+  inherited: false
+- name: read_only?
+  path: plumbum/provider/i-read-only?
+  slug: read-only?
+  inherited: false
+- name: set
+  path: plumbum/provider/i-set
+  slug: set
+  inherited: false
+- name: write_once?
+  path: plumbum/provider/i-write-once?
+  slug: write-once?
+  inherited: false
+data_path: plumbum/provider
+description: |-
+  A Plumbum::Provider is responsible for making one or more values available
+  to a consumer object. How those values are stored or generated is up to the
+  provider implementation.
+
+  Each provider implementation is responsible for defining the #get_value(key)
+  and #has_value(key) methods:
+
+  - #get_value(key) must accept a single non-empty String argument and return
+    the provided value matching the key, or nil if there is no matching value.
+  - #has_value?(key) must accept a single non-empty String argument and return
+    true if the provider has a value matching the key, or false if there is
+    no matching value.
+metadata:
+  see:
+  - label: Plumbum::Consumer
+    path: plumbum/consumer
+    text:
+    type: reference
+  - label: Plumbum::Providers::Plural
+    path: plumbum/providers/plural
+    text:
+    type: reference
+  - label: Plumbum::Providers::Singular
+    path: plumbum/providers/singular
+    text:
+    type: reference
+version: "*"

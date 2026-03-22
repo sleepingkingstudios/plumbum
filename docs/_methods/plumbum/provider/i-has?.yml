@@ -1,0 +1,30 @@
+---
+name: Plumbum::Provider#has?
+parent_path: plumbum/provider
+signature: 'has?(key, allow_undefined: false)'
+slug: has?
+constructor: false
+data_path: plumbum/provider/i-has?
+params:
+- description: the key for the requested value.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+- description: |-
+    if true, returns true even if the key
+    exists but the value is undefined.
+  name: allow_undefined
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+returns:
+- description: |-
+    true if the provider has a value for the requested
+    key, otherwise false.
+  type:
+  - name: 'true'
+  - name: 'false'
+short_description: Checks if the provider has a value for the given key.
+version: "*"

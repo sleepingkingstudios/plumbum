@@ -1,0 +1,27 @@
+---
+name: Plumbum::RSpec::StubProvider
+slug: stub-provider
+type: module
+files:
+- lib/plumbum/rspec/stub_provider.rb
+parent_path: plumbum/r-spec
+short_description: Helper methods for stubbing the values of Plumbum providers in
+  RSpec tests.
+class_methods:
+- name: validate_key
+  path: plumbum/r-spec/stub-provider/c-validate-key
+  slug: validate-key
+  inherited: false
+defined_modules:
+- name: ClassMethods
+  slug: class-methods
+instance_methods:
+- name: stub_provider
+  path: plumbum/r-spec/stub-provider/i-stub-provider
+  slug: stub-provider
+  inherited: false
+data_path: plumbum/r-spec/stub-provider
+extended_modules:
+- name: SleepingKingStudios::Tools::Toolbox::Mixin
+  slug: mixin
+version: "*"

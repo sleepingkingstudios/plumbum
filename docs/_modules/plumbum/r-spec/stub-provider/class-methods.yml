@@ -1,0 +1,15 @@
+---
+name: Plumbum::RSpec::StubProvider::ClassMethods
+slug: class-methods
+type: module
+files:
+- lib/plumbum/rspec/stub_provider.rb
+parent_path: plumbum/r-spec/stub-provider
+short_description: Class methods to extend when including StubProvider.
+instance_methods:
+- name: stub_provider
+  path: plumbum/r-spec/stub-provider/class-methods/i-stub-provider
+  slug: stub-provider
+  inherited: false
+data_path: plumbum/r-spec/stub-provider/class-methods
+version: "*"

@@ -1,0 +1,14 @@
+---
+name: Plumbum::Errors::MissingDependencyError
+slug: missing-dependency-error
+type: class
+files:
+- lib/plumbum/errors/missing_dependency_error.rb
+parent_path: plumbum/errors
+short_description: Exception raised when attempting to retrieve a missing dependency.
+data_path: plumbum/errors/missing-dependency-error
+constructor: false
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"

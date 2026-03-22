@@ -1,0 +1,38 @@
+---
+name: Plumbum::Consumers::ScopedConsumer
+slug: scoped-consumer
+type: module
+files:
+- lib/plumbum/consumers/scoped_consumer.rb
+parent_path: plumbum/consumers
+short_description: Consumer implementation with fully-scoped method names for compatibility.
+defined_modules:
+- name: ClassMethods
+  slug: class-methods
+instance_methods:
+- name: get_plumbum_dependency
+  path: plumbum/consumers/instance-methods/i-get-plumbum-dependency
+  slug: get-plumbum-dependency
+  inherited: true
+- name: has_plumbum_dependency?
+  path: plumbum/consumers/instance-methods/i-has-plumbum-dependency?
+  slug: has-plumbum-dependency?
+  inherited: true
+data_path: plumbum/consumers/scoped-consumer
+description: |-
+  Use a scoped consumer when the standard Consumer DSL class methods (such as
+  .dependency and .provider) might conflict with existing methods.
+extended_modules:
+- name: SleepingKingStudios::Tools::Toolbox::Mixin
+  slug: mixin
+included_modules:
+- name: Plumbum::Consumers::InstanceMethods
+  slug: instance-methods
+  path: plumbum/consumers/instance-methods
+metadata:
+  see:
+  - label: Plumbum::Consumer
+    path: plumbum/consumer
+    text:
+    type: reference
+version: "*"

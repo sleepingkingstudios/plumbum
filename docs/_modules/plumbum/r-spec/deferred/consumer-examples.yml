@@ -1,0 +1,13 @@
+---
+name: Plumbum::RSpec::Deferred::ConsumerExamples
+slug: consumer-examples
+type: module
+files:
+- lib/plumbum/rspec/deferred/consumer_examples.rb
+parent_path: plumbum/r-spec/deferred
+short_description: Deferred examples for validating Plumbum::Consumer implementations.
+data_path: plumbum/r-spec/deferred/consumer-examples
+included_modules:
+- name: RSpec::SleepingKingStudios::Deferred::Provider
+  slug: provider
+version: "*"

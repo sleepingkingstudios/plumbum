@@ -1,0 +1,23 @@
+---
+name: Plumbum::Errors
+slug: errors
+type: module
+files:
+- lib/plumbum/errors.rb
+- lib/plumbum/errors/immutable_error.rb
+- lib/plumbum/errors/invalid_key_error.rb
+- lib/plumbum/errors/invalid_dependency_error.rb
+- lib/plumbum/errors/missing_dependency_error.rb
+parent_path: plumbum
+short_description: Namespace for exceptions raised when handling Plumbum errors.
+defined_classes:
+- name: ImmutableError
+  slug: immutable-error
+- name: InvalidDependencyError
+  slug: invalid-dependency-error
+- name: InvalidKeyError
+  slug: invalid-key-error
+- name: MissingDependencyError
+  slug: missing-dependency-error
+data_path: plumbum/errors
+version: "*"

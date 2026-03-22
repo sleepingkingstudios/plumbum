@@ -1,0 +1,37 @@
+---
+name: Plumbum::Consumers::InstanceMethods#get_plumbum_dependency
+parent_path: plumbum/consumers/instance-methods
+signature: 'get_plumbum_dependency(key, optional: false)'
+slug: get-plumbum-dependency
+constructor: false
+data_path: plumbum/consumers/instance-methods/i-get-plumbum-dependency
+params:
+- description: the key for the requested dependency.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+- description: |-
+    if true, returns nil if the dependency is
+    not defined. Defaults to false.
+  name: optional
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+raises:
+- description: if the key is not a String or Symbol, or is empty.
+  type:
+  - name: ArgumentError
+- description: |-
+    if no matching dependency
+    is found.
+  type:
+  - name: Plumbum::Errors::MissingDependencyError
+    path: plumbum/errors/missing-dependency-error
+returns:
+- description: the dependency value.
+  type:
+  - name: Object
+short_description: Retrieves the dependency with the specified key.
+version: "*"

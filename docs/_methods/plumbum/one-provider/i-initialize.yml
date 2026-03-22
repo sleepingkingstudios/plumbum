@@ -1,0 +1,26 @@
+---
+name: Plumbum::OneProvider#initialize
+parent_path: plumbum/one-provider
+signature: 'initialize(key, value: Plumbum::UNDEFINED, **options)'
+slug: initialize
+constructor: true
+data_path: plumbum/one-provider/i-initialize
+params:
+- description: the key used to identify the provided value.
+  name: key
+  type:
+  - name: String
+  - name: Symbol
+- description: the provided value, if any.
+  name: value
+  type:
+  - name: Object
+- description: additional options for the provider.
+  name: options
+  type:
+  - name: Hash
+returns:
+- description: a new instance of OneProvider
+  type:
+  - name: OneProvider
+version: "*"

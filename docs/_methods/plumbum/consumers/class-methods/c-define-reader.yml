@@ -1,0 +1,10 @@
+---
+name: Plumbum::Consumers::ClassMethods.define_reader
+parent_path: plumbum/consumers/class-methods
+signature: define_reader(receiver, key:, method_name:, optional:, path:, **options)
+slug: define-reader
+constructor: false
+data_path: plumbum/consumers/class-methods/c-define-reader
+metadata:
+  api: private
+version: "*"

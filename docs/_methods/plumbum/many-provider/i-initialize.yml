@@ -1,0 +1,26 @@
+---
+name: Plumbum::ManyProvider#initialize
+parent_path: plumbum/many-provider
+signature: 'initialize(values: Plumbum::UNDEFINED, **options)'
+slug: initialize
+constructor: true
+data_path: plumbum/many-provider/i-initialize
+params:
+- description: the provided values.
+  name: values
+  type:
+  - name: Hash
+    keys:
+    - name: String
+    - name: Symbol
+    values:
+    - name: Object
+- description: additional options for the provider.
+  name: options
+  type:
+  - name: Hash
+returns:
+- description: a new instance of ManyProvider
+  type:
+  - name: ManyProvider
+version: "*"

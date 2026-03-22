@@ -1,0 +1,14 @@
+---
+name: Plumbum::Errors::InvalidDependencyError
+slug: invalid-dependency-error
+type: class
+files:
+- lib/plumbum/errors/invalid_dependency_error.rb
+parent_path: plumbum/errors
+short_description: Exception raised when a dependency exists but cannot be resolved.
+data_path: plumbum/errors/invalid-dependency-error
+constructor: false
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"
