@@ -7,7 +7,7 @@ require 'plumbum/consumers'
 module Plumbum::Consumers
   # Class methods for defining the Consumer interface.
   module ClassMethods # rubocop:disable Metrics/ModuleLength
-    class << self
+    class << self # rubocop:disable Metrics/ClassLength
       INVALID_OPTIONS_FOR_METHOD_DEPENDENCY = {
         memoize:   true,
         predicate: false
@@ -15,37 +15,57 @@ module Plumbum::Consumers
       private_constant :INVALID_OPTIONS_FOR_METHOD_DEPENDENCY
 
       # @api private
-      def define_delegated_method(receiver, key:, method_name:, path:, **)
-        validate_delegated_method_options(path:, **)
+      def define_delegated_method( # rubocop:disable Metrics/MethodLength
+        receiver,
+        key:,
+        method_name:,
+        path:,
+        **options
+      )
+        validate_delegated_method_options(path:, **options)
 
         *path, inner_name = path
         method_name       = method_name[1..] if method_name.start_with?('#')
         inner_name        = inner_name[1..]
 
-        dependency_methods_for(receiver).define_method(method_name) \
-        do |*args, **keywords, &block|
-          inner = get_scoped_plumbum_dependency(key, path:)
+        dependency_methods_for(receiver)
+          .define_method(method_name) do |*args, **keywords, &block|
+            inner = get_scoped_plumbum_dependency(key, path:)
 
-          inner.public_send(inner_name, *args, **keywords, &block)
-        end
+            inner.public_send(inner_name, *args, **keywords, &block)
+          end # rubocop:disable Style/MultilineBlockChain
+          .tap do |method_name|
+            receiver.send(:private, method_name) if options[:private]
+          end
       end
 
       # @api private
-      def define_memoized_reader(receiver, key:, method_name:, optional:, path:)
-        dependency_methods_for(receiver).define_method(method_name) do
-          if (@plumbum_dependencies ||= {}).key?(key)
-            return @plumbum_dependencies[key]
-          end
+      def define_memoized_reader( # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+        receiver,
+        key:,
+        method_name:,
+        optional:,
+        path:,
+        **options
+      )
+        dependency_methods_for(receiver)
+          .define_method(method_name) do
+            if (@plumbum_dependencies ||= {}).key?(key)
+              return @plumbum_dependencies[key]
+            end
 
-          get_scoped_plumbum_dependency(key, optional:, path:).tap do |value|
-            @plumbum_dependencies[key] = value unless value.nil?
+            get_scoped_plumbum_dependency(key, optional:, path:).tap do |value|
+              @plumbum_dependencies[key] = value unless value.nil?
+            end
+          end # rubocop:disable Style/MultilineBlockChain
+          .tap do |method_name|
+            receiver.send(:private, method_name) if options[:private]
           end
-        end
       end
 
       # @api private
       def define_methods(receiver, key:, method_name:, memoize:, predicate:, **) # rubocop:disable Metrics/ParameterLists
-        define_predicate(receiver, key:, method_name:) if predicate
+        define_predicate(receiver, key:, method_name:, **) if predicate
 
         if memoize
           define_memoized_reader(receiver, key:, method_name:, **)
@@ -57,19 +77,34 @@ module Plumbum::Consumers
       end
 
       # @api private
-      def define_predicate(receiver, key:, method_name:)
+      def define_predicate(receiver, key:, method_name:, **options)
         method_name = :"#{method_name}?"
 
-        dependency_methods_for(receiver).define_method(method_name) do
-          has_plumbum_dependency?(key)
-        end
+        dependency_methods_for(receiver)
+          .define_method(method_name) do
+            has_plumbum_dependency?(key)
+          end # rubocop:disable Style/MultilineBlockChain
+          .tap do |method_name|
+            receiver.send(:private, method_name) if options[:private]
+          end
       end
 
       # @api private
-      def define_reader(receiver, key:, method_name:, optional:, path:)
-        dependency_methods_for(receiver).define_method(method_name) do
-          get_scoped_plumbum_dependency(key, optional:, path:)
-        end
+      def define_reader( # rubocop:disable Metrics/ParameterLists
+        receiver,
+        key:,
+        method_name:,
+        optional:,
+        path:,
+        **options
+      )
+        dependency_methods_for(receiver)
+          .define_method(method_name) do
+            get_scoped_plumbum_dependency(key, optional:, path:)
+          end # rubocop:disable Style/MultilineBlockChain
+          .tap do |method_name|
+            receiver.send(:private, method_name) if options[:private]
+          end
       end
 
       # @api private
@@ -141,6 +176,8 @@ module Plumbum::Consumers
     #   @param predicate [true, false] if true, also defines a predicate method
     #     that returns true if the dependency has a defined value. Defaults to
     #     false.
+    #   @param private [true, false] if true, the generated methods will be
+    #     generated with private visibility. Defaults to false.
     #   @param scope [String, Symbol] if given, combined with the key or keys to
     #     determine the dependency name and the path from the dependency to the
     #     returned value.
@@ -156,6 +193,7 @@ module Plumbum::Consumers
       memoize:   true,
       optional:  false,
       predicate: false,
+      private:   false,
       scope:     nil
     )
       if keys.size > 1 && as
@@ -169,6 +207,7 @@ module Plumbum::Consumers
           memoize:,
           optional:,
           predicate:,
+          private:,
           scope:
         )
       end

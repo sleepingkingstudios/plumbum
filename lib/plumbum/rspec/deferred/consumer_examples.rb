@@ -99,10 +99,123 @@ module Plumbum::RSpec::Deferred
 
     deferred_examples 'should implement the Consumer class methods' do
       describe '.plumbum_dependency' do
+        deferred_examples 'should define the delegated method' \
+        do |scoped: false, visibility: :public|
+          if scoped
+            it 'should not define the unscoped delegated method' do
+              expect(subject).not_to respond_to(delegated_name)
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(delegated_name)
+            end
+          end
+
+          if visibility == :private
+            it 'should define the private delegated method',
+              :aggregate_failures \
+            do
+              expect(subject).not_to respond_to(method_name)
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(method_name)
+              expect(subject)
+                .to respond_to(method_name, true)
+                .with_unlimited_arguments
+                .and_any_keywords
+                .and_a_block
+            end
+          else
+            it 'should define the delegated method', :aggregate_failures do
+              expect(subject).not_to respond_to(method_name)
+
+              define_dependencies
+
+              expect(subject)
+                .to respond_to(method_name)
+                .with_unlimited_arguments
+                .and_any_keywords
+                .and_a_block
+            end
+          end
+        end
+
+        deferred_examples 'should define the predicate method' \
+        do |scoped: false, visibility: :public|
+          if scoped
+            it 'should not define the unscoped predicate method' do
+              expect(subject).not_to respond_to(predicate_name)
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(predicate_name)
+            end
+          end
+
+          if visibility == :private
+            it 'should define the private predicate method',
+              :aggregate_failures \
+            do
+              expect(subject).not_to respond_to(:"#{method_name}?")
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(:"#{method_name}?")
+              expect(subject)
+                .to respond_to(:"#{method_name}?", true)
+                .with(0).arguments
+            end
+          else
+            it 'should define the predicate method', :aggregate_failures do
+              expect(subject).not_to respond_to(:"#{method_name}?")
+
+              define_dependencies
+
+              expect(subject)
+                .to respond_to(:"#{method_name}?")
+                .with(0).arguments
+            end
+          end
+        end
+
+        deferred_examples 'should define the reader method' \
+        do |scoped: false, visibility: :public|
+          if scoped
+            it 'should not define the unscoped reader method' do
+              expect(subject).not_to respond_to(reader_name)
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(reader_name)
+            end
+          end
+
+          if visibility == :private
+            it 'should define the private reader method', :aggregate_failures do
+              expect(subject).not_to respond_to(method_name)
+
+              define_dependencies
+
+              expect(subject).not_to respond_to(method_name)
+              expect(subject).to respond_to(method_name, true).with(0).arguments
+            end
+          else
+            it 'should define the reader method', :aggregate_failures do
+              expect(subject).not_to respond_to(method_name)
+
+              define_dependencies
+
+              expect(subject).to respond_to(method_name).with(0).arguments
+            end
+          end
+        end
+
         deferred_examples 'should define dependency' \
-        do |dependency_name, allow_as: true, to: nil|
+        do |dependency_name, allow_as: true, to: nil, visibility: :public|
           let(:expected_key) { (to || dependency_name).to_s.split('.').first }
           let(:reader_name)  { dependency_name.to_sym }
+          let(:method_name)  { reader_name }
 
           it 'should add the key to the dependency keys' do
             expect { define_dependencies }.to(
@@ -110,13 +223,8 @@ module Plumbum::RSpec::Deferred
             )
           end
 
-          it 'should define the reader method', :aggregate_failures do
-            expect(subject).not_to respond_to(reader_name)
-
-            define_dependencies
-
-            expect(subject).to respond_to(reader_name).with(0).arguments
-          end
+          include_deferred 'should define the reader method',
+            visibility: visibility
 
           if allow_as
             describe 'with as: nil' do
@@ -128,13 +236,8 @@ module Plumbum::RSpec::Deferred
                 )
               end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(reader_name)
-
-                define_dependencies
-
-                expect(subject).to respond_to(reader_name).with(0).arguments
-              end
+              include_deferred 'should define the reader method',
+                visibility: visibility
             end
 
             describe 'with as: an Object' do
@@ -198,15 +301,9 @@ module Plumbum::RSpec::Deferred
                   .to(change { dependency_keys }.to(include(expected_key)))
               end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(reader_name)
-                expect(subject).not_to respond_to(scoped_name)
-
-                define_dependencies
-
-                expect(subject).not_to respond_to(reader_name)
-                expect(subject).to respond_to(scoped_name).with(0).arguments
-              end
+              include_deferred 'should define the reader method',
+                scoped:     true,
+                visibility: visibility
             end
 
             describe 'with as: a Symbol' do
@@ -219,15 +316,9 @@ module Plumbum::RSpec::Deferred
                   .to change { dependency_keys }.to(include(expected_key))
               end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(reader_name)
-                expect(subject).not_to respond_to(scoped_name)
-
-                define_dependencies
-
-                expect(subject).not_to respond_to(reader_name)
-                expect(subject).to respond_to(scoped_name).with(0).arguments
-              end
+              include_deferred 'should define the reader method',
+                scoped:     true,
+                visibility: visibility
             end
           end
 
@@ -240,56 +331,35 @@ module Plumbum::RSpec::Deferred
                 .to change { dependency_keys }.to(include(expected_key))
             end
 
-            it 'should define the predicate method', :aggregate_failures do
-              expect(subject).not_to respond_to(predicate_name)
+            include_deferred 'should define the predicate method',
+              visibility: visibility
 
-              define_dependencies
-
-              expect(subject).to respond_to(predicate_name).with(0).arguments
-            end
-
-            it 'should define the reader method', :aggregate_failures do
-              expect(subject).not_to respond_to(reader_name)
-
-              define_dependencies
-
-              expect(subject).to respond_to(reader_name).with(0).arguments
-            end
+            include_deferred 'should define the reader method',
+              visibility: visibility
 
             if allow_as
               describe 'with as: value' do
-                let(:scoped_name)    { :"scoped_#{reader_name}" }
-                let(:method_name)    { scoped_name.to_s }
-                let(:options)        { super().merge(as: method_name) }
-                let(:predicate_name) { :"#{scoped_name}?" }
+                let(:scoped_name) { :"scoped_#{reader_name}" }
+                let(:method_name) { scoped_name.to_s }
+                let(:options)     { super().merge(as: method_name) }
 
-                it 'should define the predicate method', :aggregate_failures do
-                  expect(subject).not_to respond_to(predicate_name)
+                include_deferred 'should define the predicate method',
+                  scoped:     true,
+                  visibility: visibility
 
-                  define_dependencies
-
-                  expect(subject)
-                    .to respond_to(predicate_name)
-                    .with(0)
-                    .arguments
-                end
-
-                it 'should define the reader method', :aggregate_failures do
-                  expect(subject).not_to respond_to(scoped_name)
-
-                  define_dependencies
-
-                  expect(subject).to respond_to(scoped_name).with(0).arguments
-                end
+                include_deferred 'should define the reader method',
+                  scoped:     true,
+                  visibility: visibility
               end
             end
           end
         end
 
         deferred_examples 'should define method dependency' \
-        do |dependency_name, allow_as: true, to: nil|
+        do |dependency_name, allow_as: true, to: nil, visibility: :public|
           let(:expected_key)   { (to || dependency_name).to_s.split('.').first }
           let(:delegated_name) { dependency_name.to_sym }
+          let(:method_name)    { delegated_name }
 
           it 'should add the key to the dependency keys' do
             expect { define_dependencies }.to(
@@ -297,17 +367,8 @@ module Plumbum::RSpec::Deferred
             )
           end
 
-          it 'should define the delegated method', :aggregate_failures do
-            expect(subject).not_to respond_to(delegated_name)
-
-            define_dependencies
-
-            expect(subject)
-              .to respond_to(delegated_name)
-              .with_unlimited_arguments
-              .and_any_keywords
-              .and_a_block
-          end
+          include_deferred 'should define the delegated method',
+            visibility: visibility
 
           if allow_as
             describe 'with as: nil' do
@@ -319,17 +380,8 @@ module Plumbum::RSpec::Deferred
                 )
               end
 
-              it 'should define the delegated method', :aggregate_failures do
-                expect(subject).not_to respond_to(delegated_name)
-
-                define_dependencies
-
-                expect(subject)
-                  .to respond_to(delegated_name)
-                  .with_unlimited_arguments
-                  .and_any_keywords
-                  .and_a_block
-              end
+              include_deferred 'should define the delegated method',
+                visibility: visibility
             end
 
             describe 'with as: a String' do
@@ -342,19 +394,9 @@ module Plumbum::RSpec::Deferred
                   .to(change { dependency_keys }.to(include(expected_key)))
               end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(delegated_name)
-                expect(subject).not_to respond_to(scoped_name)
-
-                define_dependencies
-
-                expect(subject).not_to respond_to(delegated_name)
-                expect(subject)
-                  .to respond_to(scoped_name)
-                  .with_unlimited_arguments
-                  .and_any_keywords
-                  .and_a_block
-              end
+              include_deferred 'should define the delegated method',
+                scoped:     true,
+                visibility: visibility
             end
 
             describe 'with as: a Symbol' do
@@ -367,25 +409,25 @@ module Plumbum::RSpec::Deferred
                   .to(change { dependency_keys }.to(include(expected_key)))
               end
 
-              it 'should define the reader method', :aggregate_failures do
-                expect(subject).not_to respond_to(delegated_name)
-                expect(subject).not_to respond_to(scoped_name)
-
-                define_dependencies
-
-                expect(subject).not_to respond_to(delegated_name)
-                expect(subject)
-                  .to respond_to(scoped_name)
-                  .with_unlimited_arguments
-                  .and_any_keywords
-                  .and_a_block
-              end
+              include_deferred 'should define the delegated method',
+                scoped:     true,
+                visibility: visibility
             end
           end
         end
 
         let(:keys)    { [key] }
         let(:options) { {} }
+        let(:expected_keywords) do
+          %i[
+            as
+            memoize
+            optional
+            predicate
+            private
+            scope
+          ]
+        end
 
         define_method :define_dependencies do
           described_class.plumbum_dependency(*keys, **options)
@@ -404,7 +446,7 @@ module Plumbum::RSpec::Deferred
             .to respond_to(:plumbum_dependency)
             .with(1).argument
             .and_unlimited_arguments
-            .and_keywords(:as, :memoize, :optional, :predicate, :scope)
+            .and_keywords(*expected_keywords)
         end
 
         describe 'with nil' do
@@ -491,6 +533,14 @@ module Plumbum::RSpec::Deferred
             end
           end
 
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define dependency',
+              'valid',
+              visibility: :private
+          end
+
           describe 'with scope: value' do
             let(:options) { super().merge(scope: 'application.data') }
 
@@ -519,6 +569,14 @@ module Plumbum::RSpec::Deferred
               expect(described_class.plumbum_dependency(key, as: method_name))
                 .to be :scoped_valid
             end
+          end
+
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define dependency',
+              'valid',
+              visibility: :private
           end
 
           describe 'with scope: value' do
@@ -553,6 +611,15 @@ module Plumbum::RSpec::Deferred
             end
           end
 
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define dependency',
+              :object_tools,
+              to:         'application.tools',
+              visibility: :private
+          end
+
           describe 'with scope: value' do
             let(:options) { super().merge(scope: 'config') }
 
@@ -583,6 +650,15 @@ module Plumbum::RSpec::Deferred
               expect(described_class.plumbum_dependency(key, as: method_name))
                 .to be :scoped_object_tools
             end
+          end
+
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define dependency',
+              :object_tools,
+              to:         'application.tools',
+              visibility: :private
           end
 
           describe 'with scope: value' do
@@ -648,6 +724,21 @@ module Plumbum::RSpec::Deferred
             end
           end
 
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define dependency',
+              'valid',
+              allow_as:   false,
+              visibility: :private
+
+            include_deferred 'should define dependency',
+              :object_tools,
+              to:         'application.tools',
+              allow_as:   false,
+              visibility: :private
+          end
+
           describe 'with scope: value' do
             let(:options) { super().merge(scope: 'config') }
 
@@ -700,6 +791,15 @@ module Plumbum::RSpec::Deferred
             end
           end
 
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define method dependency',
+              :fetch,
+              to:         'application.tools',
+              visibility: :private
+          end
+
           describe 'with predicate: value' do
             let(:options) { super().merge(predicate: true) }
             let(:error_message) do
@@ -736,6 +836,15 @@ module Plumbum::RSpec::Deferred
               expect { define_dependencies }
                 .to raise_error ArgumentError, error_message
             end
+          end
+
+          describe 'with private: value' do
+            let(:options) { super().merge(private: true) }
+
+            include_deferred 'should define method dependency',
+              :fetch,
+              to:         'application.tools',
+              visibility: :private
           end
 
           describe 'with predicate: value' do
