@@ -7,6 +7,9 @@ require 'plumbum/consumers'
 module Plumbum::Consumers
   # Class methods for defining the Consumer interface.
   module ClassMethods # rubocop:disable Metrics/ModuleLength
+    UNDEFINED = SleepingKingStudios::Tools::UNDEFINED
+    private_constant :UNDEFINED
+
     class << self # rubocop:disable Metrics/ClassLength
       INVALID_OPTIONS_FOR_METHOD_DEPENDENCY = {
         memoize:   true,
@@ -42,6 +45,7 @@ module Plumbum::Consumers
       # @api private
       def define_memoized_reader( # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
         receiver,
+        default:,
         key:,
         method_name:,
         optional:,
@@ -54,9 +58,10 @@ module Plumbum::Consumers
               return @plumbum_dependencies[key]
             end
 
-            get_scoped_plumbum_dependency(key, optional:, path:).tap do |value|
-              @plumbum_dependencies[key] = value unless value.nil?
-            end
+            get_scoped_plumbum_dependency(key, default:, optional:, path:)
+              .tap do |value|
+                @plumbum_dependencies[key] = value unless value.nil?
+              end
           end # rubocop:disable Style/MultilineBlockChain
           .tap do |method_name|
             receiver.send(:private, method_name) if options[:private]
@@ -92,6 +97,7 @@ module Plumbum::Consumers
       # @api private
       def define_reader( # rubocop:disable Metrics/ParameterLists
         receiver,
+        default:,
         key:,
         method_name:,
         optional:,
@@ -100,7 +106,7 @@ module Plumbum::Consumers
       )
         dependency_methods_for(receiver)
           .define_method(method_name) do
-            get_scoped_plumbum_dependency(key, optional:, path:)
+            get_scoped_plumbum_dependency(key, default:, optional:, path:)
           end # rubocop:disable Style/MultilineBlockChain
           .tap do |method_name|
             receiver.send(:private, method_name) if options[:private]
@@ -169,6 +175,12 @@ module Plumbum::Consumers
     #     dependency will be defined for each key using the same options.
     #   @param as [String, Symbol] the method name used to define dependency
     #     methods. Defaults to the key. Cannot be used with multiple keys.
+    #   @param default [Object, Proc] if given, the default value will be
+    #     returned when the consumer does not have a provider for the
+    #     dependency. If the default value is a Proc, the default will be lazily
+    #     evaluated in the context of the consumer. A default value *will not*
+    #     be returned if a matching provider is defined but does not support the
+    #     given scope.
     #   @param memoize [true, false] if true, memoizes the value of the
     #     dependency the first time it is successfully called. Defaults to true.
     #   @param optional [true, false] if true, calling the dependency returns
@@ -190,6 +202,7 @@ module Plumbum::Consumers
     def plumbum_dependency( # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
       *keys,
       as:        nil,
+      default:   UNDEFINED,
       memoize:   true,
       optional:  false,
       predicate: false,
@@ -204,6 +217,7 @@ module Plumbum::Consumers
         define_plumbum_dependency(
           key,
           as:,
+          default:,
           memoize:,
           optional:,
           predicate:,

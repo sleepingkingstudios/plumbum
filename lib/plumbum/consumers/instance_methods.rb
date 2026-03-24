@@ -7,6 +7,9 @@ require 'plumbum/consumers'
 module Plumbum::Consumers
   # Instance methods for defining the Consumer interface.
   module InstanceMethods
+    UNDEFINED = SleepingKingStudios::Tools::UNDEFINED
+    private_constant :UNDEFINED
+
     # Retrieves the dependency with the specified key.
     #
     # @param key [String, Symbol] the key for the requested dependency.
@@ -57,10 +60,23 @@ module Plumbum::Consumers
       yield
     end
 
-    def get_scoped_plumbum_dependency(key, path:, optional: false) # rubocop:disable Metrics/MethodLength
+    def get_scoped_plumbum_dependency( # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      key,
+      path:,
+      default:  UNDEFINED,
+      optional: false
+    )
+      optional ||= default != UNDEFINED
       dependency = get_plumbum_dependency(key, optional:)
 
-      return dependency if dependency.nil?
+      if dependency.nil?
+        return if default == UNDEFINED
+
+        return default unless default.is_a?(Proc)
+
+        return instance_exec(&default)
+      end
+
       return dependency if path.nil? || path.empty?
 
       path.reduce(dependency) do |memo, method_name|

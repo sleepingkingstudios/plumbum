@@ -1,8 +1,8 @@
 ---
 name: Plumbum::Consumers::ClassMethods.define_memoized_reader
 parent_path: plumbum/consumers/class-methods
-signature: define_memoized_reader(receiver, key:, method_name:, optional:, path:,
-  **options)
+signature: define_memoized_reader(receiver, default:, key:, method_name:, optional:,
+  path:, **options)
 slug: define-memoized-reader
 constructor: false
 data_path: plumbum/consumers/class-methods/c-define-memoized-reader

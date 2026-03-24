@@ -421,6 +421,7 @@ module Plumbum::RSpec::Deferred
         let(:expected_keywords) do
           %i[
             as
+            default
             memoize
             optional
             predicate
@@ -1493,6 +1494,42 @@ module Plumbum::RSpec::Deferred
             it 'should return the dependency value' do
               expect(consumer.integration).to be railtie_provider.value
             end
+          end
+        end
+
+        context 'when the class defines a dependency with default: a Proc' do
+          let(:default) { -> { { id: SecureRandom.uuid } } }
+
+          before(:example) do
+            described_class.plumbum_dependency('tools', default:)
+          end
+
+          it { expect(consumer).to respond_to(:tools).with(0).arguments }
+
+          it { expect(consumer.tools).to match({ id: an_instance_of(String) }) }
+
+          context 'when the class includes a provider for the dependency' do
+            include_deferred 'when the class defines providers'
+
+            it { expect(consumer.tools).to be tools_provider.value }
+          end
+        end
+
+        context 'when the class defines a dependency with default: value' do
+          let(:default) { {} }
+
+          before(:example) do
+            described_class.plumbum_dependency('tools', default:)
+          end
+
+          it { expect(consumer).to respond_to(:tools).with(0).arguments }
+
+          it { expect(consumer.tools).to be == default }
+
+          context 'when the class includes a provider for the dependency' do
+            include_deferred 'when the class defines providers'
+
+            it { expect(consumer.tools).to be tools_provider.value }
           end
         end
 

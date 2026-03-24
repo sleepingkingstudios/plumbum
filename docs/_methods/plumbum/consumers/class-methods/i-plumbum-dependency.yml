@@ -25,6 +25,17 @@ params:
   - name: Symbol
   default: nil
 - description: |-
+    if given, the default value will be
+    returned when the consumer does not have a provider for the
+    dependency. If the default value is a Proc, the default will be lazily
+    evaluated in the context of the consumer. A default value *will not*
+    be returned if a matching provider is defined but does not support the
+    given scope.
+  name: default
+  type:
+  - name: Object
+  - name: Proc
+- description: |-
     if true, memoizes the value of the
     dependency the first time it is successfully called. Defaults to true.
   name: memoize
