@@ -18,13 +18,16 @@ defaults:
     type: 'pages'
   values:
     encoding: 'utf-8'
-    layout: 'default'
+    layout: 'page'
     title: 'Plumbum'
 description: |
   A minimal dependency injection framework for Ruby, using vanilla Ruby semantics to define and reference dependencies from different providers.
 github:
   repository_url: https://github.com/sleepingkingstudios/plumbum
 markdown: kramdown
-repository: sleepingkingstudios/plumbum
 theme: jekyll-theme-dinky
 title: Plumbum
+project_metadata:
+  name:           Plumbum
+  repository_url: https://github.com/sleepingkingstudios/plumbum
+  versions:       []

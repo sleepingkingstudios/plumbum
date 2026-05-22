@@ -7,7 +7,7 @@ A minimal dependency injection framework for Ruby, using vanilla Ruby semantics 
 
 ## Documentation
 
-This is the documentation for the [current development build](https://github.com/sleepingkingstudios/plumbum) of Plumbum.
+{% include snippets/index-versions.md %}
 
 <!-- - For the most recent release, see [Version 0.1]({{site.baseurl}}/versions/0.1). -->
 - For previous releases, see the [Versions]({{site.baseurl}}/versions) page.

@@ -12,8 +12,8 @@ Plumbum is a minimal dependency injection framework for Ruby, using vanilla Ruby
 Plumbum defines an interface for declaring, providing, and consuming object dependencies. It defines the following concepts:
 
 - Dependencies - A value or object used in some part of your application, such as a data repository, a configuration hash, or an environment name.
-- [Providers](http://sleepingkingstudios.github.io/plumbum/provider) - A `Provider` makes one or more dependencies available to other parts of the application.
-- [Consumers](http://sleepingkingstudios.github.io/plumbum/consumer) - A `Consumer` declares what dependencies it relies on and what providers it consumes. Plumbum handles resolving those dependencies.
+- [Providers](http://sleepingkingstudios.com/plumbum/providers) - A `Provider` makes one or more dependencies available to other parts of the application.
+- [Consumers](http://sleepingkingstudios.com/plumbum/consumers) - A `Consumer` declares what dependencies it relies on and what providers it consumes. Plumbum handles resolving those dependencies.
 
 As an example, consider a data repository. From a query object's perspective, there should be one source of truth as to where the data is read and persisted - but where? In a global singleton? A repository object manually passed to the query? What if we want to use different data sources in the test environment?
 
