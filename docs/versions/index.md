@@ -8,6 +8,7 @@ breadcrumbs:
 
 For more information on release versions, see the [Changelog](www.example.com/blob/main/CHANGELOG.md).
 
-<!-- - [Version 0.1]({{site.baseurl}}/versions/0.1) -->
-
-{% include breadcrumbs.md %}
+{% assign versions = site.project_metadata.versions | reverse %}
+{% for version in versions %}
+- [Version {{ version }}]({{site.baseurl}}/versions/{{version}})
+{%- endfor %}
