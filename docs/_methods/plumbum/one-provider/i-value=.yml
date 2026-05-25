@@ -6,8 +6,8 @@ slug: value=
 constructor: false
 data_path: plumbum/one-provider/i-value=
 params:
-- description: changed value.
-  name: the
+- description: the changed value.
+  name: value
   type:
   - name: Object
 version: "*"

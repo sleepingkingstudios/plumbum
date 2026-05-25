@@ -7,11 +7,31 @@ A minimal dependency injection framework for Ruby, using vanilla Ruby semantics 
 
 ## Documentation
 
-This is the documentation for the [current development build](https://github.com/sleepingkingstudios/plumbum) of Plumbum.
+{% include snippets/index-versions.md %}
 
-<!-- - For the most recent release, see [Version 0.1]({{site.baseurl}}/versions/0.1). -->
-- For previous releases, see the [Versions]({{site.baseurl}}/versions) page.
+## Getting Started
+
+Add the gem to your `Gemfile` or `gemspec`:
+
+```ruby
+gem 'plumbum'
+```
+
+Require `Plumbum` in your code:
+
+```ruby
+require 'plumbum'
+```
 
 ## Reference
+
+Plumbum defines the following core components:
+
+- **[Consumers](./consumers)**
+  <br>
+  Objects that use providers to access dependency values.
+- **[Providers](./providers)**
+  <br>
+  Objects that declare dependencies and their definitions.
 
 For a full list of defined classes and objects, see [Reference](./reference).
