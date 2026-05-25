@@ -5,6 +5,12 @@ signature: plumbum_provider(provider)
 slug: plumbum-provider
 constructor: false
 data_path: plumbum/consumers/class-methods/i-plumbum-provider
+params:
+- description: the provider to register.
+  name: provider
+  type:
+  - name: Plumbum::Provider
+    path: plumbum/provider
 returns:
 - description: void
   type: []

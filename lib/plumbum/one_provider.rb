@@ -32,7 +32,7 @@ module Plumbum
       @value == Plumbum::UNDEFINED ? nil : @value
     end
 
-    # @param [Object] the changed value.
+    # @param value [Object] the changed value.
     def value=(value)
       require_mutable(key)
 

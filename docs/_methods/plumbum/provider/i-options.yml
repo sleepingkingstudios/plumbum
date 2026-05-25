@@ -5,4 +5,14 @@ signature: options
 slug: options
 constructor: false
 data_path: plumbum/provider/i-options
+returns:
+- description: |-
+    the options used to configure the
+    provider.
+  type:
+  - name: Hash
+    keys:
+    - name: Symbol
+    values:
+    - name: Object
 version: "*"

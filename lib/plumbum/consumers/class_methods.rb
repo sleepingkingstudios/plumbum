@@ -17,7 +17,7 @@ module Plumbum::Consumers
       }.freeze
       private_constant :INVALID_OPTIONS_FOR_METHOD_DEPENDENCY
 
-      # @api private
+      # @private
       def define_delegated_method( # rubocop:disable Metrics/MethodLength
         receiver,
         key:,
@@ -42,7 +42,7 @@ module Plumbum::Consumers
           end
       end
 
-      # @api private
+      # @private
       def define_memoized_reader( # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
         receiver,
         default:,
@@ -68,7 +68,7 @@ module Plumbum::Consumers
           end
       end
 
-      # @api private
+      # @private
       def define_methods(receiver, key:, method_name:, memoize:, predicate:, **) # rubocop:disable Metrics/ParameterLists
         define_predicate(receiver, key:, method_name:, **) if predicate
 
@@ -81,7 +81,7 @@ module Plumbum::Consumers
         method_name.to_sym
       end
 
-      # @api private
+      # @private
       def define_predicate(receiver, key:, method_name:, **options)
         method_name = :"#{method_name}?"
 
@@ -94,7 +94,7 @@ module Plumbum::Consumers
           end
       end
 
-      # @api private
+      # @private
       def define_reader( # rubocop:disable Metrics/ParameterLists
         receiver,
         default:,
@@ -113,7 +113,7 @@ module Plumbum::Consumers
           end
       end
 
-      # @api private
+      # @private
       def dependency_methods_for(receiver)
         if receiver.const_defined?(:PlumbumDependencyMethods, false)
           return receiver.const_get(:PlumbumDependencyMethods)
@@ -125,7 +125,7 @@ module Plumbum::Consumers
           .then { |mod| receiver.const_set(:PlumbumDependencyMethods, mod) }
       end
 
-      # @api private
+      # @private
       def split_key(key, as:, scope:)
         ClassMethods.validate_name(key, as: :key)
         ClassMethods.validate_name(scope, as: :scope) if scope
@@ -139,7 +139,7 @@ module Plumbum::Consumers
         [segments.first, as || segments.last, segments[1..]]
       end
 
-      # @api private
+      # @private
       def validate_name(value, as: nil)
         SleepingKingStudios::Tools::Toolbelt
           .instance
@@ -248,7 +248,7 @@ module Plumbum::Consumers
 
     # Registers a provider for the class.
     #
-    # @provider [Plumbum::Provider] the provider to register.
+    # @param provider [Plumbum::Provider] the provider to register.
     #
     # @return void
     def plumbum_provider(provider) # rubocop:disable Metrics/MethodLength

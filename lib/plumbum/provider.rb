@@ -73,7 +73,8 @@ module Plumbum
         .then { |key| set_value(key, value) }
     end
 
-    # @return Hash{Symbol => Object} the options used to configure the provider.
+    # @return [Hash{Symbol => Object}] the options used to configure the
+    #   provider.
     def options
       @options ||= {}
     end
