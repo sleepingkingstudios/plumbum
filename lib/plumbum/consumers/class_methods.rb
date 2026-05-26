@@ -7,6 +7,9 @@ require 'plumbum/consumers'
 module Plumbum::Consumers
   # Class methods for defining the Consumer interface.
   module ClassMethods # rubocop:disable Metrics/ModuleLength
+    PROVIDER_METHODS = %i[get has?].freeze
+    private_constant :PROVIDER_METHODS
+
     UNDEFINED = SleepingKingStudios::Tools::UNDEFINED
     private_constant :UNDEFINED
 
@@ -248,20 +251,15 @@ module Plumbum::Consumers
 
     # Registers a provider for the class.
     #
-    # @param provider [Plumbum::Provider] the provider to register.
+    # @param provider [#get, #has?] the provider to register.
     #
     # @return void
-    def plumbum_provider(provider) # rubocop:disable Metrics/MethodLength
-      unless provider.is_a?(Plumbum::Provider)
-        message =
-          SleepingKingStudios::Tools::Toolbelt
-          .instance
-          .assertions
-          .error_message_for(
-            'sleeping_king_studios.tools.assertions.instance_of',
-            as:       :provider,
-            expected: Plumbum::Provider
-          )
+    def plumbum_provider(provider)
+      PROVIDER_METHODS.each do |method_name|
+        next if provider.respond_to?(method_name)
+
+        # @todo [0.2] use tools error message for assertions.respond_to
+        message = "provider does not respond to ##{method_name}"
 
         raise ArgumentError, message
       end
