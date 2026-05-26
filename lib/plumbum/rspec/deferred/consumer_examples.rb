@@ -1032,15 +1032,7 @@ module Plumbum::RSpec::Deferred
         end
 
         describe 'with nil' do
-          let(:error_message) do
-            tools
-              .assertions
-              .error_message_for(
-                'sleeping_king_studios.tools.assertions.instance_of',
-                as:       :provider,
-                expected: Plumbum::Provider
-              )
-          end
+          let(:error_message) { 'provider does not respond to #get' }
 
           it 'should raise an exception' do
             expect { described_class.plumbum_provider(nil) }
@@ -1049,15 +1041,7 @@ module Plumbum::RSpec::Deferred
         end
 
         describe 'with an Object' do
-          let(:error_message) do
-            tools
-              .assertions
-              .error_message_for(
-                'sleeping_king_studios.tools.assertions.instance_of',
-                as:       :provider,
-                expected: Plumbum::Provider
-              )
-          end
+          let(:error_message) { 'provider does not respond to #get' }
 
           it 'should raise an exception' do
             expect { described_class.plumbum_provider(Object.new.freeze) }
@@ -1065,7 +1049,7 @@ module Plumbum::RSpec::Deferred
           end
         end
 
-        describe 'with a provider' do
+        describe 'with a Provider' do
           let(:provider) { Plumbum::ManyProvider.new }
 
           define_method :defined_providers do
@@ -1094,6 +1078,66 @@ module Plumbum::RSpec::Deferred
 
               expect(defined_providers.first).to be provider
             end
+          end
+        end
+
+        describe 'with an object implementing the Provider interface' do
+          let(:provider) do
+            Spec::CustomProvider.new(hostname: 'localhost', port: '3000')
+          end
+
+          example_constant 'Spec::CustomProvider' do
+            Data.define(:hostname, :port) do
+              def get(key) = has?(key) ? send(key) : nil
+
+              def has?(key) = members.include?(key.to_sym)
+            end
+          end
+
+          define_method :defined_providers do
+            described_class.plumbum_providers(cache: false)
+          end
+
+          it { expect(described_class.plumbum_provider(provider)).to be nil }
+
+          it 'should add the provider to #plumbum_providers',
+            :aggregate_failures \
+          do
+            expect { described_class.plumbum_provider(provider) }.to(
+              change { defined_providers.count }.by(1)
+            )
+
+            expect(defined_providers.first).to be provider
+          end
+
+          wrap_deferred 'when the class defines providers' do
+            it 'should add the provider to #plumbum_providers',
+              :aggregate_failures \
+            do
+              expect { described_class.plumbum_provider(provider) }.to(
+                change { defined_providers.count }.by(1)
+              )
+
+              expect(defined_providers.first).to be provider
+            end
+          end
+        end
+
+        describe 'with an object that partially implements the interface' do
+          let(:provider) do
+            Spec::PartialProvider.new(hostname: 'localhost', port: '3000')
+          end
+          let(:error_message) { 'provider does not respond to #has?' }
+
+          example_constant 'Spec::PartialProvider' do
+            Data.define(:hostname, :port) do
+              def get(key) = send(key)
+            end
+          end
+
+          it 'should raise an exception' do
+            expect { described_class.plumbum_provider(provider) }
+              .to raise_error ArgumentError, error_message
           end
         end
       end
