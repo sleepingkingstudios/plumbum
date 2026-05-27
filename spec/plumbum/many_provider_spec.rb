@@ -13,8 +13,18 @@ RSpec.describe Plumbum::ManyProvider do
     let(:keywords) { super().merge(values:) }
   end
 
+  deferred_context 'when initialized with values: an empty Array' do
+    let(:values)   { [] }
+    let(:keywords) { super().merge(values:) }
+  end
+
   deferred_context 'when initialized with values: an empty Hash' do
     let(:values)   { {} }
+    let(:keywords) { super().merge(values:) }
+  end
+
+  deferred_context 'when initialized with values: an non-empty Array' do
+    let(:values)   { %w[option number color] }
     let(:keywords) { super().merge(values:) }
   end
 
@@ -86,6 +96,74 @@ RSpec.describe Plumbum::ManyProvider do
 
       it 'should raise an exception' do
         expect { described_class.new(values: Object.new.freeze) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Array with nil keys' do
+      let(:values) { ['color', nil, :shape] }
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.new(values:) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Array with Object keys' do
+      let(:values) { ['color', Object.new.freeze, :shape] }
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.name',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.new(values:) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Array with empty String keys' do
+      let(:values) { ['color', '', :shape] }
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.new(values:) }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a Array with empty Symbol keys' do
+      let(:values) { ['color', :'', :shape] }
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.presence',
+            as: :'values.keys[1]'
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { described_class.new(values:) }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -226,10 +304,40 @@ RSpec.describe Plumbum::ManyProvider do
       it { expect(provider.values).to be == {} }
     end
 
+    wrap_deferred 'when initialized with values: an empty Array' do
+      it { expect(provider.values).to be == {} }
+    end
+
     wrap_deferred 'when initialized with values: an empty Hash' do
       it { expect(provider.values).to be == {} }
     end
     # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+    context 'when initialized with values: an Array of String keys' do
+      let(:values)   { %w[option number] }
+      let(:keywords) { super().merge(values:) }
+      let(:expected) do
+        {
+          'option' => Plumbum::UNDEFINED,
+          'number' => Plumbum::UNDEFINED
+        }
+      end
+
+      it { expect(provider.values).to be == expected }
+    end
+
+    context 'when initialized with values: an Array of Symbol keys' do
+      let(:values)   { %i[option number] }
+      let(:keywords) { super().merge(values:) }
+      let(:expected) do
+        {
+          'option' => Plumbum::UNDEFINED,
+          'number' => Plumbum::UNDEFINED
+        }
+      end
+
+      it { expect(provider.values).to be == expected }
+    end
 
     context 'when initialized with values: a Hash with String keys' do
       let(:values)   { { 'option' => 'value', 'number' => 123 } }
@@ -294,6 +402,40 @@ RSpec.describe Plumbum::ManyProvider do
 
       it 'should raise an exception' do
         expect { provider.values = Object.new.freeze }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: an empty Array' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :values,
+            expected: Hash
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = [] }
+          .to raise_error ArgumentError, error_message
+      end
+    end
+
+    describe 'with values: a non-empty Array' do
+      let(:error_message) do
+        tools
+          .assertions
+          .error_message_for(
+            'sleeping_king_studios.tools.assertions.instance_of',
+            as:       :values,
+            expected: Hash
+          )
+      end
+
+      it 'should raise an exception' do
+        expect { provider.values = %w[color shape] }
           .to raise_error ArgumentError, error_message
       end
     end
@@ -492,6 +634,38 @@ RSpec.describe Plumbum::ManyProvider do
         end
       end
 
+      wrap_deferred 'when initialized with values: an empty Array' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values.transform_keys(&:to_s)
+          end
+        end
+      end
+
       wrap_deferred 'when initialized with values: an empty Hash' do
         describe 'with values: a Hash with String keys' do
           let(:changed_values) do
@@ -524,7 +698,7 @@ RSpec.describe Plumbum::ManyProvider do
         end
       end
 
-      wrap_deferred 'when initialized with values: an non-empty Hash' do
+      wrap_deferred 'when initialized with values: an non-empty Array' do
         describe 'with values: a Hash with String keys' do
           let(:changed_values) do
             {
@@ -532,11 +706,18 @@ RSpec.describe Plumbum::ManyProvider do
               'shape' => 'circle'
             }
           end
+          let(:expected_values) do
+            changed_values
+              .merge(
+                'number' => Plumbum::UNDEFINED,
+                'option' => Plumbum::UNDEFINED
+              )
+          end
 
           it 'should update the values' do
             expect { provider.values = changed_values }
               .to change(provider, :values)
-              .to be == changed_values.transform_keys(&:to_s)
+              .to be == expected_values
           end
         end
 
@@ -547,11 +728,66 @@ RSpec.describe Plumbum::ManyProvider do
               shape: 'circle'
             }
           end
+          let(:expected_values) do
+            changed_values
+              .transform_keys(&:to_s)
+              .merge(
+                'number' => Plumbum::UNDEFINED,
+                'option' => Plumbum::UNDEFINED
+              )
+          end
 
           it 'should update the values' do
             expect { provider.values = changed_values }
               .to change(provider, :values)
-              .to be == changed_values.transform_keys(&:to_s)
+              .to be == expected_values
+          end
+        end
+      end
+
+      wrap_deferred 'when initialized with values: an non-empty Hash' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:expected_values) do
+            changed_values
+              .merge(
+                'number' => Plumbum::UNDEFINED,
+                'option' => Plumbum::UNDEFINED
+              )
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == expected_values
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:expected_values) do
+            changed_values
+              .transform_keys(&:to_s)
+              .merge(
+                'number' => Plumbum::UNDEFINED,
+                'option' => Plumbum::UNDEFINED
+              )
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == expected_values
           end
         end
       end
@@ -637,6 +873,96 @@ RSpec.describe Plumbum::ManyProvider do
       end
 
       # rubocop:disable RSpec/RepeatedExampleGroupBody
+      wrap_deferred 'when initialized with values: an empty Array' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.first.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+      end
+
+      wrap_deferred 'when initialized with values: an non-empty Array' do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.last.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.last.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        context 'when the changed keys are initialized with value: UNDEFINED' do
+          let(:changed_values) do
+            values
+              .to_h { |key| [key, Plumbum::UNDEFINED] }
+              .merge('color' => 'red')
+          end
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values
+          end
+        end
+      end
+
       wrap_deferred 'when initialized with values: an empty Hash' do
         describe 'with values: a Hash with String keys' do
           let(:changed_values) do
@@ -713,6 +1039,68 @@ RSpec.describe Plumbum::ManyProvider do
         end
       end
       # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+      wrap_deferred 'when initialized with values: Hash with UNDEFINED values' \
+      do
+        describe 'with values: a Hash with String keys' do
+          let(:changed_values) do
+            {
+              'color' => 'red',
+              'shape' => 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.last.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        describe 'with values: a Hash with Symbol keys' do
+          let(:changed_values) do
+            {
+              color: 'red',
+              shape: 'circle'
+            }
+          end
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              "key #{changed_values.keys.last.to_s.inspect}"
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+
+        context 'when the changed keys are initialized with value: UNDEFINED' do
+          let(:changed_values) { values.merge('color' => 'red') }
+
+          it 'should update the values' do
+            expect { provider.values = changed_values }
+              .to change(provider, :values)
+              .to be == changed_values
+          end
+        end
+
+        context 'when the values are missing defined keys' do
+          let(:changed_values) { { 'color' => 'red' } }
+          let(:error_message) do
+            "unable to change immutable value for #{described_class} with " \
+              'key "option"'
+          end
+
+          it 'should raise an exception' do
+            expect { provider.values = changed_values }
+              .to raise_error Plumbum::Errors::ImmutableError, error_message
+          end
+        end
+      end
 
       context 'when the provider is frozen' do
         let(:error_message) do

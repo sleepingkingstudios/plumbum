@@ -132,10 +132,13 @@ RSpec.describe Plumbum::ManyProvider do
 
     context 'when initialized with values' do
       let(:options) { super().merge(values:) }
+      let(:expected_value) do
+        values.merge(changed_value)
+      end
 
       it 'should update the values' do
         expect { provider.values = changed_value }.to(
-          change(provider, :values).to(be == changed_value)
+          change(provider, :values).to(be == expected_value)
         )
       end
     end

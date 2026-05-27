@@ -9,8 +9,8 @@ params:
 - description: the provider to register.
   name: provider
   type:
-  - name: Plumbum::Provider
-    path: plumbum/provider
+  - name: "#get"
+  - name: "#has?"
 returns:
 - description: void
   type: []

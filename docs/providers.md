@@ -86,6 +86,8 @@ We can also pass a `value:` keyword directly when initializing the provider:
 provider = Plumbum::OneProvider.new(:repository, value: SqlRepository.new(database_url:))
 ```
 
+If a value is *not* given, the value can be set later if the provider allows a mutable value (using options `read_only: false` or `write_once: true`).
+
 [Back To Top](#)
 
 ### Plural Providers
@@ -111,6 +113,8 @@ Library::CONFIGURATION_PROVIDER.get(:database_url)
 ```
 
 For a plural provider, we pass the `values:` as a keyword, as well as any additional options for the provider. For available options, see [Provider Options](#provider-options), below.
+
+A plural provider can also be initialized with an `Array` of dependency keys. These dependency values can be set later if the provider allows a mutable value (using options `read_only: false` or `write_once: true`).
 
 [Back To Top](#)
 
