@@ -3,7 +3,7 @@ name: Plumbum::Version::PRERELEASE
 parent_path: plumbum/version
 slug: prerelease
 short_description: Prerelease version.
-value: ":alpha"
+value: nil
 data_path: plumbum/version/prerelease
 metadata:
   api: private
