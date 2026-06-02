@@ -1,0 +1,13 @@
+---
+name: Plumbum::OneProvider#value=
+parent_path: plumbum/one-provider
+signature: value=(value)
+slug: value=
+constructor: false
+data_path: plumbum/one-provider/i-value=
+params:
+- description: the changed value.
+  name: value
+  type:
+  - name: Object
+version: '0.1'

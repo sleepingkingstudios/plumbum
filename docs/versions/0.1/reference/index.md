@@ -1,0 +1,16 @@
+---
+breadcrumbs:
+  - name: 'Documentation'
+    path: '../../..'
+  - name: 'Versions'
+    path: '../..'
+  - name: '0.1'
+    path: '..'
+version: '*'
+---
+
+{% assign root_namespace = site.namespaces | where: "version", page.version | first %}
+
+# Plumbum Reference
+
+{% include reference/namespace.md label=false namespace=root_namespace %}
