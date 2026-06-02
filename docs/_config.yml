@@ -30,4 +30,5 @@ title: Plumbum
 project_metadata:
   name:           Plumbum
   repository_url: https://github.com/sleepingkingstudios/plumbum
-  versions:       []
+  versions:
+    - 0.1

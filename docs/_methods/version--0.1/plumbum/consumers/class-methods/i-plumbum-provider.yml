@@ -1,0 +1,18 @@
+---
+name: Plumbum::Consumers::ClassMethods#plumbum_provider
+parent_path: plumbum/consumers/class-methods
+signature: plumbum_provider(provider)
+slug: plumbum-provider
+constructor: false
+data_path: plumbum/consumers/class-methods/i-plumbum-provider
+params:
+- description: the provider to register.
+  name: provider
+  type:
+  - name: "#get"
+  - name: "#has?"
+returns:
+- description: void
+  type: []
+short_description: Registers a provider for the class.
+version: '0.1'

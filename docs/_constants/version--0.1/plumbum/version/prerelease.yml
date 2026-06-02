@@ -7,4 +7,4 @@ value: nil
 data_path: plumbum/version/prerelease
 metadata:
   api: private
-version: "*"
+version: '0.1'
