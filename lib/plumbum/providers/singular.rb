@@ -15,7 +15,8 @@ module Plumbum::Providers
 
     private
 
-    def has_value?(key, **) = key == self.key # rubocop:disable Naming/PredicatePrefix
+    # rubocop:disable-next Naming/PredicatePrefix
+    def has_value?(key, **) = key == self.key
 
     def raw_value(key) = key == self.key ? @value : nil
 

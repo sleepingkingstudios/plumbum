@@ -126,7 +126,8 @@ module Plumbum
 
     def tools = SleepingKingStudios::Tools::Toolbelt.instance
 
-    def valid_key?(key) = has_value?(key) # rubocop:disable Style/PreferredHashMethods
+    # rubocop:disable-next Style/PreferredHashMethods
+    def valid_key?(key) = has_value?(key)
 
     def validate_key(key)
       return if valid_key?(key)
