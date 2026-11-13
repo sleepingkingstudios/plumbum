@@ -9,6 +9,8 @@ gem 'sleeping_king_studios-tasks', '~> 0.4', '>= 0.4.1'
 group :development, :test do
   gem 'byebug', '~> 11.1'
 
+  gem 'cuprum-cli', '~> 0.2'
+
   gem 'rspec', '~> 3.13'
   gem 'rspec-sleeping_king_studios', '~> 2.8.0', '>= 2.8.4'
 
@@ -27,7 +29,7 @@ group :docs do
 
   gem 'logger', '~> 1.7'
 
-  gem 'sleeping_king_studios-docs', '~> 0.2', '>= 0.2.1'
+  gem 'sleeping_king_studios-docs', '~> 0.2', '< 0.3'
 
   # Use Webrick as local content server.
   gem 'webrick', '~> 1.9'
