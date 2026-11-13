@@ -30,7 +30,7 @@ In addition to managing dependencies like configuration and repositories, one cr
 
 ## About
 
-Plumbum is tested against MRI Ruby 3.2 through 4.0.
+Plumbum is tested against MRI Ruby 3.3 through 4.0.
 
 ### Documentation
 

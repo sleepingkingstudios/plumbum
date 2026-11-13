@@ -8,14 +8,12 @@ gem 'sleeping_king_studios-tasks', '~> 0.4', '>= 0.4.1'
 
 group :development, :test do
   gem 'byebug', '~> 11.1'
-  gem 'irb'
-  gem 'readline'
 
   gem 'rspec', '~> 3.13'
   gem 'rspec-sleeping_king_studios', '~> 2.8.0', '>= 2.8.4'
 
-  gem 'rubocop',       '~> 1.85'
-  gem 'rubocop-rspec', '~> 3.9'
+  gem 'rubocop',       '~> 1.92'
+  gem 'rubocop-rspec', '~> 3.10'
 
   gem 'simplecov', '~> 0.22'
 end
@@ -26,6 +24,8 @@ group :docs do
 
   # Use Kramdown to parse GFM-dialect Markdown.
   gem 'kramdown-parser-gfm', '~> 1.1'
+
+  gem 'logger', '~> 1.7'
 
   gem 'sleeping_king_studios-docs', '~> 0.2', '>= 0.2.1'
 
