@@ -31,3 +31,4 @@ returns:
   type: []
 short_description: Verifies the provider has the given key.
 version: "*"
+checksum: eq+JLtzeVCRKRyJdohVewg==

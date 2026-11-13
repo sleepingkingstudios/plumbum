@@ -1,0 +1,9 @@
+---
+name: Plumbum::Consumer::ClassMethods#provider
+parent_path: plumbum/consumer/class-methods
+signature: provider
+slug: provider
+constructor: false
+data_path: plumbum/consumer/class-methods/i-provider
+version: "*"
+checksum: R5k5Pzd7uLQudpF4NHK6Fg==

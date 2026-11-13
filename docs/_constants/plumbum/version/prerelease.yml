@@ -8,3 +8,4 @@ data_path: plumbum/version/prerelease
 metadata:
   api: private
 version: "*"
+checksum: 6z72ZNyJbZAU9fFs/XVX+w==

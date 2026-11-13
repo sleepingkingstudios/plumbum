@@ -25,3 +25,4 @@ extended_modules:
 - name: SleepingKingStudios::Tools::Toolbox::Mixin
   slug: mixin
 version: "*"
+checksum: RPs2W2QhWKgwiX1VrSSqZw==

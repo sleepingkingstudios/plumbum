@@ -18,3 +18,4 @@ defined_modules:
   slug: scoped-consumer
 data_path: plumbum/consumers
 version: "*"
+checksum: U6oX+ZESw9EgdnhgW9nbfw==

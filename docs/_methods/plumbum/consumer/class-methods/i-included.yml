@@ -11,3 +11,4 @@ description: |-
 short_description: Callback invoked when Consumer is included in another module or
   class.
 version: "*"
+checksum: FYLjP1CJfZDDsP3uYyKbNA==

@@ -34,3 +34,4 @@ returns:
 short_description: Stubs the value of a specific key for a provider for the current
   spec.
 version: "*"
+checksum: klpFykAPraUaXXjaWmRdnw==

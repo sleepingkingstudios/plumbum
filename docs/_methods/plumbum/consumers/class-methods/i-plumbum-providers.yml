@@ -22,3 +22,4 @@ returns:
     - name: Plumbum::Provider
       path: plumbum/provider
 version: "*"
+checksum: MvP5UUuSxASHaBWs/5+qWQ==

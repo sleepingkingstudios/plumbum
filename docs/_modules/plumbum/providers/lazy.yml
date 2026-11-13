@@ -16,3 +16,4 @@ description: |-
   Add Plumbum::Providers::Lazy for values that have a consistent definition
   but changing value, such as class definitions under code reloading.
 version: "*"
+checksum: oWEppQwVUgORRK3dP4ML+w==

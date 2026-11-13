@@ -58,3 +58,4 @@ included_modules:
   path: plumbum/providers/plural
 constructor: true
 version: "*"
+checksum: pIiXmtJVN7zsH/jdi3r7FA==
