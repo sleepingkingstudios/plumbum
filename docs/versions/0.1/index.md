@@ -12,7 +12,7 @@ A minimal dependency injection framework for Ruby, using vanilla Ruby semantics 
 
 ## Documentation
 
-{% include snippets/index-versions.md %}
+{% include pages/index-versions.md %}
 
 ## Getting Started
 

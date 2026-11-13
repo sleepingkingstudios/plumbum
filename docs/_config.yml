@@ -12,6 +12,8 @@ collections:
     output: false
   namespaces:
     output: false
+  versions:
+    output: false
 defaults:
 - scope:
     path: ''
@@ -20,15 +22,23 @@ defaults:
     encoding: 'utf-8'
     layout: 'page'
     title: 'Plumbum'
-description: |
-  A minimal dependency injection framework for Ruby, using vanilla Ruby semantics to define and reference dependencies from different providers.
-github:
-  repository_url: https://github.com/sleepingkingstudios/plumbum
+exclude:
+  - /vendor
 markdown: kramdown
-theme: jekyll-theme-dinky
-title: Plumbum
+
+# Project Configuration
 project_metadata:
+  description: |
+    A minimal dependency injection framework for Ruby, using vanilla Ruby
+    semantics to define and reference dependencies from different providers.
   name:           Plumbum
   repository_url: https://github.com/sleepingkingstudios/plumbum
-  versions:
-    - 0.1
+
+# Theme Configuration
+theme: jekyll-theme-dinky
+description: |
+  A minimal dependency injection framework for Ruby, using vanilla Ruby
+  semantics to define and reference dependencies from different providers.
+github:
+  repository_url: https://github.com/sleepingkingstudios/plumbum
+title: Plumbum

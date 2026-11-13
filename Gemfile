@@ -29,7 +29,7 @@ group :docs do
 
   gem 'logger', '~> 1.7'
 
-  gem 'sleeping_king_studios-docs', '~> 0.2', '< 0.3'
+  gem 'sleeping_king_studios-docs', '~> 0.3'
 
   # Use Webrick as local content server.
   gem 'webrick', '~> 1.9'

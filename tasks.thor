@@ -4,7 +4,9 @@ require 'cuprum/cli/integrations/thor/registry'
 
 Cuprum::Cli.initializer.call
 
-load 'sleeping_king_studios/docs/tasks.rb'
+require 'sleeping_king_studios/docs'
+
+SleepingKingStudios::Docs.initializer.call
 
 registry = Cuprum::Cli::Integrations::Thor::Registry.new
 
@@ -13,3 +15,7 @@ registry.register Cuprum::Cli::Commands::Ci.commands
 
 # File Commands
 registry.register Cuprum::Cli::Commands::File.commands
+
+# Docs Commands
+registry.register SleepingKingStudios::Docs::Jekyll.commands
+
