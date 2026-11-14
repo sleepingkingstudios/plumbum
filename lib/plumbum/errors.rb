@@ -9,5 +9,6 @@ module Plumbum
     autoload :InvalidDependencyError, 'plumbum/errors/invalid_dependency_error'
     autoload :InvalidKeyError,        'plumbum/errors/invalid_key_error'
     autoload :MissingDependencyError, 'plumbum/errors/missing_dependency_error'
+    autoload :SystemCommandFailure,   'plumbum/errors/system_command_failure'
   end
 end
