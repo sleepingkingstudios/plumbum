@@ -18,6 +18,7 @@ SleepingKingStudios::Tools.initializer.call
 RSpec.configure do |config|
   config.extend  RSpec::SleepingKingStudios::Concerns::ExampleConstants
   config.extend  RSpec::SleepingKingStudios::Concerns::FocusExamples
+  config.include RSpec::SleepingKingStudios::Concerns::Toolbelt
   config.extend  RSpec::SleepingKingStudios::Concerns::WrapExamples
   config.include RSpec::SleepingKingStudios::Concerns::WrapEnv
   config.include RSpec::SleepingKingStudios::Deferred::Consumer
