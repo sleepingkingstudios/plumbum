@@ -6,3 +6,4 @@ defined_modules:
 - name: Plumbum
   slug: plumbum
 version: "*"
+checksum: PWpek5KsbyAKsLdICWKgIQ==

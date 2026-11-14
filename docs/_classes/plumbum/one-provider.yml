@@ -64,3 +64,4 @@ included_modules:
   path: plumbum/providers/singular
 constructor: true
 version: "*"
+checksum: dww972lvtmMQ3nHBFZII3A==

@@ -6,3 +6,4 @@ short_description: The current version of the gem.
 value: Version.to_gem_version
 data_path: plumbum/version
 version: "*"
+checksum: I7jlQl+IZCs3V3NYtuKRnw==

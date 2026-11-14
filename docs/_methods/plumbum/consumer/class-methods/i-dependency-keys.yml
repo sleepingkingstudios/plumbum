@@ -1,0 +1,9 @@
+---
+name: Plumbum::Consumer::ClassMethods#dependency_keys
+parent_path: plumbum/consumer/class-methods
+signature: dependency_keys
+slug: dependency-keys
+constructor: false
+data_path: plumbum/consumer/class-methods/i-dependency-keys
+version: "*"
+checksum: rWqBIw10jac6aPpjDT0dBQ==

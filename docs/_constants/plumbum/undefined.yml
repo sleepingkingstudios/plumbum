@@ -6,3 +6,4 @@ short_description: Object representing an undefined or uninitialized value.
 value: Object.new.freeze
 data_path: plumbum/undefined
 version: "*"
+checksum: X6tiYwHyUm/jkigp778H2Q==

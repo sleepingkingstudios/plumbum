@@ -23,3 +23,4 @@ returns:
   - name: nil
 short_description: Retrieves the provided value for the given key.
 version: "*"
+checksum: 5JPC8jEc/vTvfAKvoNIcQg==

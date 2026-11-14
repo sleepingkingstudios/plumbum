@@ -28,3 +28,4 @@ returns:
   - name: 'false'
 short_description: Checks if the provider has a value for the given key.
 version: "*"
+checksum: "/llpRJ3AZBufBZV851ETdw=="

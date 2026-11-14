@@ -93,3 +93,4 @@ returns:
     - name: Symbol
 short_description: Defines injected dependencies for instances of the class.
 version: "*"
+checksum: PaQI+EBOHTEvyB+xHmaZOw==

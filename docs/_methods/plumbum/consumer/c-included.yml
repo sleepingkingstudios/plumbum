@@ -8,3 +8,4 @@ data_path: plumbum/consumer/c-included
 short_description: Callback invoked when Consumer is included in another module or
   class.
 version: "*"
+checksum: w/TLbFJxqcG6f8+qqYNcnA==

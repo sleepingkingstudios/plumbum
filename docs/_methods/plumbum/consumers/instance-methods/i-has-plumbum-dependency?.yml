@@ -22,3 +22,4 @@ returns:
   - name: 'false'
 short_description: Checks if the dependency with the given key is defined.
 version: "*"
+checksum: lTEHvs3MywRHKccvZRRCwQ==

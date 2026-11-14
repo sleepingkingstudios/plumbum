@@ -35,3 +35,4 @@ returns:
   - name: Object
 short_description: Retrieves the dependency with the specified key.
 version: "*"
+checksum: jG3kUIkgtODkL9+2F+WVjw==

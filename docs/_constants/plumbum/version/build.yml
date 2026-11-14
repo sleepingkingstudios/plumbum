@@ -8,3 +8,4 @@ data_path: plumbum/version/build
 metadata:
   api: private
 version: "*"
+checksum: pgt+BjG6wnLcuYGu3mb5+w==
