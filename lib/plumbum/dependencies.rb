@@ -14,6 +14,7 @@ module Plumbum
   # structure that simulates reading and writing files without making any
   # changes to the actual file system.
   module Dependencies
-    autoload :Clock, 'plumbum/dependencies/clock'
+    autoload :Clock,      'plumbum/dependencies/clock'
+    autoload :FileSystem, 'plumbum/dependencies/file_system'
   end
 end

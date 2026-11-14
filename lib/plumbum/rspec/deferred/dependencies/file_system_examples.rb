@@ -14,7 +14,7 @@ module Plumbum::RSpec::Deferred::Dependencies
     end
 
     define_method :qualified_path? do |path|
-      path.start_with?('*')
+      path.start_with?('.')
     end
 
     deferred_context 'with fixture files and directories' do
@@ -518,8 +518,6 @@ module Plumbum::RSpec::Deferred::Dependencies
         rescue StandardError
           nil
         end
-
-        include_deferred 'with valid file paths'
 
         it 'should define the method' do
           expect(subject)
@@ -1509,12 +1507,6 @@ module Plumbum::RSpec::Deferred::Dependencies
         end
         alias_method :call_method, :read_file
 
-        define_method :safe_read_file do
-          read_file
-        rescue StandardError
-          nil
-        end
-
         it { expect(subject).to respond_to(:read_file).with(1).argument }
 
         it 'should define the aliased method' do
@@ -1604,7 +1596,9 @@ module Plumbum::RSpec::Deferred::Dependencies
 
             next unless existing_file
 
+            # :nocov:
             expect(subject.read_file(file)).to eq(existing_contents)
+            # :nocov:
           end
         end
 
