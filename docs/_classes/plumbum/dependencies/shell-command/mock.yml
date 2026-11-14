@@ -1,0 +1,40 @@
+---
+name: Plumbum::Dependencies::ShellCommand::Mock
+slug: mock
+type: class
+files:
+- lib/plumbum/dependencies/shell_command/mock.rb
+parent_path: plumbum/dependencies/shell-command
+short_description: Mock implementation of ShellCommand for testing purposes.
+defined_classes:
+- name: MockStatus
+  slug: mock-status
+instance_attributes:
+- name: recorded_commands
+  read: true
+  write: false
+  path: plumbum/dependencies/shell-command/mock/i-recorded-commands
+  slug: recorded-commands
+  inherited: false
+instance_methods:
+- name: capture
+  path: plumbum/dependencies/shell-command/i-capture
+  slug: capture
+  inherited: true
+- name: initialize
+  path: plumbum/dependencies/shell-command/mock/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: spawn
+  path: plumbum/dependencies/shell-command/i-spawn
+  slug: spawn
+  inherited: true
+data_path: plumbum/dependencies/shell-command/mock
+constructor: true
+inherited_classes:
+- name: Plumbum::Dependencies::ShellCommand
+  slug: shell-command
+  path: plumbum/dependencies/shell-command
+version: "*"
+checksum: 7PQRgsz51d16ph8li63gAA==

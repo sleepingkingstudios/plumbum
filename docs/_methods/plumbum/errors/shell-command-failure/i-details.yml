@@ -1,0 +1,10 @@
+---
+name: Plumbum::Errors::ShellCommandFailure#details
+parent_path: plumbum/errors/shell-command-failure
+signature: details
+slug: details
+constructor: false
+data_path: plumbum/errors/shell-command-failure/i-details
+short_description: Returns the value of attribute details.
+version: "*"
+checksum: zMxld5v9FVzucgBBLYqgRw==

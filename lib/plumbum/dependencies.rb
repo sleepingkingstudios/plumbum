@@ -14,19 +14,19 @@ module Plumbum
   # structure that simulates reading and writing files without making any
   # changes to the actual file system.
   module Dependencies
-    autoload :Clock,         'plumbum/dependencies/clock'
-    autoload :FileSystem,    'plumbum/dependencies/file_system'
-    autoload :StandardIo,    'plumbum/dependencies/standard_io'
-    autoload :SystemCommand, 'plumbum/dependencies/system_command'
+    autoload :Clock,        'plumbum/dependencies/clock'
+    autoload :FileSystem,   'plumbum/dependencies/file_system'
+    autoload :ShellCommand, 'plumbum/dependencies/shell_command'
+    autoload :StandardIo,   'plumbum/dependencies/standard_io'
 
     # @return [Plumbum::Provider] the provider for the standard dependencies.
     def self.provider
       @provider ||= Plumbum::ManyProvider.new(
         values: {
-          clock:          Clock.new,
-          file_system:    FileSystem.new,
-          standard_io:    StandardIo.new,
-          system_command: SystemCommand.new
+          clock:         Clock.new,
+          file_system:   FileSystem.new,
+          shell_command: ShellCommand.new,
+          standard_io:   StandardIo.new
         }
       )
     end

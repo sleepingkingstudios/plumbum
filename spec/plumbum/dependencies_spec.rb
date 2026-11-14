@@ -22,13 +22,13 @@ RSpec.describe Plumbum::Dependencies do
       expect(provider.get(:file_system)).to be_a described_class::FileSystem
     end
 
-    it 'should provide a StandardIo dependency' do
-      expect(provider.get(:standard_io)).to be_a described_class::StandardIo
+    it 'should provide a ShellCommand dependency' do
+      expect(provider.get(:shell_command))
+        .to be_a described_class::ShellCommand
     end
 
-    it 'should provide a SystemCommand dependency' do
-      expect(provider.get(:system_command))
-        .to be_a described_class::SystemCommand
+    it 'should provide a StandardIo dependency' do
+      expect(provider.get(:standard_io)).to be_a described_class::StandardIo
     end
   end
 end

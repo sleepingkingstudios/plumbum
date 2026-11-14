@@ -1,0 +1,16 @@
+---
+name: Plumbum::Dependencies::ShellCommand::CapturedOutput#success?
+parent_path: plumbum/dependencies/shell-command/captured-output
+signature: success?
+slug: success?
+constructor: false
+data_path: plumbum/dependencies/shell-command/captured-output/i-success?
+returns:
+- description: |-
+    true if the process was successful, otherwise
+    false.
+  type:
+  - name: 'true'
+  - name: 'false'
+version: "*"
+checksum: SYcseE7HYMUnG5ZkvqR0Cg==

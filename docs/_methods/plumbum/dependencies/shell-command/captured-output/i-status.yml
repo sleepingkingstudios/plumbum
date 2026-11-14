@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::ShellCommand::CapturedOutput#status
+parent_path: plumbum/dependencies/shell-command/captured-output
+signature: status
+slug: status
+constructor: false
+data_path: plumbum/dependencies/shell-command/captured-output/i-status
+returns:
+- description: the current value of status
+  type:
+  - name: Object
+short_description: Returns the value of attribute status
+version: "*"
+checksum: hwux2PpeRK/crnAWZ7h8pg==

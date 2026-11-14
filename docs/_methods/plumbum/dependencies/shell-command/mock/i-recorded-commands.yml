@@ -1,0 +1,15 @@
+---
+name: Plumbum::Dependencies::ShellCommand::Mock#recorded_commands
+parent_path: plumbum/dependencies/shell-command/mock
+signature: recorded_commands
+slug: recorded-commands
+constructor: false
+data_path: plumbum/dependencies/shell-command/mock/i-recorded-commands
+returns:
+- description: the commands recorded by the mock service.
+  type:
+  - name: Array
+    items:
+    - name: String
+version: "*"
+checksum: TbHTfdLYOWcWturcTZHk3Q==

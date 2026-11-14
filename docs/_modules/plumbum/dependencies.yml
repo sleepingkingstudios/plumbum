@@ -8,10 +8,10 @@ files:
 - lib/plumbum/dependencies/clock/mock.rb
 - lib/plumbum/dependencies/file_system.rb
 - lib/plumbum/dependencies/standard_io.rb
-- lib/plumbum/dependencies/system_command.rb
+- lib/plumbum/dependencies/shell_command.rb
 - lib/plumbum/dependencies/file_system/mock.rb
 - lib/plumbum/dependencies/standard_io/mock.rb
-- lib/plumbum/dependencies/system_command/mock.rb
+- lib/plumbum/dependencies/shell_command/mock.rb
 parent_path: plumbum
 short_description: Dependencies provide a standard interface that abstracts side effects.
 class_methods:
@@ -24,10 +24,10 @@ defined_classes:
   slug: clock
 - name: FileSystem
   slug: file-system
+- name: ShellCommand
+  slug: shell-command
 - name: StandardIo
   slug: standard-io
-- name: SystemCommand
-  slug: system-command
 data_path: plumbum/dependencies
 description: |-
   Dependency classes wrap side effects such as accessing the file system,
@@ -39,4 +39,4 @@ description: |-
   structure that simulates reading and writing files without making any
   changes to the actual file system.
 version: "*"
-checksum: D74VRvScTKbeAtuTE8R0Uw==
+checksum: mUJwEoNTBzmYOinAkG2TcA==

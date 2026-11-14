@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::ShellCommand::Mock::MockStatus#success?
+parent_path: plumbum/dependencies/shell-command/mock/mock-status
+signature: success?
+slug: success?
+constructor: false
+data_path: plumbum/dependencies/shell-command/mock/mock-status/i-success?
+returns:
+- description: true if the exit status is zero, otherwise false.
+  type:
+  - name: 'true'
+  - name: 'false'
+version: "*"
+checksum: vSsk23X+196iPYioiko5pg==

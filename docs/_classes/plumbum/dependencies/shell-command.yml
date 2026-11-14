@@ -1,0 +1,30 @@
+---
+name: Plumbum::Dependencies::ShellCommand
+slug: shell-command
+type: class
+files:
+- lib/plumbum/dependencies/shell_command.rb
+parent_path: plumbum/dependencies
+short_description: Utility wrapper for running system command and capturing output.
+defined_classes:
+- name: CapturedOutput
+  slug: captured-output
+- name: Mock
+  slug: mock
+instance_methods:
+- name: capture
+  path: plumbum/dependencies/shell-command/i-capture
+  slug: capture
+  inherited: false
+- name: spawn
+  path: plumbum/dependencies/shell-command/i-spawn
+  slug: spawn
+  inherited: false
+data_path: plumbum/dependencies/shell-command
+constructor: false
+direct_subclasses:
+- name: Plumbum::Dependencies::ShellCommand::Mock
+  slug: mock
+  path: plumbum/dependencies/shell-command/mock
+version: "*"
+checksum: 6v926ZGa5YMnGu4Atkjg1w==

@@ -1,0 +1,10 @@
+---
+name: Plumbum::Errors::ShellCommandFailure#command
+parent_path: plumbum/errors/shell-command-failure
+signature: command
+slug: command
+constructor: false
+data_path: plumbum/errors/shell-command-failure/i-command
+short_description: Returns the value of attribute command.
+version: "*"
+checksum: klMEYN+vjo0foKycAPqrTw==
