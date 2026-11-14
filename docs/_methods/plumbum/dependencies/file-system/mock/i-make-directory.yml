@@ -1,0 +1,27 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#make_directory
+parent_path: plumbum/dependencies/file-system/mock
+signature: 'make_directory(def create_directory(path, recursive: false)'
+slug: make-directory
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-make-directory
+params:
+- description: the path to the directory.
+  name: path
+  type:
+  - name: String
+- description: |-
+    if true, creates any required intermediate
+    directories, equivalent to the -p flag on `mkdir`. Defaults to false.
+  name: recursive
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+returns:
+- description: the path to the created directory.
+  type:
+  - name: String
+short_description: Creates a directory at the requested path.
+version: "*"
+checksum: OaotCQjevQ15gc1gU5vezQ==

@@ -1,0 +1,15 @@
+---
+name: Plumbum::RSpec::Deferred::Dependencies
+slug: dependencies
+type: module
+files:
+- lib/plumbum/rspec/deferred/dependencies.rb
+- lib/plumbum/rspec/deferred/dependencies/file_system_examples.rb
+parent_path: plumbum/r-spec/deferred
+short_description: Namespace for deferred examples used to test Plumbum dependencies.
+defined_modules:
+- name: FileSystemExamples
+  slug: file-system-examples
+data_path: plumbum/r-spec/deferred/dependencies
+version: "*"
+checksum: wOShsIWoSvbzjjR2BP+J6Q==

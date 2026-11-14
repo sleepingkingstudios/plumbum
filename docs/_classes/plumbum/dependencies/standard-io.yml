@@ -1,0 +1,41 @@
+---
+name: Plumbum::Dependencies::StandardIo
+slug: standard-io
+type: class
+files:
+- lib/plumbum/dependencies/standard_io.rb
+parent_path: plumbum/dependencies
+short_description: Utility wrapping standard input, output, and error IO streams.
+defined_classes:
+- name: Mock
+  slug: mock
+instance_methods:
+- name: color
+  path: plumbum/dependencies/standard-io/i-color
+  slug: color
+  inherited: false
+- name: initialize
+  path: plumbum/dependencies/standard-io/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: read_input
+  path: plumbum/dependencies/standard-io/i-read-input
+  slug: read-input
+  inherited: false
+- name: write_error
+  path: plumbum/dependencies/standard-io/i-write-error
+  slug: write-error
+  inherited: false
+- name: write_output
+  path: plumbum/dependencies/standard-io/i-write-output
+  slug: write-output
+  inherited: false
+data_path: plumbum/dependencies/standard-io
+constructor: true
+direct_subclasses:
+- name: Plumbum::Dependencies::StandardIo::Mock
+  slug: mock
+  path: plumbum/dependencies/standard-io/mock
+version: "*"
+checksum: qjUYZuzMWgfqwY4Q4B+s7Q==

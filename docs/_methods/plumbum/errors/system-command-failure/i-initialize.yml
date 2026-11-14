@@ -1,0 +1,28 @@
+---
+name: Plumbum::Errors::SystemCommandFailure#initialize
+parent_path: plumbum/errors/system-command-failure
+signature: 'initialize(command:, details: nil, exit_status: nil)'
+slug: initialize
+constructor: true
+data_path: plumbum/errors/system-command-failure/i-initialize
+params:
+- description: the failed command.
+  name: command
+  type:
+  - name: String
+- description: the error output from the process, if any.
+  name: details
+  type:
+  - name: String
+  default: nil
+- description: the exit code returned by the process.
+  name: exit_status
+  type:
+  - name: Integer
+  default: nil
+returns:
+- description: a new instance of SystemCommandFailure
+  type:
+  - name: SystemCommandFailure
+version: "*"
+checksum: 6uzkUT3FMHWqwrQQ/587lQ==

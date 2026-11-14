@@ -1,0 +1,47 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#each_file
+parent_path: plumbum/dependencies/file-system/mock
+signature: each_file(pattern, &)
+slug: each-file
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-each-file
+overloads:
+- name: Plumbum::Dependencies::FileSystem::Mock#each_file
+  parent_path: plumbum/dependencies/file-system/mock
+  signature: each_file
+  slug: each-file
+  constructor: false
+  params:
+  - description: the file pattern to match.
+    name: pattern
+    type:
+    - name: String
+  returns:
+  - description: an enumerator over the matching file names.
+    type:
+    - name: Enumerator
+      items:
+      - name: String
+  short_description: Iterates over file names matching the given pattern.
+- name: Plumbum::Dependencies::FileSystem::Mock#each_file
+  parent_path: plumbum/dependencies/file-system/mock
+  signature: each_file { |file| }
+  slug: each-file
+  constructor: false
+  params:
+  - description: the file pattern to match.
+    name: pattern
+    type:
+    - name: String
+  returns:
+  - description: ''
+    type:
+    - name: nil
+  short_description: Yields each file name matching the given pattern.
+  yield_params:
+  - description: matching file name.
+    name: the
+    type:
+    - name: String
+version: "*"
+checksum: hYKRyobjjDF6vtmnb1DS3w==

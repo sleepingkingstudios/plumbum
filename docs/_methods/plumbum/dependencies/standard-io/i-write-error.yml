@@ -1,0 +1,30 @@
+---
+name: Plumbum::Dependencies::StandardIo#write_error
+parent_path: plumbum/dependencies/standard-io
+signature: 'write_error(message = nil, newline: true)'
+slug: write-error
+constructor: false
+data_path: plumbum/dependencies/standard-io/i-write-error
+description: If no error message is given, prints a newline only.
+params:
+- description: the message to write.
+  name: message
+  type:
+  - name: String
+  - name: nil
+  default: nil
+- description: |-
+    if true, appends a newline to the message if
+    it does not have a newline. Defaults to true.
+  name: newline
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'true'
+returns:
+- description: ''
+  type:
+  - name: nil
+short_description: Writes the given message to the error stream.
+version: "*"
+checksum: UpSl/+u3ZT7RgkTwpniLBA==

@@ -1,0 +1,36 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#initialize
+parent_path: plumbum/dependencies/standard-io/mock
+signature: 'initialize(error_stream: StringIO.new, input_stream: StringIO.new, output_stream:
+  StringIO.new)'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/standard-io/mock/i-initialize
+params:
+- description: |-
+    the error stream. Defaults to an instance of
+    StringIO.
+  name: error_stream
+  type:
+  - name: IO
+  default: StringIO.new
+- description: |-
+    the input stream. Defaults to an instance of
+    StringIO.
+  name: input_stream
+  type:
+  - name: IO
+  default: StringIO.new
+- description: |-
+    the output stream. Defaulst to an instance of
+    StringIO.
+  name: output_stream
+  type:
+  - name: IO
+  default: StringIO.new
+returns:
+- description: a new instance of Mock
+  type:
+  - name: Mock
+version: "*"
+checksum: goFDx7HK7mZfIJHfvnr+nA==

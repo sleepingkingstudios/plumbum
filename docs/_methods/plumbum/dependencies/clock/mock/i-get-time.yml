@@ -1,0 +1,16 @@
+---
+name: Plumbum::Dependencies::Clock::Mock#get_time
+parent_path: plumbum/dependencies/clock/mock
+signature: get_time
+slug: get-time
+aliases:
+- current_time
+- now
+constructor: false
+data_path: plumbum/dependencies/clock/mock/i-get-time
+returns:
+- description: the mocked current time.
+  type:
+  - name: Time
+version: "*"
+checksum: kETfvfYGv4TBAOJ7mQqviA==

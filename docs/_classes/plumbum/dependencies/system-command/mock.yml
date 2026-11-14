@@ -1,0 +1,40 @@
+---
+name: Plumbum::Dependencies::SystemCommand::Mock
+slug: mock
+type: class
+files:
+- lib/plumbum/dependencies/system_command/mock.rb
+parent_path: plumbum/dependencies/system-command
+short_description: Mock implementation of SystemCommand for testing purposes.
+defined_classes:
+- name: MockStatus
+  slug: mock-status
+instance_attributes:
+- name: recorded_commands
+  read: true
+  write: false
+  path: plumbum/dependencies/system-command/mock/i-recorded-commands
+  slug: recorded-commands
+  inherited: false
+instance_methods:
+- name: capture
+  path: plumbum/dependencies/system-command/i-capture
+  slug: capture
+  inherited: true
+- name: initialize
+  path: plumbum/dependencies/system-command/mock/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: spawn
+  path: plumbum/dependencies/system-command/i-spawn
+  slug: spawn
+  inherited: true
+data_path: plumbum/dependencies/system-command/mock
+constructor: true
+inherited_classes:
+- name: Plumbum::Dependencies::SystemCommand
+  slug: system-command
+  path: plumbum/dependencies/system-command
+version: "*"
+checksum: KB+rwsvrbI3lcdrAKY3UtA==

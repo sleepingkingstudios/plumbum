@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#combined_stream
+parent_path: plumbum/dependencies/standard-io/mock
+signature: combined_stream
+slug: combined-stream
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-combined-stream
+returns:
+- description: a combined input/output stream representing all IO activity.
+  type:
+  - name: IO
+version: "*"
+checksum: CTBLVRajlNDS2sukzfU2Kg==

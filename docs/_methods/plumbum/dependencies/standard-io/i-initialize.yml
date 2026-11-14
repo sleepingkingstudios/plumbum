@@ -1,0 +1,30 @@
+---
+name: Plumbum::Dependencies::StandardIo#initialize
+parent_path: plumbum/dependencies/standard-io
+signature: 'initialize(error_stream: -> { $stderr }, input_stream: -> { $stdin },
+  output_stream: -> { $stdout })'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/standard-io/i-initialize
+params:
+- description: the error stream. Defaults to $stderr.
+  name: error_stream
+  type:
+  - name: IO
+  default: "-> { $stderr }"
+- description: the input stream. Defaults to $stdin.
+  name: input_stream
+  type:
+  - name: IO
+  default: "-> { $stdin }"
+- description: the output stream. Defaulst to $stdout.
+  name: output_stream
+  type:
+  - name: IO
+  default: "-> { $stdout }"
+returns:
+- description: a new instance of StandardIo
+  type:
+  - name: StandardIo
+version: "*"
+checksum: 7HMg8U0jUMo8kX9m6z/+KA==

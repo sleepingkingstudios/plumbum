@@ -1,0 +1,62 @@
+---
+name: Plumbum::Dependencies::FileSystem#write
+parent_path: plumbum/dependencies/file-system
+signature: write(def write_file(file_or_path, data)
+slug: write
+constructor: false
+data_path: plumbum/dependencies/file-system/i-write
+overloads:
+- name: Plumbum::Dependencies::FileSystem#write
+  parent_path: plumbum/dependencies/file-system
+  signature: write_file(file, data)
+  slug: write
+  constructor: false
+  params:
+  - description: the file to write.
+    name: file
+    type:
+    - name: IO
+  - description: the data to write.
+    name: data
+    type:
+    - name: String
+  returns:
+  - description: the number of bytes written.
+    type:
+    - name: Integer
+  short_description: Writes the data to the given file or IO stream.
+- name: Plumbum::Dependencies::FileSystem#write
+  parent_path: plumbum/dependencies/file-system
+  signature: write_file(path, data)
+  slug: write
+  constructor: false
+  params:
+  - description: the file path to write.
+    name: path
+    type:
+    - name: String
+  - description: the data to write.
+    name: data
+    type:
+    - name: String
+  raises:
+  - description: |-
+      if the path to the requested file
+      includes an existing file.
+    type:
+    - name: DirectoryIsAFileError
+  - description: |-
+      if the directory for the requested file
+      is not found.
+    type:
+    - name: DirectoryNotFoundError
+  - description: if the requested file is a directory.
+    type:
+    - name: FileIsADirectoryError
+  returns:
+  - description: the number of bytes written.
+    type:
+    - name: Integer
+  short_description: Writes the data to the file at the given path.
+version: "*"
+checksum: KK8DkP2vxOuX0M5Jt6My8A==

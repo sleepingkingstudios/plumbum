@@ -1,0 +1,30 @@
+---
+name: Plumbum::Dependencies::SystemCommand
+slug: system-command
+type: class
+files:
+- lib/plumbum/dependencies/system_command.rb
+parent_path: plumbum/dependencies
+short_description: Utility wrapper for running system command and capturing output.
+defined_classes:
+- name: CapturedOutput
+  slug: captured-output
+- name: Mock
+  slug: mock
+instance_methods:
+- name: capture
+  path: plumbum/dependencies/system-command/i-capture
+  slug: capture
+  inherited: false
+- name: spawn
+  path: plumbum/dependencies/system-command/i-spawn
+  slug: spawn
+  inherited: false
+data_path: plumbum/dependencies/system-command
+constructor: false
+direct_subclasses:
+- name: Plumbum::Dependencies::SystemCommand::Mock
+  slug: mock
+  path: plumbum/dependencies/system-command/mock
+version: "*"
+checksum: EyVpkG0tpUjmqcnwKgzpfg==

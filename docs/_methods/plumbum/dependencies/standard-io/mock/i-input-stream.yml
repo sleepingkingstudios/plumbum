@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#input_stream
+parent_path: plumbum/dependencies/standard-io/mock
+signature: input_stream
+slug: input-stream
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-input-stream
+returns:
+- description: the input stream.
+  type:
+  - name: IO
+version: "*"
+checksum: r3qJRlEQBv9s7KwaD8EMow==

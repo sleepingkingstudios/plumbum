@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#error_stream
+parent_path: plumbum/dependencies/standard-io/mock
+signature: error_stream
+slug: error-stream
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-error-stream
+returns:
+- description: the error stream
+  type:
+  - name: IO
+version: "*"
+checksum: l+fxttwtFwQx/+agtTcEEg==

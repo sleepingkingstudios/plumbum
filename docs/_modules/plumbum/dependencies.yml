@@ -1,0 +1,37 @@
+---
+name: Plumbum::Dependencies
+slug: dependencies
+type: module
+files:
+- lib/plumbum/dependencies.rb
+- lib/plumbum/dependencies/clock.rb
+- lib/plumbum/dependencies/clock/mock.rb
+- lib/plumbum/dependencies/file_system.rb
+- lib/plumbum/dependencies/standard_io.rb
+- lib/plumbum/dependencies/system_command.rb
+- lib/plumbum/dependencies/file_system/mock.rb
+- lib/plumbum/dependencies/standard_io/mock.rb
+- lib/plumbum/dependencies/system_command/mock.rb
+parent_path: plumbum
+short_description: Dependencies provide a standard interface that abstracts side effects.
+defined_classes:
+- name: Clock
+  slug: clock
+- name: FileSystem
+  slug: file-system
+- name: StandardIo
+  slug: standard-io
+- name: SystemCommand
+  slug: system-command
+data_path: plumbum/dependencies
+description: |-
+  Dependency classes wrap side effects such as accessing the file system,
+  reading from or writing to standard IO streams, or performing system
+  commands.
+
+  Each dependency class also provides a `::Mock` version that isolates that
+  functionality. For example, the file system mock creates an in-memory data
+  structure that simulates reading and writing files without making any
+  changes to the actual file system.
+version: "*"
+checksum: XkY11qZZaI1CQKy0ePKPnw==

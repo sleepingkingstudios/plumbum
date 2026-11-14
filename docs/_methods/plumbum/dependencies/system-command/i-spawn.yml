@@ -1,0 +1,52 @@
+---
+name: Plumbum::Dependencies::SystemCommand#spawn
+parent_path: plumbum/dependencies/system-command
+signature: 'spawn(command, arguments: [], enviroment:, options: {})'
+slug: spawn
+constructor: false
+data_path: plumbum/dependencies/system-command/i-spawn
+params:
+- description: the command to run.
+  name: command
+  type:
+  - name: String
+- description: |-
+    command-line flags or arguments to pass
+    to the command.
+  name: arguments
+  type:
+  - name: Array
+    items:
+    - name: String
+  default: "[]"
+- description: |-
+    environment variables to set
+    for the command.
+  name: enviroment
+  type:
+  - name: Hash
+    items:
+    - name: String
+    - name: Object
+- description: |-
+    command line options and values to
+    pass to the command.
+  name: options
+  type:
+  - name: Hash
+    items:
+    - name: String
+    - name: Object
+  default: "{}"
+returns:
+- description: |-
+    a result with status :success if the
+    process ran successfully; otherwise, a result with status :failure and
+    an Error.
+  type:
+  - name: Cuprum::Result
+    items:
+    - name: nil
+short_description: Spawns a process to run the system command.
+version: "*"
+checksum: XgMl7m25DKU1vOA4JRRfiQ==

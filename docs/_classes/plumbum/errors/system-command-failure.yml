@@ -1,0 +1,45 @@
+---
+name: Plumbum::Errors::SystemCommandFailure
+slug: system-command-failure
+type: class
+files:
+- lib/plumbum/errors/system_command_failure.rb
+parent_path: plumbum/errors
+short_description: Error returned when a system command returns a non-success status.
+constants:
+- name: TYPE
+  path: plumbum/errors/system-command-failure/type
+  slug: type
+  inherited: false
+instance_attributes:
+- name: command
+  read: true
+  write: false
+  path: plumbum/errors/system-command-failure/i-command
+  slug: command
+  inherited: false
+- name: details
+  read: true
+  write: false
+  path: plumbum/errors/system-command-failure/i-details
+  slug: details
+  inherited: false
+- name: exit_status
+  read: true
+  write: false
+  path: plumbum/errors/system-command-failure/i-exit-status
+  slug: exit-status
+  inherited: false
+instance_methods:
+- name: initialize
+  path: plumbum/errors/system-command-failure/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+data_path: plumbum/errors/system-command-failure
+constructor: true
+inherited_classes:
+- name: Cuprum::Error
+  slug: error
+version: "*"
+checksum: OkGsJMZ0XJ9FLn+v1W7YGg==

@@ -1,0 +1,62 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock
+slug: mock
+type: class
+files:
+- lib/plumbum/dependencies/standard_io/mock.rb
+parent_path: plumbum/dependencies/standard-io
+short_description: Mock implementation of StandardIo for testing purposes.
+class_methods:
+- name: append_for_read
+  path: plumbum/dependencies/standard-io/mock/c-append-for-read
+  slug: append-for-read
+  inherited: false
+instance_attributes:
+- name: combined_stream
+  read: true
+  write: false
+  path: plumbum/dependencies/standard-io/mock/i-combined-stream
+  slug: combined-stream
+  inherited: false
+instance_methods:
+- name: color
+  path: plumbum/dependencies/standard-io/i-color
+  slug: color
+  inherited: true
+- name: error_stream
+  path: plumbum/dependencies/standard-io/mock/i-error-stream
+  slug: error-stream
+  inherited: false
+- name: initialize
+  path: plumbum/dependencies/standard-io/mock/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: input_stream
+  path: plumbum/dependencies/standard-io/mock/i-input-stream
+  slug: input-stream
+  inherited: false
+- name: output_stream
+  path: plumbum/dependencies/standard-io/mock/i-output-stream
+  slug: output-stream
+  inherited: false
+- name: read_input
+  path: plumbum/dependencies/standard-io/mock/i-read-input
+  slug: read-input
+  inherited: false
+- name: write_error
+  path: plumbum/dependencies/standard-io/mock/i-write-error
+  slug: write-error
+  inherited: false
+- name: write_output
+  path: plumbum/dependencies/standard-io/mock/i-write-output
+  slug: write-output
+  inherited: false
+data_path: plumbum/dependencies/standard-io/mock
+constructor: true
+inherited_classes:
+- name: Plumbum::Dependencies::StandardIo
+  slug: standard-io
+  path: plumbum/dependencies/standard-io
+version: "*"
+checksum: HwOYqmYafKZ8RRYYQUrlOg==

@@ -1,0 +1,21 @@
+---
+name: Plumbum::Dependencies::FileSystem#delete_file
+parent_path: plumbum/dependencies/file-system
+signature: delete_file(path)
+slug: delete-file
+aliases:
+- remove_file
+constructor: false
+data_path: plumbum/dependencies/file-system/i-delete-file
+params:
+- description: the path to the file.
+  name: path
+  type:
+  - name: String
+returns:
+- description: the path to the removed file.
+  type:
+  - name: String
+short_description: Removes the file at the requested path.
+version: "*"
+checksum: 7kwmx7HAuEgp9Vjjmbying==

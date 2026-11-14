@@ -1,0 +1,9 @@
+---
+name: Plumbum::Errors::SystemCommandFailure::TYPE
+parent_path: plumbum/errors/system-command-failure
+slug: type
+short_description: Short string used to identify the type of error.
+value: "'cuprum.cli.errors.system_command_failure'"
+data_path: plumbum/errors/system-command-failure/type
+version: "*"
+checksum: uJsg25djgStABNqXL4eRYQ==

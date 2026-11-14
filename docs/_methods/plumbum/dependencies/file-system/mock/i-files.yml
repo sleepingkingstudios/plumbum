@@ -1,0 +1,18 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#files
+parent_path: plumbum/dependencies/file-system/mock
+signature: files
+slug: files
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-files
+returns:
+- description: the mocked directories and files.
+  type:
+  - name: Hash
+    keys:
+    - name: String
+    values:
+    - name: Hash
+    - name: IO
+version: "*"
+checksum: 3Q/f5jSy28zEZAbnGEzslA==

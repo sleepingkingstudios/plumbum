@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#output_stream
+parent_path: plumbum/dependencies/standard-io/mock
+signature: output_stream
+slug: output-stream
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-output-stream
+returns:
+- description: the output stream.
+  type:
+  - name: IO
+version: "*"
+checksum: paCa97kZovhQ3ezT2xsmPg==

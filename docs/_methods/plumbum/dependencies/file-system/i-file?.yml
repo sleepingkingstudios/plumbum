@@ -1,0 +1,24 @@
+---
+name: Plumbum::Dependencies::FileSystem#file?
+parent_path: plumbum/dependencies/file-system
+signature: file?(path)
+slug: file?
+aliases:
+- file_exists?
+constructor: false
+data_path: plumbum/dependencies/file-system/i-file?
+params:
+- description: the path to the requested file.
+  name: path
+  type:
+  - name: String
+returns:
+- description: |-
+    true if the file exists and is a file,
+    otherwise false.
+  type:
+  - name: 'true'
+  - name: 'false'
+short_description: Checks if the requested file exists.
+version: "*"
+checksum: VXuf0C6Qr4Sn0bNU1Nco3g==

@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::FileSystem#root_path
+parent_path: plumbum/dependencies/file-system
+signature: root_path
+slug: root-path
+constructor: false
+data_path: plumbum/dependencies/file-system/i-root-path
+returns:
+- description: the path to the root directory.
+  type:
+  - name: String
+version: "*"
+checksum: BnVyN7KM81MMlrGLxwUN9g==

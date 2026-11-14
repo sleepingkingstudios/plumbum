@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::SystemCommand::CapturedOutput#status
+parent_path: plumbum/dependencies/system-command/captured-output
+signature: status
+slug: status
+constructor: false
+data_path: plumbum/dependencies/system-command/captured-output/i-status
+returns:
+- description: the current value of status
+  type:
+  - name: Object
+short_description: Returns the value of attribute status
+version: "*"
+checksum: MNG+Amp0TNxiMgnuOpVjCg==

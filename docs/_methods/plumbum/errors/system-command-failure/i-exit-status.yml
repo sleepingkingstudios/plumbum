@@ -1,0 +1,10 @@
+---
+name: Plumbum::Errors::SystemCommandFailure#exit_status
+parent_path: plumbum/errors/system-command-failure
+signature: exit_status
+slug: exit-status
+constructor: false
+data_path: plumbum/errors/system-command-failure/i-exit-status
+short_description: Returns the value of attribute exit_status.
+version: "*"
+checksum: 1bOq8ZEQp4cinBQBf+bDgQ==

@@ -1,0 +1,86 @@
+---
+name: Plumbum::Dependencies::FileSystem
+slug: file-system
+type: class
+files:
+- lib/plumbum/dependencies/file_system.rb
+parent_path: plumbum/dependencies
+short_description: Utility wrapping filesystem operations.
+defined_classes:
+- name: DirectoryIsAFileError
+  slug: directory-is-a-file-error
+- name: DirectoryNotEmptyError
+  slug: directory-not-empty-error
+- name: DirectoryNotFoundError
+  slug: directory-not-found-error
+- name: FileAlreadyExistsError
+  slug: file-already-exists-error
+- name: FileError
+  slug: file-error
+- name: FileIsADirectoryError
+  slug: file-is-a-directory-error
+- name: FileNotFoundError
+  slug: file-not-found-error
+- name: Mock
+  slug: mock
+instance_attributes:
+- name: root_path
+  read: true
+  write: false
+  path: plumbum/dependencies/file-system/i-root-path
+  slug: root-path
+  inherited: false
+instance_methods:
+- name: copy_file
+  path: plumbum/dependencies/file-system/i-copy-file
+  slug: copy-file
+  inherited: false
+- name: create_directory
+  path: plumbum/dependencies/file-system/i-create-directory
+  slug: create-directory
+  inherited: false
+- name: delete_directory
+  path: plumbum/dependencies/file-system/i-delete-directory
+  slug: delete-directory
+  inherited: false
+- name: delete_file
+  path: plumbum/dependencies/file-system/i-delete-file
+  slug: delete-file
+  inherited: false
+- name: directory?
+  path: plumbum/dependencies/file-system/i-directory?
+  slug: directory?
+  inherited: false
+- name: each_file
+  path: plumbum/dependencies/file-system/i-each-file
+  slug: each-file
+  inherited: false
+- name: file?
+  path: plumbum/dependencies/file-system/i-file?
+  slug: file?
+  inherited: false
+- name: initialize
+  path: plumbum/dependencies/file-system/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: read_file
+  path: plumbum/dependencies/file-system/i-read-file
+  slug: read-file
+  inherited: false
+- name: with_tempfile
+  path: plumbum/dependencies/file-system/i-with-tempfile
+  slug: with-tempfile
+  inherited: false
+- name: write_file
+  path: plumbum/dependencies/file-system/i-write-file
+  slug: write-file
+  inherited: false
+data_path: plumbum/dependencies/file-system
+constructor: true
+direct_subclasses:
+- name: Plumbum::Dependencies::FileSystem::Mock
+  slug: mock
+  path: plumbum/dependencies/file-system/mock
+version: "*"
+checksum: l7qTaYIP4EGtn8lEtkvaRw==

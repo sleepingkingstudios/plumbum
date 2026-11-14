@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::Clock::Mock#current_time
+parent_path: plumbum/dependencies/clock/mock
+signature: get_time
+slug: current-time
+constructor: false
+data_path: plumbum/dependencies/clock/mock/i-current-time
+returns:
+- description: the mocked current time.
+  type:
+  - name: Time
+short_description: rubocop:disable Naming/AccessorMethodName
+version: "*"
+checksum: vTIJx3ovbTnIpKN9YdgEtw==

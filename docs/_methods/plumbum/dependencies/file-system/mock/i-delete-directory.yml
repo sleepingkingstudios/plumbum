@@ -1,0 +1,41 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#delete_directory
+parent_path: plumbum/dependencies/file-system/mock
+signature: 'delete_directory(path, force: false, recursive: false)'
+slug: delete-directory
+aliases:
+- remove_directory
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-delete-directory
+description: |-
+  Fails if the directory contains any files or child directories. The
+  :recursive option enables removing empty child or descendent directories,
+  while the :force option enables removing both files and directories.
+params:
+- description: the path to the directory.
+  name: path
+  type:
+  - name: String
+- description: if true, removes nested files and directories.
+  name: force
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+- description: if true, removes nested empty directories.
+  name: recursive
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'false'
+raises:
+- description: ''
+  type:
+  - name: DirectoryNotEmptyError
+returns:
+- description: the path to the removed directory.
+  type:
+  - name: String
+short_description: Removes the directory at the requested path.
+version: "*"
+checksum: wDI6xppmVWR0h8sAI0oYsw==

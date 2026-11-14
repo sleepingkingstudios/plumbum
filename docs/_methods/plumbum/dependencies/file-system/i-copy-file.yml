@@ -1,0 +1,106 @@
+---
+name: Plumbum::Dependencies::FileSystem#copy_file
+parent_path: plumbum/dependencies/file-system
+signature: 'copy_file(source_path, destination_path, force: false, &block)'
+slug: copy-file
+constructor: false
+data_path: plumbum/dependencies/file-system/i-copy-file
+overloads:
+- name: Plumbum::Dependencies::FileSystem#copy_file
+  parent_path: plumbum/dependencies/file-system
+  signature: 'copy_file(source_path, destination_path, force: false)'
+  slug: copy-file
+  constructor: false
+  params:
+  - description: the path of the file to copy.
+    name: source_path
+    type:
+    - name: String
+  - description: the path to write the file to.
+    name: target_path
+    type:
+    - name: String
+  - description: |-
+      if true, overwrites an existing file (not a
+      directory) at the destination path. Defaults to false.
+    name: force
+    type:
+    - name: 'true'
+    - name: 'false'
+    default: 'false'
+  raises:
+  - description: if the file to copy does not exist.
+    type:
+    - name: FileNotFoundError
+  - description: |-
+      if the file to copy is a directory, or if
+      there is a directory at the destination path.
+    type:
+    - name: FileIsADirectoryError
+  - description: |-
+      if there is a file at the destination
+      path and the force: option is false.
+    type:
+    - name: FileAlreadyExistsError
+  returns:
+  - description: the number of bytes written.
+    type:
+    - name: Integer
+  short_description: Copies the contents of the source file to the destination path.
+- name: Plumbum::Dependencies::FileSystem#copy_file
+  parent_path: plumbum/dependencies/file-system
+  signature: 'copy_file(source_path, destination_path, force: false) { |source| }'
+  slug: copy-file
+  constructor: false
+  params:
+  - description: the path of the file to copy.
+    name: source_path
+    type:
+    - name: String
+  - description: the path to write the file to.
+    name: target_path
+    type:
+    - name: String
+  - description: |-
+      if true, overwrites an existing file (not a
+      directory) at the destination path. Defaults to false.
+    name: force
+    type:
+    - name: 'true'
+    - name: 'false'
+    default: 'false) { |source| '
+  raises:
+  - description: if the file to copy does not exist.
+    type:
+    - name: FileNotFoundError
+  - description: |-
+      if the file to copy is a directory, or if
+      there is a directory at the destination path.
+    type:
+    - name: FileIsADirectoryError
+  - description: |-
+      if there is a file at the destination
+      path and the force: option is false.
+    type:
+    - name: FileAlreadyExistsError
+  returns:
+  - description: the number of bytes written.
+    type:
+    - name: Integer
+  short_description: Reads the source file and generates a new file with modified
+    contents.
+  yield_params:
+  - description: the contents of the source file.
+    name: source
+    type:
+    - name: String
+  yield_returns:
+  - description: the contents of the destination file.
+    type:
+    - name: String
+  yields:
+  - description: |-
+      the transformation function used to modify the contents of the
+      file.
+version: "*"
+checksum: DxMLYfWpIrc6jBPVxUTpdw==

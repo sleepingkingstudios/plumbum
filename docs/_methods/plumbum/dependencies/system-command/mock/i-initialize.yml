@@ -1,0 +1,28 @@
+---
+name: Plumbum::Dependencies::SystemCommand::Mock#initialize
+parent_path: plumbum/dependencies/system-command/mock
+signature: 'initialize(captures: {})'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/system-command/mock/i-initialize
+params:
+- description: |-
+    the captured values to return. If the captures Hash has a key matching
+    the command, that value will be used to generate the result.
+  name: captures
+  type:
+  - name: Hash
+    keys:
+    - name: String
+    values:
+    - name: Proc
+    - name: Array[String
+    - name: String
+    - name: Integer]
+  default: "{}"
+returns:
+- description: a new instance of Mock
+  type:
+  - name: Mock
+version: "*"
+checksum: VoL6z6FpoYZ6H5zb85c+wg==

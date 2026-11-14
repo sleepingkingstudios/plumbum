@@ -1,0 +1,18 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock::MockTempfile#initialize
+parent_path: plumbum/dependencies/file-system/mock/mock-tempfile
+signature: initialize(path)
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/file-system/mock/mock-tempfile/i-initialize
+params:
+- description: the qualified path to the tempfile.
+  name: path
+  type:
+  - name: String
+returns:
+- description: a new instance of MockTempfile
+  type:
+  - name: MockTempfile
+version: "*"
+checksum: 7bfk43WVKeTI+mf4OOgmvQ==

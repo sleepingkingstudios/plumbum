@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#read_input
+parent_path: plumbum/dependencies/standard-io/mock
+signature: read_input
+slug: read-input
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-read-input
+returns:
+- description: the returned input string.
+  type:
+  - name: String
+short_description: Requests a newline-terminated string from the input stream.
+version: "*"
+checksum: XNvXHrA+hd5rnOFDvhVucg==

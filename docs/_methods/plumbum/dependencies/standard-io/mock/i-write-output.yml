@@ -1,0 +1,30 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock#write_output
+parent_path: plumbum/dependencies/standard-io/mock
+signature: 'write_output(message = nil, newline: true)'
+slug: write-output
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/i-write-output
+description: If no message is given, prints a newline only.
+params:
+- description: the message to write.
+  name: message
+  type:
+  - name: String
+  - name: nil
+  default: nil
+- description: |-
+    if true, appends a newline to the message if
+    it does not have a newline. Defaults to true.
+  name: newline
+  type:
+  - name: 'true'
+  - name: 'false'
+  default: 'true'
+returns:
+- description: ''
+  type:
+  - name: nil
+short_description: Writes the given message to the output stream.
+version: "*"
+checksum: Qb/ck/o1d9M05Pawqd6J0g==

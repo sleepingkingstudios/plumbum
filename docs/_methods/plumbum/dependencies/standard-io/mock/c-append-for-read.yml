@@ -1,0 +1,27 @@
+---
+name: Plumbum::Dependencies::StandardIo::Mock.append_for_read
+parent_path: plumbum/dependencies/standard-io/mock
+signature: append_for_read(*messages, io:)
+slug: append-for-read
+constructor: false
+data_path: plumbum/dependencies/standard-io/mock/c-append-for-read
+params:
+- description: |-
+    the messages to append. Will be appended
+    to the stream in the provided order.
+  name: messages
+  type:
+  - name: Array
+    items:
+    - name: String
+- description: the io stream to append.
+  name: io
+  type:
+  - name: IO
+returns:
+- description: the io stream.
+  type:
+  - name: IO
+short_description: Utility method for appending readable data to a StringIO stream.
+version: "*"
+checksum: UYtII8HIJ9MKAwUTaKRdlw==

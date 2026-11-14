@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::Clock::Mock#get_monotonic_time
+parent_path: plumbum/dependencies/clock/mock
+signature: get_monotonic_time
+slug: get-monotonic-time
+constructor: false
+data_path: plumbum/dependencies/clock/mock/i-get-monotonic-time
+returns:
+- description: the mocked monotonic time.
+  type:
+  - name: Numeric
+version: "*"
+checksum: fDEVSj8i6Ghz51M9+dWeuQ==

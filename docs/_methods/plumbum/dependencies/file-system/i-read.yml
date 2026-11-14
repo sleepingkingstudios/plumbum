@@ -1,0 +1,47 @@
+---
+name: Plumbum::Dependencies::FileSystem#read
+parent_path: plumbum/dependencies/file-system
+signature: read(def read_file(file_or_path)
+slug: read
+constructor: false
+data_path: plumbum/dependencies/file-system/i-read
+overloads:
+- name: Plumbum::Dependencies::FileSystem#read
+  parent_path: plumbum/dependencies/file-system
+  signature: read_file(file)
+  slug: read
+  constructor: false
+  params:
+  - description: the file to read.
+    name: file
+    type:
+    - name: IO
+  returns:
+  - description: the file contents.
+    type:
+    - name: String
+  short_description: Reads the contents of the given file or IO stream.
+- name: Plumbum::Dependencies::FileSystem#read
+  parent_path: plumbum/dependencies/file-system
+  signature: read_file(path)
+  slug: read
+  constructor: false
+  params:
+  - description: the file path to read.
+    name: path
+    type:
+    - name: String
+  raises:
+  - description: if the requested file is a directory.
+    type:
+    - name: FileIsADirectoryError
+  - description: if the requested file is not found.
+    type:
+    - name: FileNotFoundError
+  returns:
+  - description: the file contents.
+    type:
+    - name: String
+  short_description: Reads the contents of the file at the given path.
+version: "*"
+checksum: JKEujEdmO5/U40b1gY/Hgg==

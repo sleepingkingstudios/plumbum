@@ -1,0 +1,39 @@
+---
+name: Plumbum::Dependencies::SystemCommand::CapturedOutput
+slug: captured-output
+type: class
+files:
+- lib/plumbum/dependencies/system_command.rb
+parent_path: plumbum/dependencies/system-command
+short_description: Data object representing the captured output and status of a process.
+instance_attributes:
+- name: error
+  read: true
+  write: false
+  path: plumbum/dependencies/system-command/captured-output/i-error
+  slug: error
+  inherited: false
+- name: output
+  read: true
+  write: false
+  path: plumbum/dependencies/system-command/captured-output/i-output
+  slug: output
+  inherited: false
+- name: status
+  read: true
+  write: false
+  path: plumbum/dependencies/system-command/captured-output/i-status
+  slug: status
+  inherited: false
+instance_methods:
+- name: success?
+  path: plumbum/dependencies/system-command/captured-output/i-success?
+  slug: success?
+  inherited: false
+data_path: plumbum/dependencies/system-command/captured-output
+constructor: false
+inherited_classes:
+- name: Data
+  slug: data
+version: "*"
+checksum: bFwa8Sg351nH87/xhpmKyA==

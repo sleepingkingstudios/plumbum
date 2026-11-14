@@ -1,0 +1,24 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#file?
+parent_path: plumbum/dependencies/file-system/mock
+signature: file?(path)
+slug: file?
+aliases:
+- file_exists?
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-file?
+params:
+- description: the path to the requested directory.
+  name: path
+  type:
+  - name: String
+returns:
+- description: |-
+    true if the directory exists and is a directory,
+    otherwise false.
+  type:
+  - name: 'true'
+  - name: 'false'
+short_description: Checks if the requested directory exists.
+version: "*"
+checksum: DqL9LAzaS4Pw0vG6hsOlwQ==

@@ -6,6 +6,7 @@ files:
 - lib/plumbum/errors.rb
 - lib/plumbum/errors/immutable_error.rb
 - lib/plumbum/errors/invalid_key_error.rb
+- lib/plumbum/errors/system_command_failure.rb
 - lib/plumbum/errors/invalid_dependency_error.rb
 - lib/plumbum/errors/missing_dependency_error.rb
 parent_path: plumbum
@@ -19,6 +20,8 @@ defined_classes:
   slug: invalid-key-error
 - name: MissingDependencyError
   slug: missing-dependency-error
+- name: SystemCommandFailure
+  slug: system-command-failure
 data_path: plumbum/errors
 version: "*"
-checksum: zgycULxKI3YRrsb/56cPvw==
+checksum: 2Hw8WFXHcdp5Ho9ncZLeSg==

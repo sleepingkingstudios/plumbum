@@ -1,0 +1,43 @@
+---
+name: Plumbum::Dependencies::Clock
+slug: clock
+type: class
+files:
+- lib/plumbum/dependencies/clock.rb
+parent_path: plumbum/dependencies
+short_description: Utility wrapping the current time and time calculations.
+defined_classes:
+- name: Mock
+  slug: mock
+instance_methods:
+- name: get_monotonic_time
+  path: plumbum/dependencies/clock/i-get-monotonic-time
+  slug: get-monotonic-time
+  inherited: false
+- name: get_time
+  path: plumbum/dependencies/clock/i-get-time
+  slug: get-time
+  inherited: false
+- name: measure
+  path: plumbum/dependencies/clock/i-measure
+  slug: measure
+  inherited: false
+data_path: plumbum/dependencies/clock
+metadata:
+  examples:
+  - name: Getting the Current Time
+    text: Plumbum::Dependencies::Clock.new.get_time
+  - name: Measuring an Interval
+    text: |-
+      time_elapsed = Plumbum::Dependencies::Clock.new.measure do
+        sleep 1
+      end
+
+      time_elapsed #=> 1.0 # Approximately.
+constructor: false
+direct_subclasses:
+- name: Plumbum::Dependencies::Clock::Mock
+  slug: mock
+  path: plumbum/dependencies/clock/mock
+version: "*"
+checksum: 9esRqZXtEGG94/zUyhG42w==

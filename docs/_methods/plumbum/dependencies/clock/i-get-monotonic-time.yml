@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::Clock#get_monotonic_time
+parent_path: plumbum/dependencies/clock
+signature: get_monotonic_time
+slug: get-monotonic-time
+constructor: false
+data_path: plumbum/dependencies/clock/i-get-monotonic-time
+returns:
+- description: a monotonically increasing system clock time.
+  type:
+  - name: Float
+version: "*"
+checksum: "+MajCyrFnmtb0VRXa7j2Jw=="

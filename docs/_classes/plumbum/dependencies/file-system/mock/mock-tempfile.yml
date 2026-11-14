@@ -1,0 +1,28 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock::MockTempfile
+slug: mock-tempfile
+type: class
+files:
+- lib/plumbum/dependencies/file_system/mock.rb
+parent_path: plumbum/dependencies/file-system/mock
+short_description: Utility class used to simulate tempfile behavior.
+instance_attributes:
+- name: path
+  read: true
+  write: false
+  path: plumbum/dependencies/file-system/mock/mock-tempfile/i-path
+  slug: path
+  inherited: false
+instance_methods:
+- name: initialize
+  path: plumbum/dependencies/file-system/mock/mock-tempfile/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+data_path: plumbum/dependencies/file-system/mock/mock-tempfile
+constructor: true
+inherited_classes:
+- name: SimpleDelegator
+  slug: simple-delegator
+version: "*"
+checksum: vsdgXmg4jSjncB0jNGdEJQ==

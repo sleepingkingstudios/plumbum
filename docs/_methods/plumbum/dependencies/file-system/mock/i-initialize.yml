@@ -1,0 +1,34 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#initialize
+parent_path: plumbum/dependencies/file-system/mock
+signature: 'initialize(files: {}, root_path: Dir.pwd)'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/file-system/mock/i-initialize
+params:
+- description: |-
+    the mocked directories and files.
+    Must be a Hash with String keys representing file path segments; Hash
+    values represent directories, while IO values represent files.
+  name: files
+  type:
+  - name: Hash
+    keys:
+    - name: String
+    values:
+    - name: Hash
+    - name: IO
+  default: "{}"
+- description: |-
+    the path to the root directory. Defaults to the
+    value of `Dir.pwd`.
+  name: root_path
+  type:
+  - name: String
+  default: Dir.pwd
+returns:
+- description: a new instance of Mock
+  type:
+  - name: Mock
+version: "*"
+checksum: Rf9fYZCC6bBVzf2lwK6NpA==

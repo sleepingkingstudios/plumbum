@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::Clock#now
+parent_path: plumbum/dependencies/clock
+signature: get_time
+slug: now
+constructor: false
+data_path: plumbum/dependencies/clock/i-now
+returns:
+- description: the current time in the UTC time zone.
+  type:
+  - name: Time
+version: "*"
+checksum: NtHM8sGJZ9hCZCqfKSlw8A==

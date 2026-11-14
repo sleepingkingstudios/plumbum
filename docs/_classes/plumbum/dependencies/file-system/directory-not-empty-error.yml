@@ -1,0 +1,18 @@
+---
+name: Plumbum::Dependencies::FileSystem::DirectoryNotEmptyError
+slug: directory-not-empty-error
+type: class
+files:
+- lib/plumbum/dependencies/file_system.rb
+parent_path: plumbum/dependencies/file-system
+short_description: Exception raised when attempting to delete a non-empty directory.
+data_path: plumbum/dependencies/file-system/directory-not-empty-error
+constructor: false
+inherited_classes:
+- name: Plumbum::Dependencies::FileSystem::FileError
+  slug: file-error
+  path: plumbum/dependencies/file-system/file-error
+- name: StandardError
+  slug: standard-error
+version: "*"
+checksum: ZW/BznkJfRzSbyt71n8iGw==

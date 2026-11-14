@@ -1,0 +1,17 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#expanded_dirs
+parent_path: plumbum/dependencies/file-system/mock
+signature: expanded_dirs
+slug: expanded-dirs
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-expanded-dirs
+returns:
+- description: |-
+    a list of the defined directory paths in the mock
+    file system.
+  type:
+  - name: Array
+    items:
+    - name: String
+version: "*"
+checksum: OyNTJZqhZXBpRP5si721MA==

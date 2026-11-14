@@ -1,0 +1,21 @@
+---
+name: Plumbum::Dependencies::FileSystem#initialize
+parent_path: plumbum/dependencies/file-system
+signature: 'initialize(root_path: Dir.pwd)'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/file-system/i-initialize
+params:
+- description: |-
+    the path to the root directory. Defaults to the
+    value of `Dir.pwd`.
+  name: root_path
+  type:
+  - name: String
+  default: Dir.pwd
+returns:
+- description: a new instance of FileSystem
+  type:
+  - name: FileSystem
+version: "*"
+checksum: haP3DmeRozV9PrhwXIpALw==

@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::Clock#measure
+parent_path: plumbum/dependencies/clock
+signature: measure
+slug: measure
+constructor: false
+data_path: plumbum/dependencies/clock/i-measure
+returns:
+- description: the elapsed time in seconds.
+  type:
+  - name: Float
+short_description: Measures the time elapsed while the block is run.
+version: "*"
+checksum: BpbMWJDU1ItFPgj+HIJKug==

@@ -1,0 +1,24 @@
+---
+name: Plumbum::Dependencies::Clock::Mock#initialize
+parent_path: plumbum/dependencies/clock/mock
+signature: 'initialize(current_time: nil, monotonic_time: nil)'
+slug: initialize
+constructor: true
+data_path: plumbum/dependencies/clock/mock/i-initialize
+params:
+- description: the current time in UTC time zone.
+  name: current_time
+  type:
+  - name: Time
+  default: nil
+- description: the monotonic server time.
+  name: monotonic_time
+  type:
+  - name: Numeric
+  default: nil
+returns:
+- description: a new instance of Mock
+  type:
+  - name: Mock
+version: "*"
+checksum: 0foBZcvL6D6v9mHMTMyRig==

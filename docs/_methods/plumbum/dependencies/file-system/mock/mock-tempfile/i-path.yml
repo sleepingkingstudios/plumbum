@@ -1,0 +1,13 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock::MockTempfile#path
+parent_path: plumbum/dependencies/file-system/mock/mock-tempfile
+signature: path
+slug: path
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/mock-tempfile/i-path
+returns:
+- description: the qualified path to the tempfile.
+  type:
+  - name: String
+version: "*"
+checksum: Br/vYLue3Gy0gg9bboq0fA==

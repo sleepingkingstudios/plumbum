@@ -1,0 +1,18 @@
+---
+name: Plumbum::Dependencies::FileSystem::FileAlreadyExistsError
+slug: file-already-exists-error
+type: class
+files:
+- lib/plumbum/dependencies/file_system.rb
+parent_path: plumbum/dependencies/file-system
+short_description: Exception raised when attempting to overwrite an existing file.
+data_path: plumbum/dependencies/file-system/file-already-exists-error
+constructor: false
+inherited_classes:
+- name: Plumbum::Dependencies::FileSystem::FileError
+  slug: file-error
+  path: plumbum/dependencies/file-system/file-error
+- name: StandardError
+  slug: standard-error
+version: "*"
+checksum: hLM2pT5gI/if8dfbo7b93A==

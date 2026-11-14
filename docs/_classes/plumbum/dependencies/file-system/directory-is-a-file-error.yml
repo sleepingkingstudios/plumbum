@@ -1,0 +1,18 @@
+---
+name: Plumbum::Dependencies::FileSystem::DirectoryIsAFileError
+slug: directory-is-a-file-error
+type: class
+files:
+- lib/plumbum/dependencies/file_system.rb
+parent_path: plumbum/dependencies/file-system
+short_description: Exception raised when attempting to access a file as a directory.
+data_path: plumbum/dependencies/file-system/directory-is-a-file-error
+constructor: false
+inherited_classes:
+- name: Plumbum::Dependencies::FileSystem::FileError
+  slug: file-error
+  path: plumbum/dependencies/file-system/file-error
+- name: StandardError
+  slug: standard-error
+version: "*"
+checksum: xxrycwnSoNyNxtny/pgBMA==

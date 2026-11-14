@@ -1,0 +1,34 @@
+---
+name: Plumbum::Dependencies::FileSystem::FileError
+slug: file-error
+type: class
+files:
+- lib/plumbum/dependencies/file_system.rb
+parent_path: plumbum/dependencies/file-system
+short_description: Abstract class for exceptions raised by failing file system operations.
+data_path: plumbum/dependencies/file-system/file-error
+constructor: false
+direct_subclasses:
+- name: Plumbum::Dependencies::FileSystem::DirectoryIsAFileError
+  slug: directory-is-a-file-error
+  path: plumbum/dependencies/file-system/directory-is-a-file-error
+- name: Plumbum::Dependencies::FileSystem::DirectoryNotEmptyError
+  slug: directory-not-empty-error
+  path: plumbum/dependencies/file-system/directory-not-empty-error
+- name: Plumbum::Dependencies::FileSystem::DirectoryNotFoundError
+  slug: directory-not-found-error
+  path: plumbum/dependencies/file-system/directory-not-found-error
+- name: Plumbum::Dependencies::FileSystem::FileAlreadyExistsError
+  slug: file-already-exists-error
+  path: plumbum/dependencies/file-system/file-already-exists-error
+- name: Plumbum::Dependencies::FileSystem::FileIsADirectoryError
+  slug: file-is-a-directory-error
+  path: plumbum/dependencies/file-system/file-is-a-directory-error
+- name: Plumbum::Dependencies::FileSystem::FileNotFoundError
+  slug: file-not-found-error
+  path: plumbum/dependencies/file-system/file-not-found-error
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"
+checksum: ouBmGln7WPZTcHQ7ZNj8DQ==

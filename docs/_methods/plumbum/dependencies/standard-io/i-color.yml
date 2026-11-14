@@ -1,0 +1,27 @@
+---
+name: Plumbum::Dependencies::StandardIo#color
+parent_path: plumbum/dependencies/standard-io
+signature: color(text, color)
+slug: color
+constructor: false
+data_path: plumbum/dependencies/standard-io/i-color
+params:
+- description: the text to colorize.
+  name: text
+  type:
+  - name: String
+- description: the color to apply.
+  name: color
+  type:
+  - name: String
+raises:
+- description: if the requested color does not have an escape code.
+  type:
+  - name: KeyError
+returns:
+- description: the colorized string.
+  type:
+  - name: String
+short_description: Wraps the text in an ANSI color escape code.
+version: "*"
+checksum: hz0OnFQPfZr0RcvTRbEaxA==

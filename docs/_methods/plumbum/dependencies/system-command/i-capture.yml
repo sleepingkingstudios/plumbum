@@ -1,0 +1,52 @@
+---
+name: Plumbum::Dependencies::SystemCommand#capture
+parent_path: plumbum/dependencies/system-command
+signature: 'capture(command,.arguments: [], environment: {}, options: {})'
+slug: capture
+constructor: false
+data_path: plumbum/dependencies/system-command/i-capture
+params:
+- description: the command to run.
+  name: command
+  type:
+  - name: String
+- description: |-
+    command-line flags or arguments to pass
+    to the command.
+  name: arguments
+  type:
+  - name: Array
+    items:
+    - name: String
+- description: |-
+    environment variables to set
+    for the command.
+  name: enviroment
+  type:
+  - name: Hash
+    items:
+    - name: String
+    - name: Object
+- description: |-
+    command line options and values to
+    pass to the command.
+  name: options
+  type:
+  - name: Hash
+    items:
+    - name: String
+    - name: Object
+  default: "{}"
+returns:
+- description: |-
+    a Result wrapping the process status and captured output. The Result
+    will have a status of :success if the process ran successfully;
+    otherwise, the Result will have a status of :failure
+  type:
+  - name: Cuprum::Result
+    items:
+    - name: Plumbum::Dependencies::SystemCommand::CapturedOutput
+      path: plumbum/dependencies/system-command/captured-output
+short_description: Executes the system command and returns the captured output.
+version: "*"
+checksum: qEdMoWJl3UZLr9OW+VMQNg==

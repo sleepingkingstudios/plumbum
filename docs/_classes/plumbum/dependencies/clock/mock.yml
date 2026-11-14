@@ -1,0 +1,34 @@
+---
+name: Plumbum::Dependencies::Clock::Mock
+slug: mock
+type: class
+files:
+- lib/plumbum/dependencies/clock/mock.rb
+parent_path: plumbum/dependencies/clock
+short_description: Mock implementation of Clock for testing purposes.
+instance_methods:
+- name: get_monotonic_time
+  path: plumbum/dependencies/clock/mock/i-get-monotonic-time
+  slug: get-monotonic-time
+  inherited: false
+- name: get_time
+  path: plumbum/dependencies/clock/mock/i-get-time
+  slug: get-time
+  inherited: false
+- name: initialize
+  path: plumbum/dependencies/clock/mock/i-initialize
+  slug: initialize
+  inherited: false
+  constructor: true
+- name: measure
+  path: plumbum/dependencies/clock/i-measure
+  slug: measure
+  inherited: true
+data_path: plumbum/dependencies/clock/mock
+constructor: true
+inherited_classes:
+- name: Plumbum::Dependencies::Clock
+  slug: clock
+  path: plumbum/dependencies/clock
+version: "*"
+checksum: m9g61hUwIv/tO+fzxAxpTA==

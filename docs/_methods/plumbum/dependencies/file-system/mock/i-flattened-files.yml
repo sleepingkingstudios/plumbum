@@ -1,0 +1,17 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#flattened_files
+parent_path: plumbum/dependencies/file-system/mock
+signature: flattened_files
+slug: flattened-files
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-flattened-files
+returns:
+- description: |-
+    a list of the defined file paths in the mock file
+    system.
+  type:
+  - name: Array
+    items:
+    - name: String
+version: "*"
+checksum: A1EmtQdJDRRoTw34PeX0pQ==

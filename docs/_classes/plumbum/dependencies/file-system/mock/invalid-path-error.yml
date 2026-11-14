@@ -1,0 +1,16 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock::InvalidPathError
+slug: invalid-path-error
+type: class
+files:
+- lib/plumbum/dependencies/file_system/mock.rb
+parent_path: plumbum/dependencies/file-system/mock
+short_description: Exception raised when trying to read from or write to a non-mocked
+  path.
+data_path: plumbum/dependencies/file-system/mock/invalid-path-error
+constructor: false
+inherited_classes:
+- name: StandardError
+  slug: standard-error
+version: "*"
+checksum: qU5SE7BzoexgYxsZhonZEg==

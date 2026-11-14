@@ -1,0 +1,19 @@
+---
+name: Plumbum::Dependencies::FileSystem::Mock#with_tempfile
+parent_path: plumbum/dependencies/file-system/mock
+signature: with_tempfile(&block)
+slug: with-tempfile
+constructor: false
+data_path: plumbum/dependencies/file-system/mock/i-with-tempfile
+returns:
+- description: the value returned by the block.
+  type:
+  - name: Object
+short_description: Creates a tempfile and passes it to the block.
+yield_params:
+- description: generated tempfile.
+  name: the
+  type:
+  - name: File
+version: "*"
+checksum: Ymk4QD9amEwMeT36xhh6VQ==

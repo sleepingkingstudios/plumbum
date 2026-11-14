@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::SystemCommand::CapturedOutput#output
+parent_path: plumbum/dependencies/system-command/captured-output
+signature: output
+slug: output
+constructor: false
+data_path: plumbum/dependencies/system-command/captured-output/i-output
+returns:
+- description: the current value of output
+  type:
+  - name: Object
+short_description: Returns the value of attribute output
+version: "*"
+checksum: kcZcbuRQ9H1jt92zSBKTbA==

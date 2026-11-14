@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies::SystemCommand::CapturedOutput#error
+parent_path: plumbum/dependencies/system-command/captured-output
+signature: error
+slug: error
+constructor: false
+data_path: plumbum/dependencies/system-command/captured-output/i-error
+returns:
+- description: the current value of error
+  type:
+  - name: Object
+short_description: Returns the value of attribute error
+version: "*"
+checksum: ACqAF2AaGvd6p0QYUtx3aA==

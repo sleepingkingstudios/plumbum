@@ -1,0 +1,27 @@
+---
+name: Plumbum::Dependencies::SystemCommand::Mock::MockStatus
+slug: mock-status
+type: class
+files:
+- lib/plumbum/dependencies/system_command/mock.rb
+parent_path: plumbum/dependencies/system-command/mock
+short_description: Data class providing a mock implementation of Process::Status.
+instance_attributes:
+- name: exitstatus
+  read: true
+  write: false
+  path: plumbum/dependencies/system-command/mock/mock-status/i-exitstatus
+  slug: exitstatus
+  inherited: false
+instance_methods:
+- name: success?
+  path: plumbum/dependencies/system-command/mock/mock-status/i-success?
+  slug: success?
+  inherited: false
+data_path: plumbum/dependencies/system-command/mock/mock-status
+constructor: false
+inherited_classes:
+- name: Data
+  slug: data
+version: "*"
+checksum: Uz0zctxCTFIVMPoBEHcjtA==

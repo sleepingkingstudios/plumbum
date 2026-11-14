@@ -1,0 +1,14 @@
+---
+name: Plumbum::RSpec::Deferred::Dependencies::FileSystemExamples
+slug: file-system-examples
+type: module
+files:
+- lib/plumbum/rspec/deferred/dependencies/file_system_examples.rb
+parent_path: plumbum/r-spec/deferred/dependencies
+short_description: Deferred examples for testing the FileSystem dependency.
+data_path: plumbum/r-spec/deferred/dependencies/file-system-examples
+included_modules:
+- name: RSpec::SleepingKingStudios::Deferred::Provider
+  slug: provider
+version: "*"
+checksum: dZuf/N67F6VH59NUI3CoXA==
