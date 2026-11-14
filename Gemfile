@@ -12,7 +12,7 @@ group :development, :test do
   gem 'cuprum-cli', '~> 0.2'
 
   gem 'rspec', '~> 3.13'
-  gem 'rspec-sleeping_king_studios', '~> 2.8.0', '>= 2.8.4'
+  gem 'rspec-sleeping_king_studios', '~> 2.8.0', '>= 2.8.6'
 
   gem 'rubocop',       '~> 1.92'
   gem 'rubocop-rspec', '~> 3.10'

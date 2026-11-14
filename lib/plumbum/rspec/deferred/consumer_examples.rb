@@ -102,6 +102,7 @@ module Plumbum::RSpec::Deferred
         deferred_examples 'should define the delegated method' \
         do |scoped: false, visibility: :public|
           if scoped
+            # rubocop:disable-next RSpec/MultipleExpectations
             it 'should not define the unscoped delegated method' do
               expect(subject).not_to respond_to(delegated_name)
 
@@ -144,6 +145,7 @@ module Plumbum::RSpec::Deferred
         deferred_examples 'should define the predicate method' \
         do |scoped: false, visibility: :public|
           if scoped
+            # rubocop:disable-next RSpec/MultipleExpectations
             it 'should not define the unscoped predicate method' do
               expect(subject).not_to respond_to(predicate_name)
 
@@ -182,6 +184,7 @@ module Plumbum::RSpec::Deferred
         deferred_examples 'should define the reader method' \
         do |scoped: false, visibility: :public|
           if scoped
+            # rubocop:disable-next RSpec/MultipleExpectations
             it 'should not define the unscoped reader method' do
               expect(subject).not_to respond_to(reader_name)
 
@@ -1062,6 +1065,7 @@ module Plumbum::RSpec::Deferred
             :aggregate_failures \
           do
             expect { described_class.plumbum_provider(provider) }.to(
+              # rubocop:disable-next RSpec/ExpectChange
               change { defined_providers.count }.by(1)
             )
 
@@ -1073,6 +1077,7 @@ module Plumbum::RSpec::Deferred
               :aggregate_failures \
             do
               expect { described_class.plumbum_provider(provider) }.to(
+                # rubocop:disable-next RSpec/ExpectChange
                 change { defined_providers.count }.by(1)
               )
 
@@ -1104,6 +1109,7 @@ module Plumbum::RSpec::Deferred
             :aggregate_failures \
           do
             expect { described_class.plumbum_provider(provider) }.to(
+              # rubocop:disable-next RSpec/ExpectChange
               change { defined_providers.count }.by(1)
             )
 
@@ -1115,6 +1121,7 @@ module Plumbum::RSpec::Deferred
               :aggregate_failures \
             do
               expect { described_class.plumbum_provider(provider) }.to(
+                # rubocop:disable-next RSpec/ExpectChange
                 change { defined_providers.count }.by(1)
               )
 
@@ -1154,6 +1161,7 @@ module Plumbum::RSpec::Deferred
 
         it { expect(described_class.plumbum_providers).to be == [] }
 
+        # rubocop:disable RSpec/RepeatedExampleGroupBody
         wrap_deferred 'when the parent class defines providers' do
           it 'should return the expected providers' do
             expect(described_class.plumbum_providers).to eq(expected_providers)
@@ -1171,6 +1179,7 @@ module Plumbum::RSpec::Deferred
             expect(described_class.plumbum_providers).to eq(expected_providers)
           end
         end
+        # rubocop:enable RSpec/RepeatedExampleGroupBody
 
         context 'when the class and ancestors define providers' do
           include_deferred 'when the parent class defines providers'
@@ -1928,8 +1937,11 @@ module Plumbum::RSpec::Deferred
           end
 
           context 'when the class includes a provider for the dependency' do
-            let(:manager)      { double('application_manager', restart: nil) }
-            let(:application)  { Struct.new(:manager).new(manager) }
+            let(:manager) do
+              # rubocop:disable-next RSpec/VerifiedDoubles
+              double('application_manager', restart: nil)
+            end
+            let(:application) { Struct.new(:manager).new(manager) }
             let(:application_provider) do
               Plumbum::OneProvider.new(:application, value: application)
             end
