@@ -14,6 +14,11 @@ files:
 - lib/plumbum/dependencies/system_command/mock.rb
 parent_path: plumbum
 short_description: Dependencies provide a standard interface that abstracts side effects.
+class_methods:
+- name: provider
+  path: plumbum/dependencies/c-provider
+  slug: provider
+  inherited: false
 defined_classes:
 - name: Clock
   slug: clock
@@ -34,4 +39,4 @@ description: |-
   structure that simulates reading and writing files without making any
   changes to the actual file system.
 version: "*"
-checksum: XkY11qZZaI1CQKy0ePKPnw==
+checksum: D74VRvScTKbeAtuTE8R0Uw==

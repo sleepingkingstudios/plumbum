@@ -1,0 +1,14 @@
+---
+name: Plumbum::Dependencies.provider
+parent_path: plumbum/dependencies
+signature: provider
+slug: provider
+constructor: false
+data_path: plumbum/dependencies/c-provider
+returns:
+- description: the provider for the standard dependencies.
+  type:
+  - name: Plumbum::Provider
+    path: plumbum/provider
+version: "*"
+checksum: HvjDKLiifwB/aJ23JlyaeA==

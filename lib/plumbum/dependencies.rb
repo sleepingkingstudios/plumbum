@@ -18,5 +18,17 @@ module Plumbum
     autoload :FileSystem,    'plumbum/dependencies/file_system'
     autoload :StandardIo,    'plumbum/dependencies/standard_io'
     autoload :SystemCommand, 'plumbum/dependencies/system_command'
+
+    # @return [Plumbum::Provider] the provider for the standard dependencies.
+    def self.provider
+      @provider ||= Plumbum::ManyProvider.new(
+        values: {
+          clock:          Clock.new,
+          file_system:    FileSystem.new,
+          standard_io:    StandardIo.new,
+          system_command: SystemCommand.new
+        }
+      )
+    end
   end
 end
