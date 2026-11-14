@@ -16,5 +16,6 @@ module Plumbum
   module Dependencies
     autoload :Clock,      'plumbum/dependencies/clock'
     autoload :FileSystem, 'plumbum/dependencies/file_system'
+    autoload :StandardIo, 'plumbum/dependencies/standard_io'
   end
 end

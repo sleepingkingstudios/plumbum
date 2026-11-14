@@ -9,8 +9,6 @@ require 'plumbum/dependencies'
 module Plumbum::Dependencies
   # Utility wrapping filesystem operations.
   class FileSystem # rubocop:disable Metrics/ClassLength
-    autoload :Mock, 'cuprum/cli/dependencies/file_system/mock'
-
     # Abstract class for exceptions raised by failing file system operations.
     class FileError < StandardError; end
 
