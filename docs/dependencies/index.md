@@ -91,7 +91,17 @@ Beyond testing, using the standard dependencies as an abstraction layer allows y
 
 The [Clock](./clock) dependency wraps Ruby's native time functionality.
 
-> @todo
+```ruby
+clock = Plumbum::Clock.new
+
+clock.get_time
+#=> an instance of Time with the current time in UTC.
+
+clock.measure do
+  sleep 1
+end
+#=> approximately 1.0
+```
 
 [Back To Top](#)
 
