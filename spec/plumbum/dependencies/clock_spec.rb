@@ -14,7 +14,7 @@ RSpec.describe Plumbum::Dependencies::Clock do
 
     it { expect(clock).to respond_to(:get_monotonic_time).with(0).arguments }
 
-    it { expect(clock.get_monotonic_time).to eq current_time }
+    it { expect(clock.get_monotonic_time).to eq(current_time) }
   end
 
   describe '#get_time' do

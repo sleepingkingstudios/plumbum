@@ -4,6 +4,7 @@
 module Plumbum
   autoload :Consumer,     'plumbum/consumer'
   autoload :Consumers,    'plumbum/consumers'
+  autoload :Dependencies, 'plumbum/dependencies'
   autoload :Errors,       'plumbum/errors'
   autoload :ManyProvider, 'plumbum/many_provider'
   autoload :OneProvider,  'plumbum/one_provider'

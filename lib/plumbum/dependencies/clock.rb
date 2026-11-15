@@ -17,7 +17,7 @@ module Plumbum::Dependencies
   class Clock
     # @return [Float] a monotonically increasing system clock time.
     def get_monotonic_time # rubocop:disable Naming/AccessorMethodName
-      Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
 
     # @return [Time] the current time in the UTC time zone.
